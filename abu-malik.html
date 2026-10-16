@@ -186,7 +186,7 @@ details.fold>.body{border:1px solid var(--line);border-top:0;border-radius:0 0 v
 /* nav */
 nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
   padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
 nav.bottom button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 0;border-radius:10px}
 nav.bottom button svg{width:22px;height:22px}
 nav.bottom button.on{color:var(--ink);font-weight:600}
@@ -229,6 +229,35 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
 .fcard .acts .btn{flex:1;padding:7px 4px}
 .fcard a.btn{color:inherit;text-decoration:none}
 
+/* gym */
+.gym-week{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
+.wk7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.wk7 .wd{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.wk7 .wd i{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);display:block}
+.wk7 .wd.on i{background:var(--ok);border-color:var(--ok)}
+.wk7 .wd.now span{color:var(--ink);font-weight:600}
+.ex{display:flex;gap:10px;padding:12px 10px;border-top:1px solid var(--line);align-items:flex-start}
+.list>div:first-child>.ex{border-top:0}
+.ex .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.ex .ttl{font-weight:600}
+.ex .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.ex .col{display:flex;flex-direction:column}
+.ex.done-ex .ttl{color:var(--ok)}
+.ex-img{flex:none;width:52px;height:52px;border-radius:10px;overflow:hidden;background:var(--surface2)}
+.ex-img img{width:100%;height:100%;object-fit:cover}
+.ex-in{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.ex-in input{padding:7px 9px}
+a.btn{color:inherit;text-decoration:none}
+.tbl-wrap{overflow-x:auto}
+table.prog{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+table.prog th,table.prog td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
+table.prog thead th{color:var(--muted);font-weight:500;font-size:12px}
+table.prog tbody th{text-align:start;font-weight:500;position:sticky;right:0;background:var(--surface);max-width:130px;white-space:normal;line-height:1.35}
+table.prog td small{display:block;color:var(--muted);font-size:10px}
+table.prog td.up{color:var(--ok);font-weight:600}
+table.prog td.down{color:var(--danger)}
+table.prog td.tot{font-weight:700}
+nav.bottom button{font-size:10.5px}
 /* recipes (vault) */
 .recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
@@ -373,6 +402,12 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
   </div>
 </section>
 
+<!-- ============ GYM ============ -->
+<section class="page" id="p-gym">
+  <div class="ph"><h1>تمريني</h1><button class="btn sm pri" data-act="planner">برنامج بكلود</button></div>
+  <div id="gymBody" class="sec" style="gap:16px"></div>
+</section>
+
 <!-- ============ RECIPES (vault) ============ -->
 <section class="page" id="p-kitchen">
   <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل</button></div>
@@ -385,6 +420,7 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
   <button data-act="tab" data-v="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>المشاريع</button>
   <button data-act="tab" data-v="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>الدفتر</button>
   <button data-act="tab" data-v="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>الوثائق</button>
+  <button data-act="tab" data-v="gym"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>تمريني</button>
   <button data-act="tab" data-v="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6z"/><path d="M6 17h12"/></svg>وصفات</button>
 </div></nav>
 
@@ -462,17 +498,18 @@ const IC = {
 
 /* ---------- state & store ---------- */
 const S = {
-  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {},
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null,
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
   vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
-const COLS = ["items", "notes", "files", "vault", "meta", "habitlog"];
+const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog"];
+const MAPCOLS = ["meta", "habitlog", "gymlog"];
 
 function memApply(col, id, data, merge) {
   if (col === "meta") { S.meta[id] = merge ? deepMerge(S.meta[id] || {}, data) : data; return; }
-  if (col === "habitlog") { S.habitlog[id] = merge ? deepMerge(S.habitlog[id] || {}, data) : data; return; }
+  if (MAPCOLS.includes(col)) { S[col][id] = merge ? deepMerge(S[col][id] || {}, data) : data; return; }
   const arr = S[col]; const i = arr.findIndex(x => x.id === id);
   if (i < 0) arr.push({ id, ...data }); else arr[i] = merge ? { ...deepMerge(arr[i], data), id } : { id, ...data };
 }
@@ -494,7 +531,7 @@ async function patch(col, id, data) {
 }
 async function del(col, id) {
   if (base) { try { await base.collection(col).doc(id).delete(); } catch (e) { writeFail(e); } }
-  else { if (col === "meta") delete S.meta[id]; else if (col === "habitlog") delete S.habitlog[id]; else S[col] = S[col].filter(x => x.id !== id); renderAll(); }
+  else { if (MAPCOLS.includes(col)) delete S[col][id]; else S[col] = S[col].filter(x => x.id !== id); renderAll(); }
 }
 function writeFail(e) {
   if (e && e.code === "quota_exceeded") toast("المساحة امتلأت. احذف بعض العناصر القديمة.");
@@ -514,7 +551,7 @@ async function boot() {
     db = d; base = db.doc(`data/users/${uid}/main`);
     for (const col of COLS) {
       base.collection(col).onSnapshot(snap => {
-        if (col === "meta" || col === "habitlog") { const o = {}; snap.docs.forEach(x => o[x.id] = x.data()); S[col] = o; }
+        if (MAPCOLS.includes(col)) { const o = {}; snap.docs.forEach(x => o[x.id] = x.data()); S[col] = o; }
         else S[col] = snap.docs.map(x => ({ ...x.data(), id: x.id }));
         renderAll();
       }, () => toast("انقطع الاتصال بالبيانات. أعد فتح الدفتر."));
@@ -1426,6 +1463,168 @@ async function copyText(txt) {
   catch (e) { toast("ما قدرت أنسخ، اضغط على الرقم لإظهاره وانسخه يدوياً"); }
 }
 
+/* ---------- gym ---------- */
+const MUSCLES = ["صدر", "ظهر", "أكتاف", "باي", "تراي", "أرجل", "بطن", "كارديو", "جسم كامل"];
+const gymGroups = () => {
+  const order = S.meta.gym?.groups || [];
+  const seen = [...order];
+  S.workouts.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt).forEach(w => { if (w.group && !seen.includes(w.group)) seen.push(w.group); });
+  return seen.filter(g => S.workouts.some(w => w.group === g));
+};
+const exOf = g => S.workouts.filter(w => w.group === g).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt);
+const logDates = () => Object.keys(S.gymlog).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+function history(exId) {
+  return logDates().map(d => ({ d, e: S.gymlog[d]?.entries?.[exId] })).filter(x => x.e && (x.e.weight || x.e.done));
+}
+function suggestGroup() {
+  const gs = gymGroups(); if (!gs.length) return null;
+  const t = S.gymlog[today()]?.group; if (t && gs.includes(t)) return t;
+  const past = logDates().filter(d => d < today() && S.gymlog[d]?.group).pop();
+  if (!past) return gs[0];
+  const i = gs.indexOf(S.gymlog[past].group); return gs[(i + 1) % gs.length];
+}
+const ytLink = w => w.video && /^https?:\/\//.test(w.video) ? w.video : `https://www.youtube.com/results?search_query=${encodeURIComponent((w.nameEn || w.name) + " exercise form")}`;
+const fmtW = n => n || n === 0 ? ar(+(+n).toFixed(1)) : "";
+function renderGym() {
+  const body = $("#gymBody");
+  if (body.contains(document.activeElement) && document.activeElement.matches("input,textarea")) { S.gymPending = true; return; }
+  S.gymPending = false;
+  const gs = gymGroups();
+  if (!S.gymDay || !gs.includes(S.gymDay)) S.gymDay = suggestGroup();
+  // week strip
+  const t = today(); let week = "";
+  for (let i = 6; i >= 0; i--) {
+    const d = addDays(t, -i), L = S.gymlog[d]; const did = L && Object.values(L.entries || {}).some(e => e.done);
+    week += `<div class="wd ${did ? "on" : ""} ${d === t ? "now" : ""}"><span>${WD[parseISO(d).getDay()].replace("ال", "")}</span><i></i></div>`;
+  }
+  const sessions7 = [...Array(7)].map((_, i) => S.gymlog[addDays(t, -i)]).filter(L => L && Object.values(L.entries || {}).some(e => e.done)).length;
+  if (!gs.length) {
+    body.innerHTML = `<div class="gym-week card"><div class="row" style="justify-content:space-between"><span class="small muted">آخر ٧ أيام</span></div><div class="wk7">${week}</div></div>
+      <div class="empty card">ما فيه برنامج بعد. اضغط «برنامج بكلود» واكتب له هدفك وكم يوم تتمرن، أو أضف تمرين بنفسك من تحت.</div>
+      ${addExForm(null)}`;
+    return;
+  }
+  const log = S.gymlog[t]?.entries || {};
+  const exs = exOf(S.gymDay);
+  const doneN = exs.filter(w => log[w.id]?.done).length;
+  body.innerHTML = `
+    <div class="gym-week card"><div class="row" style="justify-content:space-between"><span class="small muted">آخر ٧ أيام</span><b class="small">${ar(sessions7)} ${sessions7 === 1 ? "تمرين" : "تمارين"}</b></div><div class="wk7">${week}</div></div>
+    <div class="tabs">${gs.map(g => `<button class="${g === S.gymDay ? "on" : ""}" data-act="gymDay" data-v="${esc(g)}">${esc(g)}</button>`).join("")}</div>
+    <div class="sec">
+      <div class="sec-h"><h2>${esc(S.gymDay)}</h2><span class="count num">${ar(doneN)} من ${ar(exs.length)}</span></div>
+      <div class="bar"><span style="width:${exs.length ? doneN / exs.length * 100 : 0}%;background:var(--ok)"></span></div>
+      <div class="list">${exs.map(w => exRow(w, log[w.id] || {})).join("")}</div>
+      <button class="btn pri" data-act="gymFinish" ${doneN ? "" : "disabled"}>${S.gymlog[t]?.finished ? "انتهى تمرين اليوم ✓" : "أنهيت التمرين"}</button>
+    </div>
+    ${progressTable(exs)}
+    ${addExForm(S.gymDay)}`;
+}
+function exRow(w, e) {
+  const h = history(w.id).filter(x => x.d < today());
+  const last = h[h.length - 1]?.e; const best = Math.max(0, ...history(w.id).map(x => +x.e.weight || 0));
+  const isPR = e.weight && +e.weight >= best && +e.weight > Math.max(0, ...h.map(x => +x.e.weight || 0)) && h.length;
+  const conf = S.confirm === "w:" + w.id ? `<div class="confirm"><p>تحذف هذا التمرين من البرنامج؟</p><button class="btn danger sm" data-act="exDelYes" data-id="${w.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  return `<div><div class="ex ${e.done ? "done-ex" : ""}">
+    <button class="check ${e.done ? "on" : ""}" data-act="exDone" data-id="${w.id}" aria-label="قفلت التمرين">${e.done ? IC.check : ""}</button>
+    ${w.imageId ? `<a class="ex-img" href="/_blob/${w.imageId}" target="_blank" rel="noopener"><img src="/_blob/${w.imageId}" alt=""></a>` : ""}
+    <div class="main">
+      <span class="ttl">${esc(w.name)}</span>
+      <div class="meta"><span class="chip">${esc(w.muscle || "")}${w.muscle ? " · " : ""}<span class="num">${ar(w.sets || 3)}×${ar(w.reps || 10)}</span></span>
+        ${last ? `<span class="small muted">آخر مرة ${fmtW(last.weight)} كجم${last.reps ? " × " + ar(last.reps) : ""}</span>` : ""}
+        ${best ? `<span class="small muted">أفضل ${fmtW(best)}</span>` : ""}${isPR ? `<span class="chip st-today">رقم جديد</span>` : ""}</div>
+      ${w.tip ? `<span class="small muted">${esc(w.tip)}</span>` : ""}
+      <div class="ex-in">
+        <label class="f">الوزن (كجم)<input type="number" inputmode="decimal" step="0.5" min="0" data-ex="${w.id}" data-k="weight" value="${esc(e.weight ?? "")}" placeholder="${last?.weight ?? ""}"></label>
+        <label class="f">العدّات<input type="number" inputmode="numeric" min="0" data-ex="${w.id}" data-k="reps" value="${esc(e.reps ?? "")}" placeholder="${w.reps || ""}"></label>
+        <a class="btn sm ghost" href="${esc(ytLink(w))}" target="_blank" rel="noopener">${w.video ? "الفيديو" : "يوتيوب"}</a>
+      </div>
+    </div>
+    <div class="col"><button class="icon-btn" data-act="exEdit" data-id="${w.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="exDel" data-id="${w.id}" aria-label="احذف">${IC.trash}</button></div>
+  </div>${conf}</div>`;
+}
+function progressTable(exs) {
+  const ds = logDates().filter(d => exs.some(w => S.gymlog[d]?.entries?.[w.id]?.weight)).slice(-8);
+  if (!ds.length) return `<details class="fold"><summary><span>جدول المتابعة</span><span class="small muted">يبدأ بعد أول تمرين</span></summary><div class="body empty">سجّل الأوزان في تمرينك وتطلع هنا جلسة بجلسة.</div></details>`;
+  const head = ds.map(d => `<th>${ar(parseISO(d).getDate())}/${ar(parseISO(d).getMonth() + 1)}</th>`).join("");
+  const rows = exs.map(w => {
+    let prev = null, best = 0;
+    const cells = ds.map(d => {
+      const e = S.gymlog[d]?.entries?.[w.id]; const v = e?.weight ? +e.weight : null;
+      let cls = ""; if (v != null) { if (prev != null) cls = v > prev ? "up" : v < prev ? "down" : ""; if (v > best) { best = v; } prev = v; }
+      return `<td class="${cls}">${v != null ? fmtW(v) : "—"}${e?.reps ? `<small>×${ar(e.reps)}</small>` : ""}</td>`;
+    }).join("");
+    const first = history(w.id).find(x => x.e.weight)?.e.weight, lastV = [...history(w.id)].reverse().find(x => x.e.weight)?.e.weight;
+    const diff = history(w.id).filter(x => x.e.weight).length > 1 ? +lastV - +first : null;
+    return `<tr><th scope="row">${esc(w.name)}</th>${cells}<td class="tot ${diff > 0 ? "up" : diff < 0 ? "down" : ""}">${diff != null ? (diff > 0 ? "+" : "") + fmtW(diff) : "—"}</td></tr>`;
+  }).join("");
+  return `<details class="fold" open><summary><span>جدول المتابعة</span><span class="small muted">الوزن بالكيلو</span></summary>
+    <div class="body"><div class="tbl-wrap"><table class="prog"><thead><tr><th>التمرين</th>${head}<th>التطور</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
+}
+function exFormFields(w, group) {
+  const gs = gymGroups();
+  return `<label class="f">اسم التمرين<input type="text" id="exName" value="${esc(w?.name || "")}" placeholder="بنش برس بالبار"></label>
+    <div class="grid2"><label class="f">اليوم<input type="text" id="exGroup" list="exGroups" value="${esc(w?.group || group || "")}" placeholder="يوم الصدر"><datalist id="exGroups">${gs.map(g => `<option value="${esc(g)}">`).join("")}</datalist></label>
+    <label class="f">العضلة<select id="exMuscle">${MUSCLES.map(m => `<option ${m === w?.muscle ? "selected" : ""}>${m}</option>`).join("")}</select></label></div>
+    <div class="grid2"><label class="f">المجموعات<input type="number" id="exSets" min="1" value="${esc(w?.sets || 3)}"></label><label class="f">العدّات<input type="text" id="exReps" value="${esc(w?.reps || "10")}"></label></div>
+    <label class="f">رابط يوتيوب للتمرين<input type="url" id="exVideo" value="${esc(w?.video || "")}" placeholder="https://youtube.com/…" dir="ltr"></label>
+    <label class="f">صورة التمرين<input type="file" id="exImg" accept="image/*"></label>`;
+}
+function addExForm(group) {
+  return `<details class="fold" id="exAddFold"><summary><span>أضف تمرين</span><span class="small muted">+</span></summary>
+    <div class="body sec" style="padding:12px">${exFormFields(null, group)}<div><button class="btn pri" data-act="exAdd">أضف</button></div></div></details>`;
+}
+async function readExForm(root, prev) {
+  const $ = s => root.querySelector(s);
+  const name = $("#exName").value.trim(); if (!name) { toast("اكتب اسم التمرين"); return null; }
+  const o = { name, group: $("#exGroup").value.trim() || "تمريني", muscle: $("#exMuscle").value, sets: +$("#exSets").value || 3, reps: $("#exReps").value.trim() || "10", video: $("#exVideo").value.trim() };
+  const file = $("#exImg").files?.[0];
+  if (file) {
+    if (!assets) toast("رفع الصور متاح لصاحب الدفتر فقط");
+    else { try { const r = await assets.upload(file); o.imageId = r.id; if (prev?.imageId) assets.delete(prev.imageId).catch(() => { }); } catch (e) { toast("ما انرفعت الصورة"); } }
+  }
+  return o;
+}
+async function saveGymEntry(exId, upd) {
+  const d = today(), cur = S.gymlog[d] || {};
+  const entries = { ...(cur.entries || {}) }; entries[exId] = { ...(entries[exId] || {}), ...upd };
+  await put("gymlog", d, { ...cur, entries, group: cur.group || S.gymDay });
+}
+function openPlanner() {
+  openSheet(`<h2>برنامج بكلود</h2>
+    <label class="f">وش هدفك؟<textarea id="planGoal" rows="4" placeholder="مثال: ٤ أيام بالأسبوع، أبي أنشّف وأقوّي الظهر، عندي ألم خفيف في الركبة، أتمرن ساعة"></textarea></label>
+    <div class="row"><button class="btn pri" data-act="planGen">ابنِ البرنامج</button><button class="btn ghost" data-act="closeSheet">إغلاق</button></div>
+    <div id="planOut"></div>`);
+}
+let planDraft = null;
+async function genPlan() {
+  if (!sample) { toast("كلود غير متاح في هذا العرض"); return; }
+  const goal = $("#planGoal").value.trim(); if (!goal) return;
+  const out = $("#planOut"); out.innerHTML = `<div class="thinking"><span class="pulse"></span>كلود يبني برنامجك…</div>`;
+  const existing = S.workouts.map(w => `${w.group}: ${w.name}`).join("، ");
+  try {
+    const r = await sample.json(`أنت مدرب لياقة محترف. صمّم برنامج تمارين نادي لأبو مالك حسب طلبه (قد يكون مملى بالصوت).
+طلبه: """${goal}"""
+${existing ? `برنامجه الحالي: ${existing}` : ""}
+أعد JSON فقط: {"days":[{"name":"اسم اليوم بالعربية مثل: يوم ١ - صدر وتراي","exercises":[{"name":"اسم التمرين بالعربية كما يُعرف في النوادي السعودية","nameEn":"English exercise name","muscle":"واحدة من: ${MUSCLES.join("، ")}","sets":3,"reps":"10-12","tip":"نصيحة أداء قصيرة جداً"}]}],"note":"ملاحظة عامة قصيرة"}
+من ٤ إلى ٧ تمارين لكل يوم. راعِ أي إصابة يذكرها. لا تضع روابط.`, { modelTier: "default" });
+    planDraft = r;
+    out.innerHTML = (r.note ? `<p class="small muted">${esc(r.note)}</p>` : "") + (r.days || []).map((d, i) => `<div class="card sec" style="padding:12px"><label class="row"><input type="checkbox" data-pd="${i}" checked> <b>${esc(d.name)}</b></label>
+      <ul style="margin:0;padding-inline-start:18px">${(d.exercises || []).map(x => `<li>${esc(x.name)} <span class="small muted num">${ar(x.sets || 3)}×${esc(ar(x.reps || 10))}</span></li>`).join("")}</ul></div>`).join("")
+      + `<button class="btn pri" data-act="planSave">أضف البرنامج</button>`;
+  } catch (e) { out.innerHTML = `<p class="small" style="color:var(--danger)">${e?.code === "rate_limited" ? "كلود مشغول، جرّب بعد دقيقة." : "ما قدرت أبني البرنامج. جرّب مرة ثانية."}</p>`; }
+}
+async function savePlan() {
+  if (!planDraft) return;
+  const keep = [...document.querySelectorAll("[data-pd]")].filter(c => c.checked).map(c => +c.dataset.pd);
+  const writes = []; let order = 0; const groups = [...(S.meta.gym?.groups || [])];
+  for (const i of keep) {
+    const d = planDraft.days[i]; if (!groups.includes(d.name)) groups.push(d.name);
+    for (const x of d.exercises || []) writes.push(put("workouts", newId(), { name: String(x.name || "").slice(0, 80), nameEn: String(x.nameEn || ""), muscle: MUSCLES.includes(x.muscle) ? x.muscle : "جسم كامل", sets: +x.sets || 3, reps: String(x.reps || "10"), tip: String(x.tip || "").slice(0, 140), group: d.name, order: order++, createdAt: Date.now() }));
+  }
+  await Promise.all(writes); await put("meta", "gym", { groups });
+  closeSheet(); S.gymDay = planDraft.days[keep[0]]?.name || null; planDraft = null; toast("انضاف البرنامج");
+}
+
 /* ---------- render all ---------- */
 let curTab = "today";
 function renderAll() {
@@ -1434,6 +1633,7 @@ function renderAll() {
   if (curTab === "notes") renderNotes();
   if (curTab === "files") renderFiles();
   if (curTab === "kitchen") renderKitchen();
+  if (curTab === "gym") renderGym();
 }
 function setTab(v) {
   curTab = v; S.confirm = null;
@@ -1495,6 +1695,20 @@ const A = {
   fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
   vaultAdd, vaultLock: lockAll,
+  gymDay: b => { S.gymDay = b.dataset.v; renderGym(); },
+  exDone: b => { const e = S.gymlog[today()]?.entries?.[b.dataset.id] || {}; saveGymEntry(b.dataset.id, { done: !e.done }); },
+  exAdd: async b => { b.disabled = true; const o = await readExForm($("#exAddFold"), null); b.disabled = false; if (!o) return;
+    const groups = [...(S.meta.gym?.groups || [])]; if (!groups.includes(o.group)) { groups.push(o.group); await put("meta", "gym", { groups }); }
+    S.gymDay = o.group; await put("workouts", newId(), { ...o, order: exOf(o.group).length, createdAt: Date.now() }); toast("انضاف التمرين"); },
+  exEdit: b => { const w = S.workouts.find(x => x.id === b.dataset.id); if (!w) return;
+    openSheet(`<h2>تعديل التمرين</h2>${exFormFields(w)}<div class="row"><button class="btn pri" data-act="exSave" data-id="${w.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  exSave: async b => { const w = S.workouts.find(x => x.id === b.dataset.id); b.disabled = true; const o = await readExForm($("#sheetBack"), w); b.disabled = false; if (!o) return; await patch("workouts", w.id, o); closeSheet(); },
+  exDel: b => { S.confirm = "w:" + b.dataset.id; renderGym(); },
+  exDelYes: b => { const w = S.workouts.find(x => x.id === b.dataset.id); S.confirm = null; if (w?.imageId && assets) assets.delete(w.imageId).catch(() => { }); del("workouts", b.dataset.id); },
+  gymFinish: async () => { const d = today(), cur = S.gymlog[d] || {}; await put("gymlog", d, { ...cur, entries: cur.entries || {}, group: cur.group || S.gymDay, finished: true });
+    if (habitList().some(h => h.id === "sport")) { const hl = S.habitlog[d]?.done || {}; if (!hl.sport) await put("habitlog", d, { done: { ...hl, sport: true } }); }
+    toast("عافية! انحسب تمرين اليوم"); },
+  planner: openPlanner, planGen: genPlan, planSave: savePlan,
   vShow: b => { S.showPw[b.dataset.id] = !S.showPw[b.dataset.id]; renderKitchenResults(); },
   vCopy: b => { touchLock(); const d = S.dec[b.dataset.id]; if (d) copyText(d[b.dataset.f] || ""); },
   vaultDel: b => { S.confirm = "v:" + b.dataset.id; renderKitchenResults(); },
@@ -1514,6 +1728,8 @@ document.addEventListener("change", e => {
 });
 $("#fileIn").addEventListener("change", e => { S.pendingFiles = [...e.target.files]; e.target.value = ""; renderUploadForm(); });
 $("#fileSearch").addEventListener("input", renderFiles);
+document.addEventListener("change", e => { const i = e.target; if (i.dataset?.ex) { const v = i.value === "" ? null : +en(i.value); saveGymEntry(i.dataset.ex, { [i.dataset.k]: v, ...(i.dataset.k === "weight" && v ? { done: true } : {}) }); } });
+$("#gymBody").addEventListener("focusout", () => setTimeout(() => { if (S.gymPending && curTab === "gym") renderGym(); }, 50));
 document.addEventListener("input", e => { if (e.target.classList?.contains("pinIn") && /^\d{4}$/.test(en(e.target.value)) && S.meta.vault) pinUnlock(e.target); });
 document.addEventListener("pointerdown", e => { if (e.target.closest("#p-files,#p-kitchen")) touchLock(); });
 $("#noteSearch").addEventListener("input", renderNotes);
