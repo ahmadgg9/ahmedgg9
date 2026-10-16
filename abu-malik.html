@@ -186,7 +186,7 @@ details.fold>.body{border:1px solid var(--line);border-top:0;border-radius:0 0 v
 /* nav */
 nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
   padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr)}
+nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
 nav.bottom button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 0;border-radius:10px}
 nav.bottom button svg{width:22px;height:22px}
 nav.bottom button.on{color:var(--ink);font-weight:600}
@@ -273,6 +273,35 @@ table.prog td.up{color:var(--ok);font-weight:600}
 table.prog td.down{color:var(--danger)}
 table.prog td.tot{font-weight:700}
 nav.bottom button{font-size:10.5px}
+/* english */
+.flash{display:flex;flex-direction:column;gap:14px;padding:18px;text-align:center}
+.flash .q{font-family:var(--font-display);font-size:22px;font-weight:600;line-height:1.5}
+.flash .cloze{font-size:16px;color:var(--muted);background:var(--surface2);border-radius:10px;padding:10px;text-align:left}
+.flash .ans{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.flash .term{font-size:26px;font-family:var(--font-display)}
+.pron{color:var(--work);font-size:15px}
+.ex{text-align:left;font-size:15px;line-height:1.6;background:var(--surface2);border-radius:10px;padding:8px 10px}
+.ex .muted{display:block;text-align:right}
+.icon-btn.sm{width:28px;height:28px;vertical-align:middle}
+.grades{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.grades button{display:flex;flex-direction:column;align-items:center;padding:10px 4px;border-radius:12px;font-weight:600;font-size:14px;border:1.5px solid var(--line);background:var(--surface)}
+.grades small{font-weight:400;font-size:11px;color:var(--muted)}
+.grades .g0{color:var(--danger)} .grades .g1{color:var(--biz)} .grades .g2{color:var(--ok)} .grades .g3{color:var(--work)}
+.daily h3{margin-top:4px}
+.etext{font-size:16.5px;line-height:1.9;text-align:left}
+.vocab{display:flex;flex-direction:column;gap:6px}
+.vrow{display:flex;align-items:center;gap:8px;background:var(--surface2);border-radius:10px;padding:4px 6px 4px 10px}
+.vrow .cp[disabled]{opacity:.55}
+.fb{display:flex;flex-direction:column;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.fb .score{font-family:var(--font-display);font-size:24px;color:var(--ok)}
+.wdetail{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.eng-done{text-align:center;display:flex;flex-direction:column;gap:6px;padding:22px}
+.eng-done h2{color:var(--ok)}
+.eng-due{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--work) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--work) 30%,var(--line));font-size:14px;color:var(--ink);text-align:start}
+.eng-due span:last-child{color:var(--work);font-weight:600;white-space:nowrap}
+#engStats.stats .stat b{font-size:20px}
+nav.bottom button{font-size:10px}
+nav.bottom button svg{width:21px;height:21px}
 /* recipes (vault) */
 .recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
@@ -335,6 +364,7 @@ nav.bottom button{font-size:10.5px}
   <div class="sec">
     <div class="sec-h"><h2>عاداتي اليوم</h2><button class="btn sm ghost" data-act="habitEdit" id="habitEditBtn">تعديل</button></div>
     <div class="habits" id="habits"></div>
+    <button class="eng-due" id="engDue" data-act="tab" data-v="eng" hidden></button>
     <div class="row" id="habitAdd" hidden><input type="text" id="habitNew" placeholder="عادة جديدة"><button class="btn" data-act="habitAdd">أضف</button></div>
   </div>
 
@@ -423,6 +453,20 @@ nav.bottom button{font-size:10.5px}
   <div id="gymBody" class="sec" style="gap:16px"></div>
 </section>
 
+<!-- ============ ENGLISH ============ -->
+<section class="page" id="p-eng">
+  <div class="ph"><h1>إنجليزي</h1><span class="small muted" id="engStreak"></span></div>
+  <div class="stats" id="engStats"></div>
+  <div class="card sec">
+    <textarea id="engIn" rows="2" dir="auto" placeholder="كلمة أو جملة جديدة (كل سطر لحاله)"></textarea>
+    <div class="tabs" id="engSources"></div>
+    <div class="row"><input type="text" id="engCtx" placeholder="وين سمعتها؟ (اختياري)"><button class="btn pri" data-act="engSave">احفظ</button></div>
+  </div>
+  <div id="engPending"></div>
+  <div class="seg" id="engSeg"><button data-act="engTab" data-v="review" class="on">المراجعة</button><button data-act="engTab" data-v="daily">نص اليوم</button><button data-act="engTab" data-v="words">كلماتي</button></div>
+  <div id="engBody" class="sec" style="gap:14px"></div>
+</section>
+
 <!-- ============ RECIPES (vault) ============ -->
 <section class="page" id="p-kitchen">
   <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل</button></div>
@@ -436,6 +480,7 @@ nav.bottom button{font-size:10.5px}
   <button data-act="tab" data-v="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>الدفتر</button>
   <button data-act="tab" data-v="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>الوثائق</button>
   <button data-act="tab" data-v="gym"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>تمريني</button>
+  <button data-act="tab" data-v="eng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7M7.5 3v2M5.5 5c0 4 2.5 7 5.5 8M10 5c-.5 3.5-3 7-6 8"/><path d="M12 21l4-10 4 10M13.5 17.5h5"/></svg>إنجليزي</button>
   <button data-act="tab" data-v="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6z"/><path d="M6 17h12"/></svg>وصفات</button>
 </div></nav>
 
@@ -508,20 +553,21 @@ const IC = {
   x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><text x="7" y="18" font-size="5.5" fill="currentColor" stroke="none" font-family="sans-serif">PDF</text></svg>',
   copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
+  sound: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>',
   lock: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   cal: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
 };
 
 /* ---------- state & store ---------- */
 const S = {
-  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null,
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, engTab: "review", engSource: "",
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
   vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
-const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog"];
-const MAPCOLS = ["meta", "habitlog", "gymlog"];
+const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily"];
+const MAPCOLS = ["meta", "habitlog", "gymlog", "engdaily"];
 
 function memApply(col, id, data, merge) {
   if (col === "meta") { S.meta[id] = merge ? deepMerge(S.meta[id] || {}, data) : data; return; }
@@ -975,6 +1021,7 @@ function meetRow(t) {
 /* ---------- habits ---------- */
 function habitList() { return S.meta.habits?.list || []; }
 function renderHabits() {
+  const nd = S.words.length ? dueQueue().length : 0; const ed = $("#engDue"); ed.hidden = !nd; ed.innerHTML = nd ? `<span>عندك <b>${ar(nd)}</b> ${nd <= 10 ? "كلمات" : "كلمة"} إنجليزي للمراجعة</span><span>راجعها ←</span>` : "";
   const hs = habitList(), log = S.habitlog[today()]?.done || {};
   const week = h => { let n = 0; for (let i = 0; i < 7; i++) if (S.habitlog[addDays(today(), -i)]?.done?.[h.id]) n++; return n; };
   $("#habits").innerHTML = hs.length ? hs.map(h => `<button class="habit ${log[h.id] ? "on" : ""}" data-act="${S.habitEdit ? "habitDel" : "habit"}" data-id="${h.id}">
@@ -1665,6 +1712,218 @@ async function savePlan() {
   closeSheet(); S.gymDay = planDraft.days[keep[0]]?.name || null; planDraft = null; toast("انضاف البرنامج");
 }
 
+/* ---------- English ---------- */
+const ENG_SOURCES = ["دورة حجازي", "الشغل", "مسلسل أو فيلم", "بودكاست", "سفر", "تجارة"];
+const ENG_TOPICS = ["اجتماع عمل في الشركة", "التفاوض مع مورد", "حجز فندق والسفر", "مطعم ومقهى في السفر", "مكالمة مع عميل", "عرض منتج جديد", "المطار والجوازات", "إيميل رسمي لمدير", "التسوق والأسعار", "مقابلة شخص جديد والتعارف", "مشكلة في طلبية وحلها", "الحديث عن الأسرة والهوايات", "حجز موعد عند الطبيب", "التخطيط لمشروع", "سؤال عن الاتجاهات في مدينة جديدة"];
+const canSpeak = "speechSynthesis" in window;
+function speak(t) { if (!canSpeak || !t) return; try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t); u.lang = "en-US"; u.rate = 0.9; speechSynthesis.speak(u); } catch (e) { } }
+const isDue = w => w.enriched !== false && (w.srs?.due || today()) <= today();
+function dueQueue() {
+  const due = S.words.filter(w => w.term && isDue(w));
+  const fresh = due.filter(w => !w.srs?.reps).sort((a, b) => a.createdAt - b.createdAt).slice(0, 10);
+  const old = due.filter(w => w.srs?.reps).sort((a, b) => (a.srs.due || "").localeCompare(b.srs.due || ""));
+  return [...old, ...fresh].slice(0, 20);
+}
+function nextSrs(srs, grade) {
+  const s = { interval: 0, ease: 2.5, reps: 0, lapses: 0, ...(srs || {}) };
+  if (grade === 0) { s.reps = 0; s.lapses++; s.ease = Math.max(1.3, s.ease - 0.2); s.interval = 1; }
+  else if (grade === 1) { s.ease = Math.max(1.3, s.ease - 0.15); s.interval = Math.max(1, Math.round((s.interval || 1) * 1.2)); s.reps++; }
+  else {
+    s.interval = s.reps === 0 ? 1 : s.reps === 1 ? 3 : Math.round(s.interval * s.ease);
+    if (grade === 3) { s.interval = Math.max(s.interval + 1, Math.round(s.interval * 1.3)); s.ease += 0.15; }
+    s.reps++;
+  }
+  s.due = addDays(today(), s.interval); s.last = today();
+  return s;
+}
+function engStats() {
+  const total = S.words.length, mastered = S.words.filter(w => (w.srs?.interval || 0) >= 21).length;
+  const learning = S.words.filter(w => w.srs?.reps && (w.srs.interval || 0) < 21).length;
+  let streak = 0; for (let i = 0; i < 365; i++) { const d = addDays(today(), -i); const r = S.meta.eng?.days?.[d]; if (r) streak++; else if (i > 0) break; }
+  return { total, mastered, learning, due: dueQueue().length, streak };
+}
+function renderEng() {
+  const body = $("#engBody");
+  if (body.contains(document.activeElement) && document.activeElement.matches("input,textarea")) { S.engPending = true; return; }
+  S.engPending = false;
+  const st = engStats();
+  $("#engStats").innerHTML = `<div class="stat"><b class="num">${ar(st.due)}</b><span>للمراجعة اليوم</span></div><div class="stat"><b class="num">${ar(st.mastered)}</b><span>ثبتت</span></div><div class="stat"><b class="num">${ar(st.total)}</b><span>كل كلماتي</span></div>`;
+  $("#engStreak").textContent = st.streak ? `${ar(st.streak)} ${st.streak === 1 ? "يوم" : st.streak === 2 ? "يومين" : "أيام"} متواصلة` : "";
+  document.querySelectorAll("#engSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === S.engTab));
+  const pend = S.words.filter(w => w.enriched === false);
+  $("#engPending").innerHTML = pend.length ? `<div class="thinking"><span class="pulse"></span>كلود يجهّز ${ar(pend.length)} ${pend.length === 1 ? "كلمة" : "كلمات"}…${sample ? `<button class="btn sm ghost" data-act="engEnrich">جهّزها</button>` : ""}</div>` : "";
+  if (S.engTab === "review") body.innerHTML = renderEngReview();
+  else if (S.engTab === "daily") body.innerHTML = renderDaily();
+  else body.innerHTML = renderWordList();
+}
+function exampleCloze(w) {
+  const ex = (w.examples || [])[0]; if (!ex?.en) return "";
+  const re = new RegExp(w.term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  return re.test(ex.en) ? ex.en.replace(re, "_____") : "";
+}
+const ivl = n => n <= 1 ? "بكرة" : n < 30 ? "بعد " + lateWord(n) : n < 365 ? "بعد " + ar(Math.round(n / 30)) + " شهر" : "بعد سنة";
+function renderEngReview() {
+  const q = dueQueue();
+  if (!S.words.length) return `<div class="empty card">احفظ أول كلمة أو جملة من فوق. كلود يجهّز معناها ونطقها وأمثلة من شغلك وتجارتك، وتطلع لك هنا للمراجعة في الوقت المناسب.</div>`;
+  if (!q.length) return `<div class="card eng-done"><h2>خلصت مراجعة اليوم</h2><p class="muted small">الكلمات الجاية تطلع لك في موعدها. افتح «نص اليوم» وتدرّب.</p>${S.engReviewed ? `<p class="small">راجعت ${ar(S.engReviewed)} ${S.engReviewed > 10 ? "بطاقة" : "بطاقات"} اليوم</p>` : ""}</div>`;
+  const w = q[0], show = S.engShow, cloze = exampleCloze(w);
+  return `<div class="flash card">
+    <div class="row" style="justify-content:space-between"><span class="small muted">${ar(q.length)} باقية</span>${w.srs?.reps ? `<span class="chip">مراجعة</span>` : `<span class="chip st-today">جديدة</span>`}</div>
+    <div class="q">${esc(w.meaning || "")}</div>
+    ${cloze ? `<div class="cloze" dir="ltr">${esc(cloze)}</div>` : ""}
+    ${show ? `<div class="ans">
+        <div class="row" style="justify-content:center;gap:10px"><b dir="ltr" class="term">${esc(w.term)}</b>${canSpeak ? `<button class="icon-btn" data-act="say" data-t="${esc(w.term)}" aria-label="استمع">${IC.sound}</button>` : ""}</div>
+        ${w.pron ? `<div class="pron">${esc(w.pron)}</div>` : ""}
+        ${(w.examples || []).map(e => `<div class="ex"><span dir="ltr">${esc(e.en)}</span>${canSpeak ? `<button class="icon-btn sm" data-act="say" data-t="${esc(e.en)}" aria-label="استمع">${IC.sound}</button>` : ""}<br><span class="muted small">${esc(e.ar || "")}</span></div>`).join("")}
+      </div>
+      <div class="grades">
+        <button class="g0" data-act="grade" data-id="${w.id}" data-g="0">نسيتها<small>بكرة</small></button>
+        <button class="g1" data-act="grade" data-id="${w.id}" data-g="1">صعبة<small>${ivl(nextSrs(w.srs, 1).interval)}</small></button>
+        <button class="g2" data-act="grade" data-id="${w.id}" data-g="2">عرفتها<small>${ivl(nextSrs(w.srs, 2).interval)}</small></button>
+        <button class="g3" data-act="grade" data-id="${w.id}" data-g="3">سهلة<small>${ivl(nextSrs(w.srs, 3).interval)}</small></button>
+      </div>`
+    : `<p class="muted small" style="text-align:center;margin:0">تذكّرها بالإنجليزي، قلها بصوت عالي، ثم اضغط</p><button class="btn pri" data-act="engShow">أظهر الجواب</button>`}
+  </div>
+  ${weeklyChallenge()}`;
+}
+function weeklyChallenge() {
+  const pool = S.words.filter(w => w.srs?.reps >= 2);
+  if (pool.length < 5) return "";
+  const c = S.meta.eng?.challenge;
+  if (c && c.date >= addDays(today(), -6)) {
+    return `<details class="fold"${c.feedback ? "" : " open"}><summary><span>تحدّي الأسبوع</span><span class="small muted">${c.feedback ? "تم" : "استخدم ٥ كلمات"}</span></summary><div class="body sec" style="padding:12px">
+      <p class="small" style="margin:0">اكتب جملة لكل كلمة، عن شغلك أو تجارتك:</p>
+      <div class="row wrapr">${c.words.map(t => `<span class="chip" dir="ltr">${esc(t)}</span>`).join("")}</div>
+      <textarea id="chText" rows="5" dir="ltr" placeholder="Write 5 sentences…">${esc(c.text || "")}</textarea>
+      <div><button class="btn pri" data-act="chCheck">صحّح لي</button></div>
+      ${c.feedback ? feedbackHTML(c.feedback) : ""}</div></details>`;
+  }
+  return `<button class="btn ghost" data-act="chNew">تحدّي الأسبوع: استخدم ٥ من كلماتك في جمل</button>`;
+}
+function feedbackHTML(f) {
+  return `<div class="fb"><div class="row"><b class="score num">${ar(f.score ?? "")}/١٠</b><span class="small">${esc(f.praise || "")}</span></div>
+    ${f.corrected ? `<div><span class="small muted">التصحيح</span><div class="draft" dir="ltr">${esc(f.corrected)}</div></div>` : ""}
+    ${f.better ? `<div><span class="small muted">بأسلوب أطبع</span><div class="draft" dir="ltr">${esc(f.better)}</div></div>` : ""}
+    ${(f.notes || []).length ? `<ul class="small" style="margin:0;padding-inline-start:18px">${f.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}</div>`;
+}
+function renderDaily() {
+  const d = S.engdaily[today()];
+  if (!d) return `<div class="card sec"><h2>نص اليوم</h2><p class="muted small" style="margin:0">نص قصير أعلى من مستواك بشوي (A2 إلى B1). يوم حوار ويوم مقال، عن الشغل والتجارة والسفر. تقرأه بصوت عالي، وتلخصه بكلامك، وكلود يصحح لك.</p>
+    <div><button class="btn pri" data-act="dailyGen" ${sample ? "" : "disabled"}>جهّز نص اليوم</button></div></div>${pastDaily()}`;
+  return `<article class="card sec daily">
+    <div class="row" style="justify-content:space-between"><span class="chip">${d.kind === "dialogue" ? "حوار" : "مقال"} · ${esc(d.topic || "")}</span>${canSpeak ? `<button class="btn sm ghost" data-act="say" data-t="${esc(d.text)}">${IC.sound} استمع</button>` : ""}</div>
+    <h2 dir="ltr" style="text-align:left">${esc(d.title)}</h2>
+    <div class="etext" dir="ltr">${esc(d.text).replace(/\n/g, "<br>")}</div>
+    <details><summary class="small">الترجمة</summary><div class="small" style="line-height:1.9">${esc(d.translation || "").replace(/\n/g, "<br>")}</div></details>
+    <h3>كلمات النص</h3>
+    <div class="vocab">${(d.vocab || []).map((v, i) => { const have = S.words.some(w => w.term.toLowerCase() === String(v.term).toLowerCase());
+      return `<div class="vrow"><span dir="ltr"><b>${esc(v.term)}</b></span><span class="muted small grow">${esc(v.meaning)}</span>${canSpeak ? `<button class="icon-btn sm" data-act="say" data-t="${esc(v.term)}" aria-label="استمع">${IC.sound}</button>` : ""}<button class="cp" data-act="vocabAdd" data-i="${i}" ${have ? "disabled" : ""}>${have ? "محفوظة" : "احفظ"}</button></div>`; }).join("")}</div>
+    ${(d.questions || []).length ? `<h3>أسئلة</h3><ol class="small" dir="ltr" style="margin:0;text-align:left">${d.questions.map(q => `<li>${esc(q)}</li>`).join("")}</ol>` : ""}
+    <h3>تمرينك</h3>
+    <p class="small" style="margin:0">${esc(d.task || "اقرأ النص بصوت عالي ٣ مرات، ثم لخّصه بكلماتك في ٣ إلى ٥ جمل وجاوب على الأسئلة. استخدم إملاء الكيبورد الإنجليزي.")}</p>
+    <textarea id="dailyAttempt" rows="5" dir="ltr" placeholder="Write or dictate your summary…">${esc(d.attempt || "")}</textarea>
+    <div><button class="btn pri" data-act="dailyCheck">صحّح لي</button></div>
+    ${d.feedback ? feedbackHTML(d.feedback) : ""}
+  </article>${pastDaily()}`;
+}
+function pastDaily() {
+  const ds = Object.keys(S.engdaily).filter(d => d < today()).sort().reverse().slice(0, 7);
+  if (!ds.length) return "";
+  return `<details class="fold"><summary><span>نصوص سابقة</span><span class="small muted">${ar(ds.length)}</span></summary><div class="body list">${ds.map(d => { const x = S.engdaily[d];
+    return `<details class="note"><summary><b dir="ltr">${esc(x.title)}</b> <span class="small muted">${dayLabel(d)}${x.feedback ? " · " + ar(x.feedback.score) + "/١٠" : ""}</span></summary><div class="etext small" dir="ltr">${esc(x.text).replace(/\n/g, "<br>")}</div></details>`; }).join("")}</div></details>`;
+}
+function renderWordList() {
+  const q = (S.engQ || "").trim().toLowerCase();
+  let ws = S.words.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (q) ws = ws.filter(w => [w.term, w.meaning, w.source, w.input].join(" ").toLowerCase().includes(q));
+  const lvl = w => { const i = w.srs?.interval || 0; return !w.srs?.reps ? ["جديدة", ""] : i >= 21 ? ["ثبتت", "st-today"] : ["تتعلمها", ""]; };
+  return `<input type="search" id="engSearch" placeholder="ابحث في كلماتك" value="${esc(S.engQ || "")}"><div id="wordList">${wordListHTML()}</div>`;
+}
+function wordListHTML() {
+  const q = (S.engQ || "").trim().toLowerCase();
+  let ws = S.words.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (q) ws = ws.filter(w => [w.term, w.meaning, w.source, w.input].join(" ").toLowerCase().includes(q));
+  const lvl = w => { const i = w.srs?.interval || 0; return !w.srs?.reps ? ["جديدة", ""] : i >= 21 ? ["ثبتت", "st-today"] : ["تتعلمها", ""]; };
+  return `<div class="list">${ws.length ? ws.map(w => { const [l, c] = lvl(w); const open = S.engOpen === w.id;
+      const conf = S.confirm === "e:" + w.id ? `<div class="confirm"><p>تحذف هذه الكلمة؟</p><button class="btn danger sm" data-act="wordDelYes" data-id="${w.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+      return `<div><div class="it">
+        <div class="main"><span class="ttl" data-act="wordOpen" data-id="${w.id}"><span dir="ltr">${esc(w.term || w.input)}</span> <span class="muted small">${esc(w.meaning || "")}</span></span>
+          <div class="meta"><span class="chip ${c}">${l}</span>${w.kind ? `<span class="chip">${esc({ word: "كلمة", phrase: "عبارة", idiom: "تعبير", sentence: "جملة" }[w.kind] || w.kind)}</span>` : ""}${w.level ? `<span class="chip">${esc(w.level)}</span>` : ""}${w.source ? `<span class="small muted">${esc(w.source)}</span>` : ""}</div>
+          ${open ? `<div class="wdetail">${w.pron ? `<div class="pron">${esc(w.pron)}</div>` : ""}${(w.examples || []).map(e => `<div class="ex"><span dir="ltr">${esc(e.en)}</span><br><span class="muted small">${esc(e.ar || "")}</span></div>`).join("")}${w.note ? `<div class="small" style="color:var(--biz)">${esc(w.note)}</div>` : ""}</div>` : ""}
+        </div>
+        ${canSpeak && w.term ? `<button class="icon-btn" data-act="say" data-t="${esc(w.term)}" aria-label="استمع">${IC.sound}</button>` : ""}
+        <button class="icon-btn" data-act="wordCopy" data-id="${w.id}" aria-label="نسخ">${IC.copy}</button>
+        <button class="icon-btn" data-act="wordEdit" data-id="${w.id}" aria-label="تعديل">${IC.edit}</button>
+        <button class="icon-btn" data-act="wordDel" data-id="${w.id}" aria-label="احذف">${IC.trash}</button>
+      </div>${conf}</div>`; }).join("") : `<div class="empty">${q ? "ما لقيت شي." : "ما فيه كلمات بعد."}</div>`}</div>`;
+}
+async function saveWords() {
+  const raw = $("#engIn").value.trim(); if (!raw) return;
+  const lines = raw.split(/\n+/).map(x => x.trim()).filter(Boolean).slice(0, 20);
+  const source = S.engSource || "", ctx = $("#engCtx").value.trim();
+  const ids = [];
+  for (const l of lines) { const id = newId(); ids.push(id); await put("words", id, { input: l, term: sample ? "" : l, source, context: ctx, enriched: sample ? false : true, createdAt: Date.now(), srs: { due: today(), interval: 0, ease: 2.5, reps: 0, lapses: 0 } }); }
+  $("#engIn").value = ""; $("#engCtx").value = "";
+  toast(lines.length === 1 ? "انحفظت" : `انحفظت ${ar(lines.length)}`);
+  enrichWords(ids);
+}
+let enriching = false;
+async function enrichWords(ids) {
+  if (!sample || enriching) return;
+  const list = (ids ? ids.map(id => S.words.find(w => w.id === id)) : S.words.filter(w => w.enriched === false)).filter(Boolean).slice(0, 12);
+  if (!list.length) return;
+  enriching = true;
+  try {
+    const r = await sample.json(`أنت معلم إنجليزي لأبو مالك: سعودي مستواه A2، يتعلم للشغل (شركة SANS)، وللتجارة (مشاريعه: مطاعم ومخابز وهندسة وتجارة)، وللسفر. ويدرس دورة محادثة.
+هذه كلمات أو جمل حفظها (قد تكون بإملاء صوتي فيها أخطاء، أو مكتوبة بالعربي ويقصد مقابلها الإنجليزي):
+${list.map((w, i) => `${i + 1}. "${w.input}"${w.context ? ` (سمعها في: ${w.context})` : ""}`).join("\n")}
+
+لكل عنصر أعد بنفس الترتيب JSON فقط:
+{"items":[{"term":"الكلمة أو الجملة الإنجليزية الصحيحة","kind":"word|phrase|idiom|sentence","meaning":"المعنى بعربي بسيط قريب من اللهجة السعودية (قصير)","pron":"النطق بحروف عربية تقريبية مع إبراز المقطع المشدد","examples":[{"en":"جملة مثال بسيطة بمستوى A2-B1 من الشغل أو التجارة أو السفر تحتوي الكلمة نفسها حرفياً","ar":"ترجمتها"},{"en":"","ar":""}],"level":"A1|A2|B1|B2|C1","note":"إذا كان في كتابته خطأ فاشرح التصحيح باختصار بالعربي، وإلا فارغ"}]}`, { modelTier: "default" });
+    const items = Array.isArray(r?.items) ? r.items : [];
+    for (let i = 0; i < list.length; i++) {
+      const x = items[i]; const w = list[i];
+      if (!x?.term) { await patch("words", w.id, { term: w.input, enriched: true }); continue; }
+      await patch("words", w.id, { term: String(x.term).slice(0, 200), kind: String(x.kind || ""), meaning: String(x.meaning || "").slice(0, 200), pron: String(x.pron || "").slice(0, 120),
+        examples: (Array.isArray(x.examples) ? x.examples : []).filter(e => e?.en).slice(0, 3).map(e => ({ en: String(e.en).slice(0, 240), ar: String(e.ar || "").slice(0, 240) })),
+        level: String(x.level || ""), note: String(x.note || "").slice(0, 300), enriched: true });
+    }
+  } catch (e) { toast(e?.code === "rate_limited" ? "كلود مشغول، اضغط «جهّزها» بعد دقيقة." : "ما قدرت أجهّز الكلمات. اضغط «جهّزها» مرة ثانية."); }
+  enriching = false;
+}
+async function gradeWord(id, g) {
+  const w = S.words.find(x => x.id === id); if (!w) return;
+  S.engShow = false; S.engReviewed = (S.engReviewed || 0) + 1;
+  await patch("words", id, { srs: nextSrs(w.srs, g) });
+  const days = { ...(S.meta.eng?.days || {}) }; days[today()] = (days[today()] || 0) + 1;
+  await put("meta", "eng", { ...(S.meta.eng || {}), days });
+  if (dueQueue().filter(x => x.id !== id).length === 0 && habitList().some(h => h.id === "english")) {
+    const hl = S.habitlog[today()]?.done || {}; if (!hl.english) { await put("habitlog", today(), { done: { ...hl, english: true } }); toast("خلصت مراجعة اليوم، وانحسبت عادة الإنجليزي"); }
+  }
+}
+async function genDaily() {
+  if (!sample) return;
+  const n = Object.keys(S.engdaily).length, kind = n % 2 ? "article" : "dialogue";
+  const topic = ENG_TOPICS[(n * 7 + new Date().getDate()) % ENG_TOPICS.length];
+  const known = S.words.filter(w => w.term).slice(-30).map(w => w.term).join(", ");
+  $("#engBody").innerHTML = `<div class="card thinking"><span class="pulse"></span>كلود يكتب نص اليوم…</div>`;
+  try {
+    const r = await sample.json(`اكتب نص تدريب إنجليزي لمتعلم سعودي مستواه A2 يريد الوصول لـ B1، ويدرس دورة محادثة.
+النوع: ${kind === "dialogue" ? "حوار طبيعي بين شخصين (كل سطر يبدأ باسم المتحدث ثم نقطتين)، بعبارات المحادثة اليومية الحقيقية" : "مقال قصير بلغة بسيطة واضحة"}.
+الموضوع: ${topic}.
+الطول: 110 إلى 150 كلمة. جمل قصيرة إلى متوسطة، مفردات شائعة مع 6 إلى 8 كلمات أو عبارات جديدة مفيدة.
+${known ? `حاول إدخال كلمتين أو ثلاث من كلماته المحفوظة إن ناسبت: ${known}` : ""}
+أعد JSON فقط: {"title":"","text":"النص بالإنجليزي مع \\n بين الأسطر","translation":"ترجمة عربية سلسة","vocab":[{"term":"","meaning":"معنى عربي قصير"}],"questions":["3 أسئلة فهم بالإنجليزي بسيطة"],"task":"مهمة كلام قصيرة بالعربي يطبق فيها النص على حياته في الشغل أو التجارة أو السفر"}`, { modelTier: "default" });
+    await put("engdaily", today(), { title: String(r.title || "Today"), text: String(r.text || ""), translation: String(r.translation || ""), vocab: (r.vocab || []).slice(0, 10), questions: (r.questions || []).slice(0, 5), task: String(r.task || ""), kind, topic, createdAt: Date.now() });
+  } catch (e) { toast(e?.code === "rate_limited" ? "كلود مشغول، جرّب بعد دقيقة." : "ما قدرت أجهّز النص. جرّب مرة ثانية."); renderEng(); }
+}
+async function checkWriting(text, context) {
+  return sample.json(`أنت معلم إنجليزي ودود لمتعلم سعودي مستواه A2. صحّح كتابته (قد تكون بالإملاء الصوتي).
+${context}
+كتابته: """${text}"""
+أعد JSON فقط: {"score":رقم من 1 إلى 10 حسب مستواه,"praise":"جملة تشجيع قصيرة بالعربي عن شيء أحسن فيه","corrected":"نصه نفسه بعد تصحيح الأخطاء فقط","better":"نسخة أطبع وأقرب لكلام الناطقين بنفس مستواه تقريباً","notes":["أهم 3 ملاحظات بالعربي: الخطأ ← الصحيح ولماذا"]}`, { modelTier: "default" });
+}
+
 /* ---------- render all ---------- */
 let curTab = "today";
 function renderAll() {
@@ -1674,6 +1933,7 @@ function renderAll() {
   if (curTab === "files") renderFiles();
   if (curTab === "kitchen") renderKitchen();
   if (curTab === "gym") renderGym();
+  if (curTab === "eng") renderEng();
 }
 function setTab(v) {
   curTab = v; S.confirm = null;
@@ -1768,6 +2028,38 @@ const A = {
     if (habitList().some(h => h.id === "sport")) { const hl = S.habitlog[d]?.done || {}; if (!hl.sport) await put("habitlog", d, { done: { ...hl, sport: true } }); }
     toast("عافية! انحسب تمرين اليوم"); },
   planner: openPlanner, planGen: genPlan, planSave: savePlan,
+  engTab: b => { S.engTab = b.dataset.v; renderEng(); },
+  engSrc: b => { S.engSource = S.engSource === b.dataset.v ? "" : b.dataset.v; renderEngSources(); },
+  engSave: saveWords, engEnrich: () => enrichWords(),
+  engShow: () => { S.engShow = true; renderEng(); const w = dueQueue()[0]; if (w) speak(w.term); },
+  grade: b => gradeWord(b.dataset.id, +b.dataset.g),
+  say: b => speak(b.dataset.t),
+  wordOpen: b => { S.engOpen = S.engOpen === b.dataset.id ? null : b.dataset.id; $("#wordList").innerHTML = wordListHTML(); },
+  wordCopy: b => { const w = S.words.find(x => x.id === b.dataset.id); if (w) copyText(w.term || w.input); },
+  wordDel: b => { S.confirm = "e:" + b.dataset.id; $("#wordList").innerHTML = wordListHTML(); },
+  wordDelYes: b => { S.confirm = null; del("words", b.dataset.id); },
+  wordEdit: b => { const w = S.words.find(x => x.id === b.dataset.id); if (!w) return;
+    openSheet(`<h2>تعديل الكلمة</h2><label class="f">بالإنجليزي<input type="text" id="weTerm" dir="ltr" value="${esc(w.term || w.input)}"></label>
+      <label class="f">المعنى<input type="text" id="weMean" value="${esc(w.meaning || "")}"></label>
+      <label class="f">النطق<input type="text" id="wePron" value="${esc(w.pron || "")}"></label>
+      <label class="f">مثال<textarea id="weEx" rows="2" dir="ltr">${esc(w.examples?.[0]?.en || "")}</textarea></label>
+      <div class="row wrapr"><button class="btn pri" data-act="wordSave" data-id="${w.id}">احفظ</button><button class="btn ghost" data-act="wordReset" data-id="${w.id}">ابدأ مراجعتها من جديد</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  wordSave: async b => { const w = S.words.find(x => x.id === b.dataset.id); if (!w) return; const ex = $("#weEx").value.trim(); const exs = [...(w.examples || [])];
+    if (ex) exs[0] = { en: ex, ar: ex === exs[0]?.en ? exs[0].ar : "" }; else exs.shift();
+    await patch("words", w.id, { term: $("#weTerm").value.trim() || w.term, meaning: $("#weMean").value.trim(), pron: $("#wePron").value.trim(), examples: exs, enriched: true }); closeSheet(); },
+  wordReset: async b => { await patch("words", b.dataset.id, { srs: { due: today(), interval: 0, ease: 2.5, reps: 0, lapses: 0 } }); closeSheet(); toast("ترجع لك في مراجعة اليوم"); },
+  dailyGen: genDaily,
+  vocabAdd: async b => { const d = S.engdaily[today()]; const v = d?.vocab?.[+b.dataset.i]; if (!v) return; b.disabled = true;
+    const id = newId(); await put("words", id, { input: v.term, term: v.term, meaning: v.meaning || "", source: "نص اليوم", context: d.title, enriched: false, createdAt: Date.now(), srs: { due: today(), interval: 0, ease: 2.5, reps: 0, lapses: 0 } }); enrichWords([id]); },
+  dailyCheck: async b => { const t = $("#dailyAttempt").value.trim(); if (!t || !sample) return; const d = S.engdaily[today()]; b.disabled = true; b.textContent = "يصحح…";
+    try { const f = await checkWriting(t, `هذا تلخيصه وإجاباته على نص بعنوان "${d.title}":\n${d.text}\nالأسئلة: ${(d.questions || []).join(" | ")}`); await put("engdaily", today(), { ...d, attempt: t, feedback: f });
+      if (habitList().some(h => h.id === "english")) { const hl = S.habitlog[today()]?.done || {}; if (!hl.english) await put("habitlog", today(), { done: { ...hl, english: true } }); } }
+    catch (e) { toast("ما قدرت أصحح الحين. جرّب مرة ثانية."); b.disabled = false; b.textContent = "صحّح لي"; } },
+  chNew: async () => { const pool = S.words.filter(w => w.srs?.reps >= 2).sort(() => Math.random() - 0.5).slice(0, 5).map(w => w.term);
+    await put("meta", "eng", { ...(S.meta.eng || {}), challenge: { date: today(), words: pool } }); },
+  chCheck: async b => { const t = $("#chText").value.trim(); const c = S.meta.eng?.challenge; if (!t || !c || !sample) return; b.disabled = true; b.textContent = "يصحح…";
+    try { const f = await checkWriting(t, `المطلوب منه: يكتب جملة لكل كلمة من هذه الكلمات ويستخدمها صح: ${c.words.join(", ")}. نبّه إذا استخدم كلمة بمعنى خطأ.`); await put("meta", "eng", { ...(S.meta.eng || {}), challenge: { ...c, text: t, feedback: f } }); }
+    catch (e) { toast("ما قدرت أصحح الحين."); b.disabled = false; b.textContent = "صحّح لي"; } },
   vShow: b => { S.showPw[b.dataset.id] = !S.showPw[b.dataset.id]; renderKitchenResults(); },
   vCopy: b => { touchLock(); const d = S.dec[b.dataset.id]; if (d) copyText(d[b.dataset.f] || ""); },
   vaultDel: b => { S.confirm = "v:" + b.dataset.id; renderKitchenResults(); },
@@ -1788,6 +2080,10 @@ document.addEventListener("change", e => {
 $("#fileIn").addEventListener("change", e => { S.pendingFiles = [...e.target.files]; e.target.value = ""; renderUploadForm(); });
 $("#fileSearch").addEventListener("input", renderFiles);
 document.addEventListener("change", e => { const i = e.target; if (i.dataset?.ex) { const v = i.value === "" ? null : +en(i.value); saveGymEntry(i.dataset.ex, { [i.dataset.k]: v, ...(i.dataset.k === "weight" && v ? { done: true } : {}) }); } });
+$("#engBody").addEventListener("focusout", () => setTimeout(() => { if (S.engPending && curTab === "eng") renderEng(); }, 50));
+document.addEventListener("input", e => { if (e.target.id === "engSearch") { S.engQ = e.target.value; $("#wordList").innerHTML = wordListHTML(); } });
+function renderEngSources() { $("#engSources").innerHTML = ENG_SOURCES.map(x => `<button class="${S.engSource === x ? "on" : ""}" data-act="engSrc" data-v="${x}">${x}</button>`).join(""); }
+renderEngSources();
 $("#gymBody").addEventListener("focusout", () => setTimeout(() => { if (S.gymPending && curTab === "gym") renderGym(); }, 50));
 document.addEventListener("input", e => { if (e.target.classList?.contains("pinIn") && /^\d{4}$/.test(en(e.target.value)) && S.meta.vault) pinUnlock(e.target); });
 document.addEventListener("pointerdown", e => { if (e.target.closest("#p-files,#p-kitchen")) touchLock(); });
