@@ -507,6 +507,7 @@ const IC = {
   trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>',
   x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
   pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><text x="7" y="18" font-size="5.5" fill="currentColor" stroke="none" font-family="sans-serif">PDF</text></svg>',
+  copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>',
   lock: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
   cal: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
 };
@@ -1140,7 +1141,7 @@ function renderProjects() {
 }
 function noteRow(n) {
   const conf = S.confirm === "n:" + n.id ? `<div class="confirm" style="margin:0 -12px -12px"><p>تحذف هذه الملاحظة نهائياً؟</p><button class="btn danger sm" data-act="noteDelYes" data-id="${n.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
-  return `<div class="note"><div class="txt">${esc(n.text)}</div><div class="foot"><span class="grow">${new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "short" }).format(new Date(n.createdAt || Date.now()))}</span><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>${conf}</div>`;
+  return `<div class="note"><div class="txt">${esc(n.text)}</div><div class="foot"><span class="grow">${new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "short" }).format(new Date(n.createdAt || Date.now()))}</span><button class="icon-btn" data-act="noteCopy" data-id="${n.id}" aria-label="نسخ">${IC.copy}</button><button class="icon-btn" data-act="noteEdit" data-id="${n.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>${conf}</div>`;
 }
 
 /* ---------- notebook ---------- */
@@ -1198,7 +1199,7 @@ function lamCard(n) {
   const txt = n.body || n.text;
   const conf = S.confirm === "n:" + n.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الملاحظة نهائياً؟</p><button class="btn danger sm" data-act="noteDelYes" data-id="${n.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
   return `<article class="lam ${cls}">
-    <div class="row"><span class="kind grow">${k ? (n.classified ? LAM_KINDS[k] : "لم تُصنّف بعد") : esc(n.source || "")}${n.title ? " · " + esc(n.title) : ""}</span><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>
+    <div class="row"><span class="kind grow">${k ? (n.classified ? LAM_KINDS[k] : "لم تُصنّف بعد") : esc(n.source || "")}${n.title ? " · " + esc(n.title) : ""}</span><button class="icon-btn" data-act="noteCopy" data-id="${n.id}" aria-label="نسخ">${IC.copy}</button><button class="icon-btn" data-act="noteEdit" data-id="${n.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>
     ${n.takeaway ? `<div class="take">${esc(n.takeaway)}</div>` : ""}
     <div class="txt">${esc(txt).replace(/\n/g, "<br>")}</div>
     ${k === "story" && txt.length > 280 ? `<button class="btn sm ghost" data-act="expand" style="align-self:flex-start">اقرأ كاملة</button>` : ""}
@@ -1720,6 +1721,24 @@ const A = {
   noteDel: b => { S.confirm = "n:" + b.dataset.id; renderAll(); },
   noteDelYes: b => { S.confirm = null; del("notes", b.dataset.id); },
   noteSec: b => setNoteSec(b.dataset.v), noteSave: saveNote,
+  noteCopy: b => { const n = S.notes.find(x => x.id === b.dataset.id); if (n) copyText((n.body || n.text || "") + (n.answer ? "\n\nالجواب: " + n.answer : "")); },
+  noteEdit: b => { const n = S.notes.find(x => x.id === b.dataset.id); if (!n) return; const sec = n.section;
+    openSheet(`<h2>تعديل</h2>
+      ${sec === "lamasat" ? `<label class="f">النوع<select id="neKind">${Object.entries(LAM_KINDS).map(([k, l]) => `<option value="${k}" ${k === (n.kind || "other") ? "selected" : ""}>${l}</option>`).join("")}</select></label>` : ""}
+      ${sec !== "project" ? `<label class="f">العنوان<input type="text" id="neTitle" value="${esc(n.title || "")}"></label>` : ""}
+      <label class="f">النص<textarea id="neText" rows="6">${esc(n.body || n.text || "")}</textarea></label>
+      ${n.answer || n.kind === "riddle" ? `<label class="f">الجواب<input type="text" id="neAnswer" value="${esc(n.answer || "")}"></label>` : ""}
+      ${sec === "audio" || sec === "reading" ? `<label class="f">المصدر<input type="text" id="neSource" value="${esc(n.source || "")}"></label><label class="f">الفائدة<input type="text" id="neTake" value="${esc(n.takeaway || "")}"></label>` : ""}
+      <div class="row"><button class="btn pri" data-act="noteEditSave" data-id="${n.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  noteEditSave: async b => { const n = S.notes.find(x => x.id === b.dataset.id); if (!n) return; const v = id => document.getElementById(id);
+    const text = v("neText").value.trim(); if (!text) { toast("النص فاضي"); return; }
+    const upd = n.body ? { body: text } : { text };
+    if (v("neTitle")) upd.title = v("neTitle").value.trim();
+    if (v("neKind")) { upd.kind = v("neKind").value; upd.classified = true; }
+    if (v("neAnswer")) upd.answer = v("neAnswer").value.trim();
+    if (v("neSource")) upd.source = v("neSource").value.trim();
+    if (v("neTake")) upd.takeaway = v("neTake").value.trim();
+    await patch("notes", n.id, upd); closeSheet(); toast("انحفظ التعديل"); },
   lamKind: b => { S.lamKind = b.dataset.v; renderNotes(); },
   classifyAll: async b => { b.disabled = true; b.textContent = "يصنّف…"; for (const n of S.notes.filter(n => n.section === "lamasat" && !n.classified).slice(0, 15)) await enrichNote(n.id, "lamasat", n.text); },
   expand: b => b.closest(".lam").classList.toggle("open"),
