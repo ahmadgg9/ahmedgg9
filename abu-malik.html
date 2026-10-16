@@ -1,0 +1,1375 @@
+<title>دفتر مهام أبو مالك</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one mobile column, sticky greeting header, bottom tab bar; areas carry their own hue, everything else stays quiet ink-on-stone */
+:root{
+  --bg:#EEF1F0; --surface:#FFFFFF; --surface2:#E3E8E6; --ink:#16201F; --muted:#5C6967; --line:#D3DAD8;
+  --accent:#1E2B33; --on-accent:#F4F7F6;
+  --deep:#16212A; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
+  --work:#2E5F8E; --biz:#B06A22; --pers:#3F7F52; --fam:#934A76;
+  --danger:#C0392B; --ok:#2F7D4F;
+  --font-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --font-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1416; --surface:#171E21; --surface2:#1F282C; --ink:#E5ECEA; --muted:#93A19E; --line:#2A3438;
+  --accent:#DCE6E3; --on-accent:#10181B;
+  --deep:#22313D; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
+  --work:#78A9DA; --biz:#E3A35F; --pers:#7DBF8D; --fam:#D08DB5;
+  --danger:#F07A6A; --ok:#6FCB92; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1416; --surface:#171E21; --surface2:#1F282C; --ink:#E5ECEA; --muted:#93A19E; --line:#2A3438;
+  --accent:#DCE6E3; --on-accent:#10181B;
+  --deep:#22313D; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
+  --work:#78A9DA; --biz:#E3A35F; --pers:#7DBF8D; --fam:#D08DB5;
+  --danger:#F07A6A; --ok:#6FCB92; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;direction:rtl;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 96px}
+.wrap{max-width:640px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0;font-weight:600}
+h2{font-size:17px}
+h3{font-size:15px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px solid var(--work);outline-offset:2px;border-radius:8px}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+.row{display:flex;align-items:center;gap:8px}
+.wrapr{flex-wrap:wrap}
+.grow{flex:1;min-width:0}
+.sec{display:flex;flex-direction:column;gap:10px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.sec-h .count{font-size:13px;color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 14px;border-radius:11px;background:var(--surface2);font-weight:500;font-size:14px;white-space:nowrap}
+.btn.pri{background:var(--accent);color:var(--on-accent)}
+.btn.ghost{background:transparent;border:1px solid var(--line)}
+.btn.danger{background:var(--danger);color:#fff}
+.btn.sm{padding:6px 10px;font-size:13px;border-radius:9px}
+.btn[disabled]{opacity:.5;cursor:default}
+.icon-btn{width:36px;height:36px;border-radius:10px;display:inline-grid;place-items:center;flex:none;color:var(--muted)}
+.icon-btn:hover{background:var(--surface2)}
+.icon-btn svg,.btn svg{width:18px;height:18px}
+input[type=text],input[type=search],input[type=password],input[type=date],input[type=time],input[type=number],textarea,select{
+  width:100%;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-width:0}
+textarea{resize:vertical}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted);min-width:0}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor}
+.a-work{--a:var(--work)} .a-biz{--a:var(--biz)} .a-pers{--a:var(--pers)} .a-fam{--a:var(--fam)}
+.chip.area{color:var(--a);background:color-mix(in srgb,var(--a) 13%,transparent)}
+.st-late{color:var(--danger);background:color-mix(in srgb,var(--danger) 13%,transparent)}
+.st-today{color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.st-none{color:var(--muted);border:1px dashed var(--line);background:transparent}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));background:var(--accent);color:var(--on-accent);padding:10px 16px;border-radius:12px;font-size:14px;z-index:60;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.banner{background:color-mix(in srgb,var(--biz) 14%,var(--surface));border:1px solid color-mix(in srgb,var(--biz) 35%,transparent);border-radius:12px;padding:10px 12px;font-size:13px}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.hello{padding-top:18px;display:flex;flex-direction:column;gap:12px}
+.hello h1{font-size:24px}
+.dateline{font-size:13px;color:var(--muted)}
+.daytime{display:flex;flex-direction:column;gap:8px}
+.daytime .big{font-family:var(--font-display);font-size:30px;font-weight:600;line-height:1}
+.bar{display:flex;height:9px;border-radius:99px;overflow:hidden;background:var(--surface2)}
+.bar span{display:block;height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-inline-end:5px;vertical-align:middle}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column}
+.stat b{font-family:var(--font-display);font-size:22px;font-weight:600;line-height:1.2}
+.stat span{font-size:12px;color:var(--muted)}
+.stat.late b{color:var(--danger)}
+
+/* input */
+.dump{position:relative}
+.dump textarea{min-height:92px;padding:14px 14px 14px 58px;border-radius:16px;font-size:16px;border:1.5px solid var(--line);background:var(--surface)}
+.dump textarea:focus{border-color:var(--accent);outline:none}
+.dump .send{position:absolute;left:10px;bottom:10px;width:40px;height:40px;border-radius:12px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center}
+.dump .send svg{width:20px;height:20px}
+.thinking{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.pulse{width:9px;height:9px;border-radius:50%;background:var(--work);animation:pl 1s ease-in-out infinite}
+@keyframes pl{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pulse{animation:none}}
+
+/* review */
+.review{border:1.5px solid var(--accent)}
+.rv-item{border-top:1px solid var(--line);padding-top:12px;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.rv-item:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.seg{display:inline-flex;background:var(--surface2);border-radius:10px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{padding:5px 11px;border-radius:8px;font-size:13px;color:var(--muted)}
+.seg button.on{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.days{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.days button{flex:none;width:46px;padding:5px 0;border-radius:10px;border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;font-size:11px;line-height:1.3;color:var(--muted);background:var(--surface)}
+.days button b{font-size:15px;font-family:var(--font-display);color:var(--ink);font-weight:500}
+.days button.we{background:var(--surface2)}
+.days button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.days button.on b{color:var(--on-accent)}
+.f-missing input{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--surface))}
+[hidden]{display:none!important}
+.only-task,.only-meeting,.only-note{display:none!important}
+[data-kind=task] .only-task,[data-kind=note] label.only-note{display:flex!important}
+[data-kind=meeting] .grid2.only-meeting,[data-kind=note] .grid2.only-note{display:grid!important}
+[data-kind=note] .only-notnote{display:none!important}
+
+/* running */
+.running{background:var(--deep);color:var(--on-deep);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.running .lbl{font-size:12px;color:var(--deep-muted);letter-spacing:.02em}
+.running .t{font-family:var(--font-display);font-size:46px;font-weight:600;line-height:1;letter-spacing:.02em}
+.running .ttl{font-size:16px;font-weight:500}
+.running .btn{background:rgba(255,255,255,.12);color:var(--on-deep)}
+.running .btn.pri{background:var(--on-deep);color:var(--deep)}
+.running .chip.area{background:rgba(255,255,255,.1)}
+
+/* lists */
+.list{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.it{display:flex;align-items:flex-start;gap:8px;padding:10px 10px;border-top:1px solid var(--line)}
+.list>.it:first-child,.list>div:first-child>.it{border-top:0}
+.it .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.it .ttl{font-weight:500;word-wrap:break-word;cursor:pointer}
+.it .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.it.on .ttl{font-weight:600}
+.play{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;flex:none;color:var(--ink)}
+.play svg{width:14px;height:14px}
+.play.live{background:var(--deep);border-color:var(--deep);color:var(--on-deep)}
+.check{width:26px;height:26px;border-radius:8px;border:1.5px solid var(--line);flex:none;display:grid;place-items:center;margin-top:3px;color:var(--on-accent)}
+.check.on{background:var(--ok);border-color:var(--ok)}
+.check svg{width:15px;height:15px}
+.confirm{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px;background:color-mix(in srgb,var(--danger) 9%,var(--surface));border-top:1px solid var(--line)}
+.confirm p{margin:0;flex:1 1 100%;font-weight:500}
+.empty{padding:16px;text-align:center;color:var(--muted);font-size:14px}
+.mt{display:flex;gap:12px;padding:12px;border-top:1px solid var(--line);align-items:flex-start}
+.list>.mt:first-child{border-top:0}
+.mt .when{width:58px;flex:none;display:flex;flex-direction:column;align-items:center;font-family:var(--font-display)}
+.mt .when b{font-size:18px;font-weight:600;line-height:1.2}
+.mt .when span{font-size:11px;color:var(--muted)}
+.cal-ok{color:var(--ok);font-size:12px;display:inline-flex;align-items:center;gap:4px}
+.cal-no{color:var(--muted);font-size:12px}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tabs button{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);font-size:13px;background:var(--surface);color:var(--muted)}
+.tabs button.on{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.tabs button .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--a);margin-inline-end:6px}
+details.fold>summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-family:var(--font-display);font-weight:600}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold[open]>summary{border-radius:var(--r) var(--r) 0 0}
+details.fold>.body{border:1px solid var(--line);border-top:0;border-radius:0 0 var(--r) var(--r);background:var(--surface)}
+.done .ttl{text-decoration:line-through;color:var(--muted)}
+.cando .it{align-items:center}
+
+/* habits */
+.habits{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.habit{display:flex;align-items:center;gap:8px;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--surface);text-align:start}
+.habit .check{margin:0}
+.habit .nm{flex:1;min-width:0;font-size:14px;font-weight:500;line-height:1.35}
+.habit .wk{font-size:11px;color:var(--muted)}
+.habit.on{border-color:color-mix(in srgb,var(--ok) 50%,var(--line));background:color-mix(in srgb,var(--ok) 7%,var(--surface))}
+.habit .x{color:var(--danger)}
+.todo-add{display:flex;gap:6px;padding:8px;border-top:1px solid var(--line)}
+
+/* sheet */
+.sheet-back{position:fixed;inset:0;background:rgba(10,15,18,.45);z-index:40;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:88vh;overflow:auto;border-radius:20px 20px 0 0;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:12px}
+.sheet .grab{width:42px;height:4px;border-radius:9px;background:var(--line);align-self:center}
+.draft{white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;min-height:80px;font-size:15px;line-height:1.8}
+
+/* nav */
+nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
+  padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
+nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
+nav.bottom button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 0;border-radius:10px}
+nav.bottom button svg{width:22px;height:22px}
+nav.bottom button.on{color:var(--ink);font-weight:600}
+.page{display:none}
+.page.on{display:flex;flex-direction:column;gap:18px}
+.ph{padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ph h1{font-size:22px}
+
+/* projects */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:6px;text-align:start}
+.pcard .nm{font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--a)}
+.note{padding:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.list>.note:first-child{border-top:0}
+.note .txt{white-space:pre-wrap;word-wrap:break-word}
+.note .foot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+
+/* notebook kinds */
+.lam{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:8px}
+.lam .kind{font-size:12px;font-weight:600;color:var(--muted)}
+.lam.k-poem .txt{font-family:var(--font-display);text-align:center;line-height:2.1;font-size:16px}
+.lam.k-wisdom .txt,.lam.k-quote .txt{font-family:var(--font-display);font-size:18px;line-height:1.75;font-weight:500}
+.lam.k-wisdom,.lam.k-quote{background:color-mix(in srgb,var(--work) 6%,var(--surface))}
+.lam.k-riddle{background:color-mix(in srgb,var(--biz) 7%,var(--surface))}
+.lam.k-story .txt{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+.lam.k-story.open .txt{display:block}
+.lam details summary{cursor:pointer;color:var(--biz);font-weight:600;font-size:13px}
+.lams{display:flex;flex-direction:column;gap:10px}
+.take{border-inline-start:3px solid var(--line);padding-inline-start:10px;font-weight:500}
+
+/* files */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.fcard .thumb{aspect-ratio:4/3;background:var(--surface2);display:grid;place-items:center;overflow:hidden;max-width:100%}
+.fcard .thumb img{width:100%;height:100%;object-fit:cover}
+.fcard .thumb svg{width:38px;height:38px;color:var(--muted)}
+.fcard .b{padding:9px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.fcard .nm{font-weight:600;font-size:14px;word-wrap:break-word}
+.fcard .acts{display:flex;gap:4px}
+.fcard .acts .btn{flex:1;padding:7px 4px}
+.fcard a.btn{color:inherit;text-decoration:none}
+
+/* recipes (vault) */
+.recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
+.recipe .ing{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:14px}
+.recipe .ing dt{color:var(--muted);font-size:13px}
+.recipe .ing dd{margin:0;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.kitchen-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+</style>
+
+<div class="wrap">
+
+<!-- ============ TODAY ============ -->
+<section class="page on" id="p-today">
+  <header class="hello">
+    <div>
+      <h1 id="greet">أهلاً يا أبو مالك</h1>
+      <div class="dateline" id="dateline"></div>
+    </div>
+    <div class="daytime">
+      <div class="row" style="justify-content:space-between;align-items:flex-end">
+        <div><div class="small muted">وقت العمل اليوم</div><div class="big num" id="dayTotal" data-tick>٠د</div></div>
+      </div>
+      <div class="bar" id="dayBar"></div>
+      <div class="legend" id="dayLegend"></div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div id="noStore" class="banner" hidden>البيانات الآن مؤقتة في هذه الصفحة فقط. افتح الدفتر من claude.ai وأنت مسجّل الدخول لتُحفظ في حسابك وتظهر من أي جهاز.</div>
+
+  <div class="sec">
+    <div class="dump">
+      <textarea id="dump" aria-label="ما عندك" placeholder="وش عندك؟"></textarea>
+      <button class="send" data-act="parse" aria-label="رتّب"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+    </div>
+    <div id="parseState" hidden class="thinking"><span class="pulse"></span><span>أرتّب كلامك…</span><button class="btn sm ghost" id="fallbackBtn" data-act="fallback" hidden>رتّبها بدون انتظار</button></div>
+  </div>
+
+  <div id="review"></div>
+  <div id="running"></div>
+
+  <div class="sec" id="meetSec">
+    <div class="sec-h"><h2>الاجتماعات القادمة</h2><span class="count" id="meetCount"></span></div>
+    <div class="list" id="meetings"></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h"><h2>عاداتي اليوم</h2><button class="btn sm ghost" data-act="habitEdit" id="habitEditBtn">تعديل</button></div>
+    <div class="habits" id="habits"></div>
+    <div class="row" id="habitAdd" hidden><input type="text" id="habitNew" placeholder="عادة جديدة"><button class="btn" data-act="habitAdd">أضف</button></div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h"><h2>سريعة</h2><span class="count" id="todoCount"></span></div>
+    <div class="list"><div id="todos"></div>
+      <div class="todo-add"><input type="text" id="todoNew" placeholder="مهمة سريعة"><button class="btn" data-act="todoAdd">أضف</button></div>
+    </div>
+  </div>
+
+  <div class="tabs" id="filters"></div>
+  <div class="tabs" id="branchFilters" hidden></div>
+
+  <div class="sec">
+    <div class="sec-h"><h2>المهام الكبيرة</h2><span class="count" id="bigCount"></span></div>
+    <div class="list" id="bigList"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-h"><h2>المهام الصغيرة</h2><span class="count" id="smallCount"></span></div>
+    <div class="list" id="smallList"></div>
+  </div>
+
+  <div class="sec" id="canSec">
+    <div class="sec-h"><h2>أقدر أسويها عنك</h2><span class="count" id="canCount"></span></div>
+    <div class="list cando" id="canList"></div>
+  </div>
+
+  <details class="fold" id="doneFold">
+    <summary><span>أُنجز اليوم</span><span class="count small muted" id="doneCount"></span></summary>
+    <div class="body list" id="doneList" style="border-top:0"></div>
+  </details>
+
+  <details class="fold">
+    <summary><span>اسأل كلود عن دفترك</span><span class="small muted">مهامك وملاحظاتك</span></summary>
+    <div class="body" style="padding:12px;display:flex;flex-direction:column;gap:10px">
+      <textarea id="askQ" rows="2" placeholder="مثال: وش أهم ثلاث مهام لازم أخلصها هالأسبوع؟"></textarea>
+      <div><button class="btn pri" data-act="ask">اسأل</button></div>
+      <div class="draft" id="askA" hidden></div>
+    </div>
+  </details>
+</section>
+
+<!-- ============ PROJECTS ============ -->
+<section class="page" id="p-projects">
+  <div class="ph"><h1 id="projTitle">المشاريع</h1><button class="btn sm ghost" data-act="projBack" id="projBack" hidden>رجوع</button></div>
+  <div id="projBody"></div>
+</section>
+
+<!-- ============ NOTEBOOK ============ -->
+<section class="page" id="p-notes">
+  <div class="ph"><h1>الدفتر</h1></div>
+  <div class="seg" id="noteSeg">
+    <button data-act="noteSec" data-v="lamasat" class="on">لمسات</button>
+    <button data-act="noteSec" data-v="audio">تدوينات سماعية</button>
+    <button data-act="noteSec" data-v="reading">من القراءة</button>
+    <button data-act="noteSec" data-v="general">عامة</button>
+  </div>
+  <div class="card sec">
+    <textarea id="noteText" rows="3" placeholder="لغز، بيت شعر، قصة، حكمة…"></textarea>
+    <input type="text" id="noteSource" placeholder="المصدر (اسم الكتاب، البودكاست، المتحدث)" hidden>
+    <div class="row"><button class="btn pri" data-act="noteSave">احفظ</button><span class="small muted" id="noteHint">كلود يصنّفها ويرتّبها</span></div>
+  </div>
+  <div class="row"><input type="search" id="noteSearch" placeholder="ابحث في الدفتر"></div>
+  <div class="tabs" id="lamKinds"></div>
+  <div id="notesBody" class="lams"></div>
+</section>
+
+<!-- ============ FILES ============ -->
+<section class="page" id="p-files">
+  <div class="ph"><h1>الوثائق</h1><label class="btn pri" for="fileIn">ارفع ملف</label></div>
+  <input type="file" id="fileIn" accept="image/*,application/pdf" multiple hidden>
+  <div id="filesNotice" class="banner" hidden></div>
+  <div id="uploadForm"></div>
+  <input type="search" id="fileSearch" placeholder="ابحث: هوية، رخصة، سجل…">
+  <div class="tabs" id="fileTags"></div>
+  <div class="fgrid" id="filesGrid"></div>
+</section>
+
+<!-- ============ RECIPES (vault) ============ -->
+<section class="page" id="p-kitchen">
+  <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل المطبخ</button></div>
+  <div id="kitchen"></div>
+</section>
+</div>
+
+<nav class="bottom" aria-label="الأقسام"><div class="in">
+  <button data-act="tab" data-v="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>اليوم</button>
+  <button data-act="tab" data-v="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>المشاريع</button>
+  <button data-act="tab" data-v="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>الدفتر</button>
+  <button data-act="tab" data-v="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>الوثائق</button>
+  <button data-act="tab" data-v="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6z"/><path d="M6 17h12"/></svg>وصفات</button>
+</div></nav>
+
+<script>
+(() => {
+"use strict";
+/* ---------- constants ---------- */
+const AREAS = {
+  work: { label: "عملي", branches: ["SANS"] },
+  biz:  { label: "مشاريعي", branches: ["WAGA", "تحميرة فرن", "تاجر حكيم", "بيت البركة", "الهندسة المحترفة"] },
+  pers: { label: "شخصي", branches: [] },
+  fam:  { label: "الأسرة والبيت", branches: [] },
+};
+const AREA_KEYS = Object.keys(AREAS);
+const PROJECTS = [
+  { key: "SANS", area: "work" },
+  ...AREAS.biz.branches.map(b => ({ key: b, area: "biz" })),
+  { key: "شخصي", area: "pers" },
+  { key: "الأسرة والبيت", area: "fam" },
+];
+const LAM_KINDS = { riddle: "لغز", poem: "شعر", story: "قصة", wisdom: "حكمة", quote: "اقتباس", joke: "طرفة", fact: "فائدة", other: "متفرقات" };
+const DO_TYPES = ["تغريدة", "منشور", "بريد", "خطاب", "خطة", "تقرير", "أجندة اجتماع"];
+const WD = ["الأحد", "الإثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
+const CAL = "Google Calendar";
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const ar = s => String(s).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const en = s => String(s ?? "").replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d)).replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
+const pad = n => String(n).padStart(2, "0");
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseISO = s => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
+const today = () => iso(new Date());
+const addDays = (s, n) => { const d = parseISO(s); d.setDate(d.getDate() + n); return iso(d); };
+const dayDiff = (a, b) => Math.round((parseISO(b) - parseISO(a)) / 864e5);
+const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const nowHM = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const isWeekend = s => { const g = parseISO(s).getDay(); return g === 5 || g === 6; };
+const dayName = s => WD[parseISO(s).getDay()];
+const dayLabel = s => {
+  const t = today();
+  if (s === t) return "اليوم";
+  if (s === addDays(t, 1)) return "بكرة";
+  return `${dayName(s)} ${ar(parseISO(s).getDate())}`;
+};
+const lateWord = n => n === 1 ? "يوم" : n === 2 ? "يومين" : n <= 10 ? `${ar(n)} أيام` : `${ar(n)} يوم`;
+const fmtDur = sec => {
+  sec = Math.round(sec); const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60);
+  if (h) return `${ar(h)}س ${ar(m)}د`;
+  return `${ar(m)}د`;
+};
+const fmtClock = sec => { sec = Math.max(0, Math.floor(sec)); return ar(`${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec % 3600 / 60))}:${pad(sec % 60)}`); };
+const fmtTime = hm => {
+  if (!hm) return "";
+  let [h, m] = hm.split(":").map(Number); const pm = h >= 12; const h12 = h % 12 || 12;
+  return ar(`${h12}:${pad(m)}`) + (pm ? " م" : " ص");
+};
+let toastT;
+function toast(msg) {
+  let el = $(".toast"); if (!el) { el = document.createElement("div"); el.className = "toast"; el.setAttribute("role", "status"); document.body.appendChild(el); }
+  el.textContent = msg; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => el.hidden = true, 3200);
+}
+const IC = {
+  play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>',
+  pause: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  trash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>',
+  x: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  pdf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><text x="7" y="18" font-size="5.5" fill="currentColor" stroke="none" font-family="sans-serif">PDF</text></svg>',
+  lock: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  cal: '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+};
+
+/* ---------- state & store ---------- */
+const S = {
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {},
+  filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
+  noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
+  vaultKey: null, revealed: {},
+};
+let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
+const COLS = ["items", "notes", "files", "vault", "meta", "habitlog"];
+
+function memApply(col, id, data, merge) {
+  if (col === "meta") { S.meta[id] = merge ? deepMerge(S.meta[id] || {}, data) : data; return; }
+  if (col === "habitlog") { S.habitlog[id] = merge ? deepMerge(S.habitlog[id] || {}, data) : data; return; }
+  const arr = S[col]; const i = arr.findIndex(x => x.id === id);
+  if (i < 0) arr.push({ id, ...data }); else arr[i] = merge ? { ...deepMerge(arr[i], data), id } : { id, ...data };
+}
+function deepMerge(a, b) {
+  const out = { ...a };
+  for (const k in b) {
+    const v = b[k];
+    out[k] = v && typeof v === "object" && !Array.isArray(v) && a[k] && typeof a[k] === "object" && !Array.isArray(a[k]) ? deepMerge(a[k], v) : v;
+  }
+  return out;
+}
+async function put(col, id, data) {
+  if (base) { try { await base.collection(col).doc(id).set(data); } catch (e) { writeFail(e); } }
+  else { memApply(col, id, data, false); renderAll(); }
+}
+async function patch(col, id, data) {
+  if (base) { try { await base.collection(col).doc(id).update(data); } catch (e) { writeFail(e); } }
+  else { memApply(col, id, data, true); renderAll(); }
+}
+async function del(col, id) {
+  if (base) { try { await base.collection(col).doc(id).delete(); } catch (e) { writeFail(e); } }
+  else { if (col === "meta") delete S.meta[id]; else if (col === "habitlog") delete S.habitlog[id]; else S[col] = S[col].filter(x => x.id !== id); renderAll(); }
+}
+function writeFail(e) {
+  if (e && e.code === "quota_exceeded") toast("المساحة امتلأت. احذف بعض العناصر القديمة.");
+  else toast("ما انحفظ التعديل. تأكد من الاتصال وجرّب مرة ثانية.");
+}
+const item = id => S.items.find(x => x.id === id);
+
+/* ---------- boot ---------- */
+async function boot() {
+  renderAll();
+  const c = window.claude;
+  if (!c || !c.use) { $("#noStore").hidden = false; return; }
+  const [d, u, sm, m, dl, as] = await Promise.all(["db", "user", "sample", "mcp", "downloads", "assets"].map(n => c.use(n).catch(() => null)));
+  sample = sm; mcp = m; downloads = dl; assets = as;
+  let uid = null; try { uid = u ? await u.id() : null; } catch (e) { }
+  if (d && uid) {
+    db = d; base = db.doc(`data/users/${uid}/main`);
+    for (const col of COLS) {
+      base.collection(col).onSnapshot(snap => {
+        if (col === "meta" || col === "habitlog") { const o = {}; snap.docs.forEach(x => o[x.id] = x.data()); S[col] = o; }
+        else S[col] = snap.docs.map(x => ({ ...x.data(), id: x.id }));
+        renderAll();
+      }, () => toast("انقطع الاتصال بالبيانات. أعد فتح الدفتر."));
+    }
+  } else $("#noStore").hidden = false;
+  renderFiles();
+}
+
+/* ---------- today: header ---------- */
+function secsToday(t) {
+  let s = (t.timeLog || {})[today()] || 0;
+  if (t.runStart) s += (Date.now() - t.runStart) / 1000;
+  return s;
+}
+function taskStatus(t) {
+  const td = today(); const days = (t.days || []).slice().sort();
+  if (!days.length) return { k: "none", label: "حدّد الأيام", ord: 3 };
+  if (days.includes(td)) return { k: "today", label: "اليوم", ord: 1 };
+  const fut = days.filter(d => d > td);
+  if (fut.length) return { k: "next", label: dayLabel(fut[0]), ord: 2, key: fut[0] };
+  const n = dayDiff(days[days.length - 1], td);
+  return { k: "late", label: "متأخرة " + lateWord(n), ord: 0, n };
+}
+function renderHeader() {
+  const d = new Date(), h = d.getHours();
+  $("#greet").textContent = (h < 12 ? "صباح الخير" : "مساء الخير") + " يا أبو مالك";
+  let hij = "";
+  try { hij = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-arab", { day: "numeric", month: "long", year: "numeric" }).format(d); } catch (e) { }
+  const greg = new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "long" }).format(d);
+  $("#dateline").textContent = `${WD[d.getDay()]} ${greg}${hij ? " · " + hij : ""}`;
+  renderTick();
+  const open = S.items.filter(x => !x.done && x.kind === "task");
+  const late = open.filter(x => taskStatus(x).k === "late").length;
+  const tod = open.filter(x => taskStatus(x).k === "today").length;
+  const mt = S.items.filter(x => !x.done && x.kind === "meeting" && x.date === today()).length;
+  $("#stats").innerHTML = `
+    <div class="stat ${late ? "late" : ""}"><b class="num">${ar(late)}</b><span>متأخرة</span></div>
+    <div class="stat"><b class="num">${ar(tod)}</b><span>مهام اليوم</span></div>
+    <div class="stat"><b class="num">${ar(mt)}</b><span>اجتماعات اليوم</span></div>`;
+}
+function renderTick() {
+  const per = { work: 0, biz: 0, pers: 0, fam: 0 };
+  S.items.forEach(t => { const s = secsToday(t); if (s) per[t.area || "pers"] = (per[t.area || "pers"] || 0) + s; });
+  const tot = Object.values(per).reduce((a, b) => a + b, 0);
+  $("#dayTotal").textContent = fmtDur(tot);
+  $("#dayBar").innerHTML = tot ? AREA_KEYS.filter(k => per[k]).map(k => `<span class="a-${k}" style="width:${(per[k] / tot * 100).toFixed(2)}%;background:var(--a)"></span>`).join("") : "";
+  $("#dayLegend").innerHTML = AREA_KEYS.map(k => `<span class="a-${k}"><i style="background:var(--a)"></i>${AREAS[k].label} ${per[k] ? fmtDur(per[k]) : "—"}</span>`).join("");
+  const r = S.items.find(x => x.active && !x.done);
+  const rt = $("#runClock"); if (r && rt) rt.textContent = fmtClock(secsToday(r));
+}
+
+/* ---------- area chip ---------- */
+const areaChip = t => `<span class="chip area a-${t.area || "pers"}"><span class="dot"></span>${esc(AREAS[t.area || "pers"].label)}${t.branch ? " · " + esc(t.branch) : ""}</span>`;
+const statusChip = t => { const s = taskStatus(t); return `<button class="chip st-${s.k}" data-act="edit" data-id="${t.id}">${esc(s.label)}</button>`; };
+
+/* ---------- review / form ---------- */
+function branchOptions(area, sel) {
+  const bs = AREAS[area]?.branches || [];
+  return `<option value="">${bs.length ? "بدون فرع" : "—"}</option>` + bs.map(b => `<option ${b === sel ? "selected" : ""}>${esc(b)}</option>`).join("");
+}
+function daysStrip(sel) {
+  const t = today(); let h = "";
+  for (let i = 0; i < 14; i++) {
+    const d = addDays(t, i);
+    h += `<button type="button" class="${sel.includes(d) ? "on" : ""} ${isWeekend(d) ? "we" : ""}" data-act="day" data-d="${d}">${i === 0 ? "اليوم" : i === 1 ? "بكرة" : WD[parseISO(d).getDay()].replace("ال", "")}<b>${ar(parseISO(d).getDate())}</b></button>`;
+  }
+  return `<div class="days">${h}</div>`;
+}
+function formHTML(it) {
+  const k = it.kind || "task";
+  const dateMissing = k === "meeting" && !it.date, timeMissing = k === "meeting" && !it.time;
+  return `
+  <label class="f">العنوان<input type="text" data-f="title" value="${esc(it.title)}"></label>
+  <div class="row wrapr">
+    <div class="seg" data-seg="kind">${[["task", "مهمة"], ["meeting", "اجتماع"], ["todo", "سريعة"], ["note", "ملاحظة"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" class="${k === v ? "on" : ""}">${l}</button>`).join("")}</div>
+    <div class="seg only-task" data-seg="size">${[["big", "كبيرة"], ["small", "صغيرة"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" class="${(it.size || "small") === v ? "on" : ""}">${l}</button>`).join("")}</div>
+  </div>
+  <div class="grid2 only-notnote">
+    <label class="f">الجهة<select data-f="area">${AREA_KEYS.map(a => `<option value="${a}" ${a === (it.area || "pers") ? "selected" : ""}>${AREAS[a].label}</option>`).join("")}</select></label>
+    <label class="f">الفرع<select data-f="branch">${branchOptions(it.area || "pers", it.branch)}</select></label>
+  </div>
+  <div class="only-task" style="flex-direction:column;gap:4px"><span class="small muted">الأيام المناسبة</span>${daysStrip(it.days || [])}</div>
+  <div class="grid2 only-meeting">
+    <label class="f ${dateMissing ? "f-missing" : ""}">التاريخ<input type="date" data-f="date" value="${esc(it.date || "")}"></label>
+    <label class="f ${timeMissing ? "f-missing" : ""}">الوقت<input type="time" data-f="time" value="${esc(it.time || "")}"></label>
+  </div>
+  <div class="grid2 only-meeting">
+    <label class="f">المدة (دقيقة)<input type="number" min="5" step="5" data-f="duration" value="${esc(it.duration || 60)}"></label>
+    <label class="f">المكان<input type="text" data-f="location" value="${esc(it.location || "")}"></label>
+  </div>
+  <div class="grid2 only-note" style="gap:8px">
+    <label class="f">القسم<select data-f="noteSection">${[["project", "ملاحظة مشروع"], ["lamasat", "لمسات"], ["audio", "تدوينة سماعية"], ["reading", "من القراءة"], ["general", "عامة"]].map(([v, l]) => `<option value="${v}" ${v === (it.noteSection || "general") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
+    <label class="f">المشروع<select data-f="noteProject"><option value="">—</option>${PROJECTS.map(p => `<option ${p.key === it.noteProject ? "selected" : ""}>${esc(p.key)}</option>`).join("")}</select></label>
+  </div>
+  <label class="f only-note">النص<textarea data-f="text" rows="3">${esc(it.text || it.title || "")}</textarea></label>`;
+}
+function readForm(el) {
+  const v = f => el.querySelector(`[data-f="${f}"]`)?.value?.trim() ?? "";
+  const seg = n => el.querySelector(`[data-seg="${n}"] .on`)?.dataset.v;
+  const kind = seg("kind") || "task";
+  return {
+    kind, title: v("title"), size: seg("size") || "small", area: v("area") || "pers", branch: v("branch") || "",
+    days: [...el.querySelectorAll(".days .on")].map(b => b.dataset.d),
+    date: v("date"), time: v("time"), duration: Number(v("duration")) || 60, location: v("location"),
+    noteSection: v("noteSection"), noteProject: v("noteProject"), text: v("text"),
+  };
+}
+function renderReview() {
+  const r = S.review, box = $("#review");
+  if (!r) { box.innerHTML = ""; return; }
+  box.innerHTML = `<div class="card review sec">
+    <div class="sec-h"><h2>راجعها قبل الإضافة</h2><span class="count">${ar(r.length)} ${r.length === 1 ? "عنصر" : "عناصر"}</span></div>
+    ${r.map((it, i) => `<div class="rv-item" data-form="${i}" data-kind="${it.kind}">
+      <div class="row"><span class="small muted grow">${it.canDo ? "أقدر أجهّز لك: " + esc(it.doType || "") : ""}</span><button class="icon-btn" data-act="rvDrop" data-i="${i}" aria-label="احذف من القائمة">${IC.x}</button></div>
+      ${formHTML(it)}</div>`).join("")}
+    <div class="row"><button class="btn pri" data-act="rvAdd">أضف</button><button class="btn ghost" data-act="rvCancel">إلغاء</button></div>
+  </div>`;
+}
+
+/* ---------- parsing with Claude ---------- */
+let parseCtl = null, parseTimer = null, parseText = "";
+function dayTable() {
+  const t = today(); const rows = [];
+  for (let i = 0; i < 14; i++) { const d = addDays(t, i); rows.push(`${d} = ${dayName(d)}${i === 0 ? " (اليوم)" : i === 1 ? " (بكرة)" : ""}`); }
+  return rows.join("\n");
+}
+function parsePrompt(text) {
+  return `أنت مساعد يرتب مهام "أبو مالك" (سعودي). حوّل كلامه المُملى بالصوت إلى عناصر منفصلة. الكلام قد يكون بلهجة سعودية وفيه أخطاء إملائية من الإملاء الصوتي؛ افهم المقصود.
+
+الوقت الآن: ${today()} ${nowHM()} (${dayName(today())}). أيام الدوام الأحد إلى الخميس.
+جدول الأيام القادمة:
+${dayTable()}
+
+الجهات (area):
+- "work" = عملي في SANS (الدوام، الإدارة، الزملاء، المدير). الفرع: "SANS".
+- "biz" = مشاريعي التجارية. الفروع: "WAGA" (واقا/واجا)، "تحميرة فرن"، "تاجر حكيم"، "بيت البركة"، "الهندسة المحترفة".
+- "pers" = شخصي (صحتي، تعلمي، أموري الخاصة).
+- "fam" = الأسرة والبيت (الزوجة، الأولاد، الأهل، صيانة البيت، المشتريات).
+
+لكل عنصر حدّد:
+- kind: "task" مهمة، "meeting" اجتماع/موعد/لقاء، "todo" شيء سريع جداً ومؤقت، "note" إذا كان ملاحظة أو فكرة أو تعليق وليس عملاً يُنجز.
+- title: عنوان قصير واضح بالعربية الفصحى المبسطة، بدون ذكر اليوم أو الوقت.
+- area, branch (اترك branch فارغاً إذا لم يُذكر أو لم يتضح).
+- size: "big" أو "small" حسب كلامه أو الجهد المتوقع (أكثر من ساعتين أو متعدد الخطوات = big).
+- days: للمهام فقط، قائمة تواريخ YYYY-MM-DD من الجدول إذا ذكر أياماً ("الأحد والإثنين"، "بكرة"، "هالأسبوع" = الأيام المتبقية من أيام الدوام). إذا لم يذكر شيئاً اترك القائمة فارغة.
+- للاجتماعات: date (YYYY-MM-DD)، time (HH:MM بنظام 24 ساعة، "العصر" ≈ 16:00 إذا لم يحدد، "المغرب" ≈ 18:00، "بعد العشاء" ≈ 20:30، الأرقام بين 1 و6 بدون تحديد تعني مساءً)، duration بالدقائق (افتراضي 60)، location. إذا لم يذكر اليوم وذكر الوقت: اليوم إن لم يفت الوقت وإلا بكرة. إذا لم يذكر شيئاً اترك date فارغاً.
+- canDo: true إذا كان بإمكان مساعد ذكي كتابة الناتج أو تجهيز جزء منه (تغريدة، منشور، بريد، خطاب، خطة، تقرير، أجندة اجتماع). doType واحدة من: ${DO_TYPES.join("، ")}.
+- للملاحظات: noteSection واحدة من "project" (ملاحظة أو تعليق على مشروع/جهة)، "lamasat" (لغز، شعر، قصة، حكمة)، "audio" (شيء سمعه)، "reading" (شيء قرأه)، "general". noteProject اسم المشروع إن وجد من: ${PROJECTS.map(p => p.key).join("، ")}. text = نص الملاحظة كاملاً منقحاً إملائياً.
+
+لا تخترع عناصر غير موجودة في الكلام. أعد JSON فقط بهذا الشكل:
+{"items":[{"kind":"task","title":"","area":"work","branch":"","size":"small","days":[],"date":"","time":"","duration":60,"location":"","canDo":false,"doType":"","noteSection":"","noteProject":"","text":""}]}
+
+الكلام:
+"""${text}"""`;
+}
+function normalize(it) {
+  const o = {
+    kind: ["task", "meeting", "todo", "note"].includes(it.kind) ? it.kind : "task",
+    title: String(it.title || it.text || "").trim().slice(0, 200),
+    area: AREA_KEYS.includes(it.area) ? it.area : "pers",
+    branch: "", size: it.size === "big" ? "big" : "small",
+    days: Array.isArray(it.days) ? it.days.filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)) : [],
+    date: /^\d{4}-\d{2}-\d{2}$/.test(it.date || "") ? it.date : "",
+    time: /^\d{1,2}:\d{2}$/.test(it.time || "") ? it.time.padStart(5, "0") : "",
+    duration: Number(it.duration) || 60, location: String(it.location || ""),
+    canDo: !!it.canDo, doType: DO_TYPES.includes(it.doType) ? it.doType : (it.canDo ? it.doType || "" : ""),
+    noteSection: it.noteSection || "general", noteProject: it.noteProject || "", text: String(it.text || ""),
+  };
+  if (AREAS[o.area].branches.includes(it.branch)) o.branch = it.branch;
+  else if (o.area === "work") o.branch = "SANS";
+  if (o.kind === "meeting" && !o.date && o.time) o.date = o.time > nowHM() ? today() : addDays(today(), 1);
+  return o;
+}
+async function doParse() {
+  const text = $("#dump").value.trim();
+  if (!text) { $("#dump").focus(); return; }
+  parseText = text;
+  if (!sample) { S.review = localParse(text); afterParse(); return; }
+  $("#parseState").hidden = false; $("#fallbackBtn").hidden = true;
+  parseCtl = new AbortController(); const my = parseCtl;
+  parseTimer = setTimeout(() => { if (parseCtl === my) $("#fallbackBtn").hidden = false; }, 5000);
+  try {
+    const res = await sample.json(parsePrompt(text), { signal: my.signal, cache: false });
+    if (parseCtl !== my) return;
+    const arr = Array.isArray(res) ? res : res?.items;
+    S.review = (Array.isArray(arr) && arr.length ? arr : []).map(normalize).filter(x => x.title);
+    if (!S.review.length) S.review = localParse(text);
+    afterParse();
+  } catch (e) {
+    if (parseCtl !== my) return;
+    if (e?.code === "not_granted") sample = null;
+    S.review = localParse(text); afterParse();
+    toast(e?.code === "rate_limited" ? "كلود مشغول الحين، رتّبتها بطريقة بسيطة." : "رتّبتها بطريقة بسيطة. راجعها قبل الإضافة.");
+  }
+}
+function afterParse() {
+  clearTimeout(parseTimer); parseCtl = null;
+  $("#parseState").hidden = true; renderReview();
+  $("#review").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function useFallback() {
+  if (parseCtl) { const c = parseCtl; parseCtl = null; try { c.abort(); } catch (e) { } }
+  S.review = localParse(parseText || $("#dump").value); afterParse();
+}
+
+/* ---------- local fallback parser ---------- */
+function localParse(raw) {
+  const text = en(raw);
+  const parts = text.split(/\n+|[.؟?!]+\s*|،\s*(?=و?(?:لازم|ابي|أبي|ابغى|أبغى|اجتماع|موعد|كلم|ارسل|أرسل|اتصل|اشتري|أشتري|راجع|جهز|جهّز))|\s+(?:وبعدين|بعدين|وكمان|وبعد كذا|وبعدها)\s+/).map(s => s.trim()).filter(s => s.length > 2);
+  const has = (s, re) => re.test(s);
+  return parts.map(p => {
+    const it = { kind: "task", title: p, area: "pers", branch: "", size: "small", days: [], date: "", time: "", duration: 60, location: "", canDo: false, doType: "" };
+    if (has(p, /اجتماع|ميتنق|ميتينق|meeting|موعد|لقاء|مقابلة/i)) it.kind = "meeting";
+    if (has(p, /sans|سانس|الدوام|الشغل|المدير|الإدارة|الادارة|الزملاء/i)) { it.area = "work"; it.branch = "SANS"; }
+    const bmap = [[/waga|واقا|واجا|وقا/i, "WAGA"], [/تحميرة|تحميره|فرن/, "تحميرة فرن"], [/تاجر حكيم/, "تاجر حكيم"], [/بيت البركة|بيت البركه/, "بيت البركة"], [/الهندسة|الهندسه/, "الهندسة المحترفة"]];
+    for (const [re, b] of bmap) if (re.test(p)) { it.area = "biz"; it.branch = b; }
+    if (it.area === "pers" && has(p, /البيت|الأولاد|الاولاد|العيال|زوجتي|المدام|أهلي|اهلي|الوالد|الوالدة|أمي|امي|أبوي|ابوي|المقاضي|السباك|الكهربائي/)) it.area = "fam";
+    if (has(p, /كبيرة|كبيره|مشروع|خطة|خطه|تقرير|دراسة/)) it.size = "big";
+    const dt = [[/تغريدة|تغريده|تويت/, "تغريدة"], [/منشور|بوست/, "منشور"], [/ايميل|إيميل|بريد/, "بريد"], [/خطاب/, "خطاب"], [/خطة|خطه/, "خطة"], [/تقرير/, "تقرير"], [/أجندة|اجندة|اجنده/, "أجندة اجتماع"]];
+    for (const [re, t] of dt) if (re.test(p)) { it.canDo = true; it.doType = t; break; }
+    const t0 = today(); const days = [];
+    if (/بعد\s*بكر[ةه]/.test(p)) days.push(addDays(t0, 2));
+    else if (/بكر[ةه]|غد[اًا]|باكر/.test(p)) days.push(addDays(t0, 1));
+    if (/(^|\s)اليوم|الحين/.test(p)) days.push(t0);
+    const wdRe = [/الأحد|الاحد|احد/, /الإثنين|الاثنين|اثنين|الإثنين/, /الثلاثاء|الثلاثا|ثلاثاء/, /الأربعاء|الاربعاء|اربعاء|الاربعا/, /الخميس|خميس/, /الجمعة|الجمعه|جمعة/, /السبت|سبت/];
+    wdRe.forEach((re, g) => { if (re.test(p)) { for (let i = 0; i < 14; i++) { const d = addDays(t0, i); if (parseISO(d).getDay() === g) { days.push(d); break; } } } });
+    const tm = p.match(/(?:الساع[ةه]\s*)(\d{1,2})(?:[:٫.](\d{2}))?\s*(?:و\s*(نص|ربع))?\s*(الصبح|صباح[اًا]?|الفجر|الظهر|العصر|المغرب|العشاء|الليل|بالليل|مساء[ًا]?|م\b|ص\b)?/);
+    if (tm) {
+      let h = +tm[1], m = tm[2] ? +tm[2] : tm[3] === "نص" ? 30 : tm[3] === "ربع" ? 15 : 0; const q = tm[4] || "";
+      if (/الظهر/.test(q) && h < 12) h = h < 6 ? h + 12 : 12;
+      else if (/العصر|المغرب|العشاء|الليل|مساء|م/.test(q) && h < 12) h += 12;
+      else if (!q && h >= 1 && h <= 6) h += 12;
+      it.time = `${pad(h % 24)}:${pad(m)}`;
+    }
+    if (it.kind === "meeting") { if (days.length) it.date = days[0]; }
+    else it.days = [...new Set(days)];
+    let tt = p;
+    if (tm) tt = tt.replace(tm[0], " ");
+    tt = tt.replace(/بعد\s*بكر[ةه]|بكر[ةه]|باكر|(?:^|\s)اليوم|الحين/g, " ").replace(/(?:يوم\s*)?(?:ال)?(?:أحد|احد|إثنين|اثنين|ثلاثاء|ثلاثا|أربعاء|اربعاء|اربعا|خميس|جمعة|جمعه|سبت)(?:\s*و)?/g, " ").replace(/\s+(?:و|في)\s*$/, "").replace(/\s{2,}/g, " ").trim();
+    it.title = (tt || p).replace(/^(?:و|ثم)\s*/, "").replace(/^(?:لازم|ابي|أبي|ابغى|أبغى|ودي|أبغا|ابغا)\s+/, "").trim();
+    if (it.title.length) it.title = it.title[0] + it.title.slice(1);
+    return normalize(it);
+  });
+}
+
+/* ---------- adding items ---------- */
+async function addFromReview() {
+  const forms = [...document.querySelectorAll("#review [data-form]")];
+  const now = Date.now();
+  for (const el of forms) {
+    const i = +el.dataset.form; const src = S.review[i] || {}; const f = readForm(el);
+    if (!f.title && !f.text) continue;
+    if (f.kind === "note") {
+      const sec = f.noteSection || "general";
+      const id = newId();
+      await put("notes", id, { section: sec, project: sec === "project" ? (f.noteProject || PROJECTS[0].key) : (f.noteProject || ""), text: f.text || f.title, title: f.title, createdAt: now });
+      if (sec !== "project" && sec !== "general") enrichNote(id, sec, f.text || f.title);
+      continue;
+    }
+    const id = newId();
+    const doc = { kind: f.kind, title: f.title, area: f.area, branch: f.branch, size: f.size, days: f.kind === "task" ? f.days : [], createdAt: now, done: false,
+      canDo: !!src.canDo, doType: src.doType || "" };
+    if (f.kind === "meeting") Object.assign(doc, { date: f.date, time: f.time, duration: f.duration, location: f.location, cal: { status: "none" } });
+    await put("items", id, doc);
+    if (f.kind === "meeting" && f.date && f.time) calCreate(id, { ...doc, id });
+  }
+  S.review = null; $("#dump").value = ""; renderReview(); toast("انضافت");
+}
+
+/* ---------- Google Calendar ---------- */
+function endOf(date, time, dur) {
+  const [y, m, d] = date.split("-").map(Number); const [h, mi] = time.split(":").map(Number);
+  const dt = new Date(y, m - 1, d, h, mi + (Number(dur) || 60));
+  return `${iso(dt)}T${pad(dt.getHours())}:${pad(dt.getMinutes())}:00`;
+}
+function findEventId(p) {
+  if (!p) return null;
+  if (typeof p === "string") { try { p = JSON.parse(p); } catch (e) { const m = p.match(/(?:event[_ ]?id|"id")\s*["':=\s]+([A-Za-z0-9_-]{6,})/i); return m ? m[1] : null; } }
+  const seen = new Set();
+  const walk = o => {
+    if (!o || typeof o !== "object" || seen.has(o)) return null; seen.add(o);
+    for (const k of ["eventId", "id"]) if (typeof o[k] === "string" && o[k].length > 4) return o[k];
+    for (const k of ["event", "data", "result", "item"]) { const r = walk(o[k]); if (r) return r; }
+    for (const k in o) { const r = walk(o[k]); if (r) return r; }
+    return null;
+  };
+  return walk(p);
+}
+function calErr(e) {
+  const c = e?.code;
+  if (c === "server_not_connected") return "أضف Google Calendar من إعدادات claude.ai ← الموصلات";
+  if (c === "needs_reauth") return "أعد ربط Google Calendar من إعدادات claude.ai ← الموصلات";
+  if (c === "not_in_manifest" || c === "approval_required") return "الدفتر يحتاج إذنك للوصول للتقويم";
+  if (c === "server_unavailable") return "التقويم ما رد الحين، جرّب بعد شوي";
+  return "ما قدرت أضيفه للتقويم";
+}
+function meetDesc(t) { return `من دفتر مهام أبو مالك · ${AREAS[t.area]?.label || ""}${t.branch ? " · " + t.branch : ""}`; }
+async function calCreate(id, t) {
+  if (!mcp) { await patch("items", id, { cal: { status: "none" } }); return; }
+  if (!t.date || !t.time) { toast("حدّد التاريخ والوقت أولاً"); return; }
+  try {
+    const res = await mcp.callTool(CAL, "create_event", {
+      summary: t.title, startTime: `${t.date}T${t.time}:00`, endTime: endOf(t.date, t.time, t.duration),
+      description: meetDesc(t), overrideReminders: [{ method: "popup", minutes: 15 }],
+      ...(t.location ? { location: t.location } : {}),
+    });
+    const eid = findEventId(res.payload ?? res.structuredContent ?? res.content?.[0]?.text);
+    await patch("items", id, { cal: { status: eid ? "added" : "none", id: eid || "" } });
+    toast(eid ? "انضاف للتقويم مع تنبيه قبل ١٥ دقيقة" : "انضاف للتقويم، لكن ما قدرت أربطه للتعديل لاحقاً");
+  } catch (e) { await patch("items", id, { cal: { status: "none", err: e?.code || "x" } }); toast(calErr(e)); }
+}
+async function calUpdate(t) {
+  if (!mcp || !t.cal?.id) return;
+  try {
+    await mcp.callTool(CAL, "update_event", { eventId: t.cal.id, summary: t.title, startTime: `${t.date}T${t.time}:00`, endTime: endOf(t.date, t.time, t.duration), location: t.location || "", overrideReminders: [{ method: "popup", minutes: 15 }] });
+    toast("تعدّل في التقويم");
+  } catch (e) { toast(calErr(e).replace("أضيفه", "أعدّله في")); }
+}
+async function calDelete(t) {
+  if (!mcp || !t.cal?.id) return true;
+  try { await mcp.callTool(CAL, "delete_event", { eventId: t.cal.id }); return true; }
+  catch (e) { toast("انحذف من الدفتر، لكن احذفه من التقويم يدوياً: " + calErr(e)); return false; }
+}
+
+/* ---------- today: lists ---------- */
+function taskRow(t) {
+  const live = t.active && t.runStart;
+  const s = secsToday(t) + Object.entries(t.timeLog || {}).filter(([d]) => d !== today()).reduce((a, [, v]) => a + v, 0);
+  const conf = S.confirm === t.id ? `<div class="confirm"><p>تحذف هذه المهمة نهائياً؟</p><button class="btn danger sm" data-act="delYes" data-id="${t.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  return `<div><div class="it ${t.active ? "on" : ""}">
+    <button class="play ${live ? "live" : ""}" data-act="${live ? "pause" : "start"}" data-id="${t.id}" aria-label="${live ? "إيقاف مؤقت" : "ابدأ العدّاد"}">${live ? IC.pause : IC.play}</button>
+    <div class="main"><span class="ttl" data-act="edit" data-id="${t.id}">${esc(t.title)}</span>
+      <div class="meta">${statusChip(t)}${S.filter === "all" || S.filter !== t.area || !t.branch ? areaChip(t) : `<span class="chip">${esc(t.branch)}</span>`}${s > 59 ? `<span class="small muted num">${fmtDur(s)}</span>` : ""}</div></div>
+    <button class="icon-btn" data-act="done" data-id="${t.id}" aria-label="تم">${IC.check}</button>
+    <button class="icon-btn" data-act="askDel" data-id="${t.id}" aria-label="احذف">${IC.trash}</button>
+  </div>${conf}</div>`;
+}
+function filtered(list) {
+  return list.filter(t => (S.filter === "all" || t.area === S.filter) && (!S.branch || t.branch === S.branch));
+}
+function sortTasks(a, b) {
+  const sa = taskStatus(a), sb = taskStatus(b);
+  if (sa.ord !== sb.ord) return sa.ord - sb.ord;
+  if (sa.k === "late") return sb.n - sa.n;
+  if (sa.k === "next") return sa.key < sb.key ? -1 : sa.key > sb.key ? 1 : 0;
+  return (a.createdAt || 0) - (b.createdAt || 0);
+}
+function renderToday() {
+  renderHeader();
+  // running
+  const r = S.items.find(x => x.active && !x.done);
+  $("#running").innerHTML = r ? `<div class="running" aria-live="polite">
+    <div class="row" style="justify-content:space-between"><span class="lbl">${r.runStart ? "شغّالة الآن" : "موقوفة مؤقتاً"}</span>${areaChip(r)}</div>
+    <div class="ttl">${esc(r.title)}</div>
+    <div class="t num" id="runClock">${fmtClock(secsToday(r))}</div>
+    <div class="row">${r.runStart ? `<button class="btn" data-act="pause" data-id="${r.id}">${IC.pause} إيقاف مؤقت</button>` : `<button class="btn" data-act="start" data-id="${r.id}">${IC.play} كمّل</button>`}<button class="btn pri" data-act="done" data-id="${r.id}">${IC.check} تم</button></div>
+    <span class="small" style="color:var(--deep-muted)">الوقت المحسوب اليوم</span>
+  </div>` : "";
+  // meetings
+  const td = today();
+  const ms = S.items.filter(x => x.kind === "meeting" && !x.done && (!x.date || x.date >= td) && (!x.date || x.date <= addDays(td, 14)))
+    .sort((a, b) => ((a.date || "0") + (a.time || "")).localeCompare((b.date || "0") + (b.time || "")));
+  $("#meetCount").textContent = ms.length ? ar(ms.length) : "";
+  $("#meetings").innerHTML = ms.length ? ms.map(meetRow).join("") : `<div class="empty">ما فيه اجتماعات قادمة. قل «اجتماع مع … بكرة الساعة ١٠» في المربع فوق.</div>`;
+  // habits & todos
+  renderHabits(); renderTodos();
+  // filters
+  $("#filters").innerHTML = [["all", "الكل"], ...AREA_KEYS.map(k => [k, AREAS[k].label])].map(([k, l]) => `<button class="${S.filter === k ? "on" : ""} ${k !== "all" ? "a-" + k : ""}" data-act="filter" data-v="${k}">${k !== "all" ? '<span class="dot"></span>' : ""}${l}</button>`).join("");
+  const bs = S.filter !== "all" ? AREAS[S.filter].branches : [];
+  $("#branchFilters").hidden = bs.length < 2;
+  $("#branchFilters").innerHTML = bs.length < 2 ? "" : [`<button class="${!S.branch ? "on" : ""}" data-act="branch" data-v="">كل الفروع</button>`, ...bs.map(b => `<button class="${S.branch === b ? "on" : ""}" data-act="branch" data-v="${esc(b)}">${esc(b)}</button>`)].join("");
+  // tasks
+  const open = filtered(S.items.filter(x => x.kind === "task" && !x.done)).sort(sortTasks);
+  const big = open.filter(x => x.size === "big"), small = open.filter(x => x.size !== "big");
+  $("#bigCount").textContent = big.length ? ar(big.length) : "";
+  $("#smallCount").textContent = small.length ? ar(small.length) : "";
+  $("#bigList").innerHTML = big.length ? big.map(taskRow).join("") : `<div class="empty">ما فيه مهام كبيرة${S.filter !== "all" ? " في هذه الجهة" : ""}.</div>`;
+  $("#smallList").innerHTML = small.length ? small.map(taskRow).join("") : `<div class="empty">ما فيه مهام صغيرة${S.filter !== "all" ? " في هذه الجهة" : ""}.</div>`;
+  // can do
+  const can = filtered(S.items.filter(x => x.canDo && !x.done && x.kind !== "todo"));
+  $("#canSec").hidden = !can.length;
+  $("#canCount").textContent = can.length ? ar(can.length) : "";
+  $("#canList").innerHTML = can.map(t => `<div class="it"><div class="main"><span class="ttl" data-act="doIt" data-id="${t.id}">${esc(t.title)}</span></div><span class="chip">${esc(t.doType || "مسودة")}</span>${t.draft ? '<span class="chip st-today">جاهزة</span>' : ""}<button class="btn sm pri" data-act="doIt" data-id="${t.id}">سوّها</button></div>`).join("");
+  // done today
+  const dn = S.items.filter(x => x.done && x.doneAt && iso(new Date(x.doneAt)) === td && x.kind !== "todo");
+  $("#doneCount").textContent = ar(dn.length);
+  $("#doneList").innerHTML = dn.length ? dn.map(t => `<div class="it done"><div class="main"><span class="ttl">${esc(t.title)}</span><div class="meta">${areaChip(t)}${secsToday(t) > 59 ? `<span class="small muted">${fmtDur(secsToday(t))}</span>` : ""}</div></div><button class="btn sm ghost" data-act="undo" data-id="${t.id}">إرجاع</button></div>`).join("") : `<div class="empty">لسّا ما أنجزت شي اليوم.</div>`;
+}
+function meetRow(t) {
+  const conf = S.confirm === t.id ? `<div class="confirm"><p>${t.cal?.id ? "تحذف الاجتماع من الدفتر والتقويم؟" : "تحذف هذا الاجتماع نهائياً؟"}</p><button class="btn danger sm" data-act="delYes" data-id="${t.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  const calSt = t.cal?.status === "added" ? `<span class="cal-ok">${IC.cal} في التقويم</span>` : `<span class="cal-no">غير مضاف</span><button class="btn sm ghost" data-act="calAdd" data-id="${t.id}">أضف للتقويم</button>`;
+  return `<div><div class="mt">
+    <div class="when">${t.time ? `<b class="num">${fmtTime(t.time).split(" ")[0]}</b><span>${fmtTime(t.time).split(" ")[1]}</span>` : `<b style="color:var(--danger)">؟</b><span>الوقت</span>`}</div>
+    <div class="main grow" style="display:flex;flex-direction:column;gap:4px">
+      <span class="ttl" style="font-weight:500;cursor:pointer" data-act="edit" data-id="${t.id}">${esc(t.title)}</span>
+      <div class="meta row wrapr">${t.date ? `<span class="chip ${t.date === today() ? "st-today" : ""}">${dayLabel(t.date)}</span>` : `<button class="chip st-late" data-act="edit" data-id="${t.id}">التاريخ ناقص</button>`}
+        <span class="small muted">${ar(t.duration || 60)} د${t.location ? " · " + esc(t.location) : ""}</span>${areaChip(t)}</div>
+      <div class="row wrapr">${calSt}</div>
+    </div>
+    <button class="icon-btn" data-act="done" data-id="${t.id}" aria-label="تم">${IC.check}</button>
+    <button class="icon-btn" data-act="askDel" data-id="${t.id}" aria-label="احذف">${IC.trash}</button>
+  </div>${conf}</div>`;
+}
+
+/* ---------- habits ---------- */
+function habitList() { return S.meta.habits?.list || []; }
+function renderHabits() {
+  const hs = habitList(), log = S.habitlog[today()]?.done || {};
+  const week = h => { let n = 0; for (let i = 0; i < 7; i++) if (S.habitlog[addDays(today(), -i)]?.done?.[h.id]) n++; return n; };
+  $("#habits").innerHTML = hs.length ? hs.map(h => `<button class="habit ${log[h.id] ? "on" : ""}" data-act="${S.habitEdit ? "habitDel" : "habit"}" data-id="${h.id}">
+      ${S.habitEdit ? `<span class="x">${IC.x}</span>` : `<span class="check ${log[h.id] ? "on" : ""}">${log[h.id] ? IC.check : ""}</span>`}
+      <span class="nm">${esc(h.name)}<br><span class="wk num">${ar(week(h))} من ٧ أيام</span></span></button>`).join("")
+    : `<div class="empty" style="grid-column:1/-1">ما فيه عادات بعد. اضغط «تعديل» وأضف أول عادة.</div>`;
+  $("#habitAdd").hidden = !S.habitEdit;
+  $("#habitEditBtn").textContent = S.habitEdit ? "انتهيت" : "تعديل";
+}
+async function toggleHabit(id) {
+  const d = today(), cur = S.habitlog[d]?.done || {};
+  await put("habitlog", d, { done: { ...cur, [id]: !cur[id] } });
+}
+/* ---------- todos ---------- */
+function renderTodos() {
+  const td = today();
+  const ts = S.items.filter(x => x.kind === "todo" && (!x.done || (x.doneAt && iso(new Date(x.doneAt)) === td))).sort((a, b) => (a.done - b.done) || (a.createdAt - b.createdAt));
+  $("#todoCount").textContent = ts.filter(x => !x.done).length ? ar(ts.filter(x => !x.done).length) : "";
+  $("#todos").innerHTML = ts.map(t => `<div class="it ${t.done ? "done" : ""}"><button class="check ${t.done ? "on" : ""}" data-act="${t.done ? "undo" : "done"}" data-id="${t.id}" aria-label="تم">${t.done ? IC.check : ""}</button><div class="main"><span class="ttl">${esc(t.title)}</span></div><button class="icon-btn" data-act="delNow" data-id="${t.id}" aria-label="احذف">${IC.x}</button></div>`).join("");
+}
+
+/* ---------- timer ---------- */
+async function startTimer(id) {
+  for (const o of S.items.filter(x => x.id !== id && (x.active || x.runStart))) await stopTimer(o, { active: false });
+  await patch("items", id, { active: true, runStart: Date.now() });
+}
+async function stopTimer(t, extra = {}) {
+  const upd = { ...extra };
+  if (t.runStart) { const d = today(); upd.timeLog = { [d]: ((t.timeLog || {})[d] || 0) + (Date.now() - t.runStart) / 1000 }; upd.runStart = null; }
+  await patch("items", t.id, upd);
+}
+
+/* ---------- sheets ---------- */
+function openSheet(html, onMount) {
+  closeSheet();
+  const back = document.createElement("div"); back.className = "sheet-back"; back.id = "sheetBack";
+  back.innerHTML = `<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  back.addEventListener("click", e => { if (e.target === back) closeSheet(); });
+  document.body.appendChild(back); onMount && onMount(back);
+}
+function closeSheet() { $("#sheetBack")?.remove(); }
+function openEdit(id) {
+  const t = item(id); if (!t) return;
+  openSheet(`<h2>تعديل</h2><div class="sec" data-form="edit" data-kind="${t.kind}">${formHTML(t)}</div>
+    <div class="row"><button class="btn pri" data-act="saveEdit" data-id="${id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`);
+}
+async function saveEdit(id) {
+  const t = item(id); const el = document.querySelector('#sheetBack [data-form]'); if (!t || !el) return;
+  const f = readForm(el);
+  if (f.kind === "note") {
+    await put("notes", newId(), { section: f.noteSection || "general", project: f.noteProject || "", text: f.text || f.title, title: f.title, createdAt: Date.now() });
+    if (t.cal?.id) await calDelete(t);
+    await del("items", id); closeSheet(); toast("تحوّلت لملاحظة"); return;
+  }
+  const upd = { kind: f.kind, title: f.title, area: f.area, branch: f.branch, size: f.size, days: f.kind === "task" ? f.days : [] };
+  if (f.kind === "meeting") Object.assign(upd, { date: f.date, time: f.time, duration: f.duration, location: f.location });
+  await patch("items", id, upd); closeSheet();
+  const nt = { ...t, ...upd };
+  if (f.kind === "meeting") {
+    const changed = t.date !== f.date || t.time !== f.time || t.duration !== f.duration || t.title !== f.title || t.location !== f.location;
+    if (t.cal?.id && changed && f.date && f.time) calUpdate(nt);
+    else if (!t.cal?.id && f.date && f.time && (t.kind !== "meeting" || changed)) calCreate(id, nt);
+  } else if (t.kind === "meeting" && t.cal?.id) { if (await calDelete(t)) await patch("items", id, { cal: { status: "none", id: "" } }); }
+}
+async function deleteItem(id) {
+  const t = item(id); if (!t) return;
+  if (t.kind === "meeting" && t.cal?.id) await calDelete(t);
+  S.confirm = null; await del("items", id);
+}
+
+/* ---------- "I can do it for you" ---------- */
+function styleFor(t) {
+  if (t.area === "work") return "أسلوب رسمي مؤسسي بعربية فصحى رصينة تليق بمراسلات مؤسسة (SANS)، مع عبارات افتتاح وختام رسمية.";
+  if (t.area === "biz") return `أسلوب عملي مباشر وواضح يناسب مشروعاً تجارياً (${t.branch || "مشروع تجاري"})، جمل قصيرة، تركيز على الفائدة والإجراء.`;
+  return "أسلوب ودي بسيط وواضح.";
+}
+function openDo(id) {
+  const t = item(id); if (!t) return;
+  openSheet(`<h2>${esc(t.doType || "مسودة")}: ${esc(t.title)}</h2>
+    <div class="row">${areaChip(t)}</div>
+    <label class="f">التفاصيل<textarea id="doDetails" rows="4" placeholder="أملِ التفاصيل: لمن، وش الهدف، أي نقاط لازم تنذكر"></textarea></label>
+    <div class="row"><button class="btn pri" data-act="doGen" data-id="${id}">جهّز المسودة</button><button class="btn ghost" data-act="closeSheet">إغلاق</button></div>
+    <div class="draft" id="doOut" ${t.draft ? "" : "hidden"}>${esc(t.draft || "")}</div>
+    <div class="row" id="doActs" ${t.draft ? "" : "hidden"}><button class="btn" data-act="copy" data-src="doOut">نسخ</button><button class="btn ghost" data-act="markDone" data-id="${id}">تم، انقلها للمنجز</button></div>`);
+}
+let genCtl = null;
+async function genDraft(id) {
+  const t = item(id); if (!t) return;
+  if (!sample) { toast("كلود غير متاح في هذا العرض. افتح الدفتر من claude.ai."); return; }
+  const details = $("#doDetails").value.trim();
+  const out = $("#doOut"); out.hidden = false; out.textContent = "أكتب…";
+  const prompt = `اكتب ${t.doType || "مسودة"} لأبو مالك.
+المهمة: ${t.title}
+الجهة: ${AREAS[t.area]?.label || ""}${t.branch ? " — " + t.branch : ""}
+الأسلوب: ${styleFor(t)}
+تفاصيل من أبو مالك (مُملاة بالصوت وقد يكون فيها أخطاء إملائية): ${details || "لا توجد تفاصيل إضافية."}
+
+قواعد صارمة:
+1. ممنوع اختلاق أي اسم شخص أو جهة أو رقم أو مبلغ أو تاريخ أو وقت أو مكان غير مذكور صراحة في التفاصيل أو المهمة.
+2. ضع مكان كل معلومة ناقصة فراغاً بين قوسين مربعين يصف المطلوب، مثل [اسم المستلم] أو [التاريخ].
+3. اكتب المسودة جاهزة للنسخ مباشرة، بدون مقدمة أو شرح منك.
+4. اختم بسطر فارغ ثم سطر يبدأ بـ «أحتاج منك:» يليه ما وضعته بين الأقواس مفصولاً بفواصل، أو «أحتاج منك: لا شيء» إن لم يوجد.`;
+  genCtl?.abort?.(); genCtl = new AbortController();
+  try {
+    const r = await sample(prompt, { cache: false, signal: genCtl.signal, onText: ({ text }) => { out.textContent = text; } });
+    out.textContent = r.text; $("#doActs").hidden = false;
+    await patch("items", id, { draft: r.text });
+  } catch (e) {
+    if (e?.code === "cancelled") return;
+    out.textContent = e?.text || ""; toast(e?.code === "rate_limited" ? "كلود مشغول، جرّب بعد دقيقة." : "ما قدرت أجهّز المسودة. جرّب مرة ثانية.");
+  }
+}
+async function copyFrom(elId) {
+  const el = document.getElementById(elId); const txt = el?.textContent || el?.value || "";
+  try { await navigator.clipboard.writeText(txt); toast("انسخت"); }
+  catch (e) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("النص محدد، انسخه يدوياً"); }
+}
+
+/* ---------- ask Claude ---------- */
+async function askClaude() {
+  const q = $("#askQ").value.trim(); if (!q) return;
+  const out = $("#askA"); out.hidden = false;
+  if (!sample) { out.textContent = "كلود غير متاح في هذا العرض. افتح الدفتر من claude.ai."; return; }
+  out.textContent = "أفكر…";
+  const open = S.items.filter(x => !x.done).map(t => ({ t: t.title, نوع: t.kind, جهة: AREAS[t.area]?.label, فرع: t.branch || undefined, حجم: t.size, حالة: t.kind === "task" ? taskStatus(t).label : undefined, تاريخ: t.date || undefined, وقت: t.time || undefined }));
+  const done = S.items.filter(x => x.done).slice(-40).map(t => t.title);
+  const notes = S.notes.slice(-80).map(n => ({ قسم: n.section, مشروع: n.project || undefined, نص: (n.text || "").slice(0, 300) }));
+  const prompt = `أنت مساعد أبو مالك الشخصي. هذا دفتره (اليوم ${today()} ${dayName(today())}):
+المهام والاجتماعات المفتوحة: ${JSON.stringify(open)}
+آخر ما أنجز: ${JSON.stringify(done)}
+ملاحظاته: ${JSON.stringify(notes)}
+
+سؤاله: ${q}
+
+أجب بالعربية باختصار ووضوح، اعتماداً على الدفتر فقط. لا تخترع مهاماً أو أرقاماً غير موجودة.`;
+  try { const r = await sample(prompt, { cache: false, onText: ({ text }) => out.textContent = text }); out.textContent = r.text; }
+  catch (e) { out.textContent = e?.code === "rate_limited" ? "كلود مشغول، جرّب بعد دقيقة." : "ما قدرت أجاوب الحين. جرّب مرة ثانية."; }
+}
+
+/* ---------- projects ---------- */
+function renderProjects() {
+  const body = $("#projBody"); $("#projBack").hidden = !S.project;
+  if (!S.project) {
+    $("#projTitle").textContent = "المشاريع";
+    body.innerHTML = `<div class="pgrid">${PROJECTS.map(p => {
+      const open = S.items.filter(t => !t.done && t.kind !== "todo" && (p.area === "pers" || p.area === "fam" ? t.area === p.area : t.branch === p.key)).length;
+      const ns = S.notes.filter(n => n.section === "project" && n.project === p.key).length;
+      return `<button class="pcard a-${p.area}" data-act="proj" data-v="${esc(p.key)}"><span class="small muted">${AREAS[p.area].label}</span><span class="nm">${esc(p.key)}</span><span class="small muted num">${ar(open)} مفتوحة · ${ar(ns)} ملاحظة</span></button>`;
+    }).join("")}</div>`;
+    return;
+  }
+  const p = PROJECTS.find(x => x.key === S.project); if (!p) { S.project = null; return renderProjects(); }
+  $("#projTitle").textContent = p.key;
+  const tasks = S.items.filter(t => !t.done && t.kind !== "todo" && (p.area === "pers" || p.area === "fam" ? t.area === p.area : t.branch === p.key)).sort(sortTasks);
+  const notes = S.notes.filter(n => n.section === "project" && n.project === p.key).sort((a, b) => b.createdAt - a.createdAt);
+  const existing = $("#projNote")?.value || "";
+  body.innerHTML = `
+    <div class="sec"><h2>ملاحظات وتعليقات</h2>
+      <div class="card sec"><textarea id="projNote" rows="3" placeholder="ملاحظة أو تعليق على ${esc(p.key)}">${esc(existing)}</textarea><div><button class="btn pri" data-act="projNoteAdd">احفظ الملاحظة</button></div></div>
+      <div class="list">${notes.length ? notes.map(noteRow).join("") : `<div class="empty">ما فيه ملاحظات على ${esc(p.key)} بعد.</div>`}</div>
+    </div>
+    <div class="sec"><div class="sec-h"><h2>المهام المفتوحة</h2><span class="count">${ar(tasks.length)}</span></div>
+      <div class="list">${tasks.length ? tasks.map(t => t.kind === "meeting" ? meetRow(t) : taskRow(t)).join("") : `<div class="empty">ما فيه مهام مفتوحة.</div>`}</div></div>`;
+}
+function noteRow(n) {
+  const conf = S.confirm === "n:" + n.id ? `<div class="confirm" style="margin:0 -12px -12px"><p>تحذف هذه الملاحظة نهائياً؟</p><button class="btn danger sm" data-act="noteDelYes" data-id="${n.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  return `<div class="note"><div class="txt">${esc(n.text)}</div><div class="foot"><span class="grow">${new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "short" }).format(new Date(n.createdAt || Date.now()))}</span><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>${conf}</div>`;
+}
+
+/* ---------- notebook ---------- */
+function setNoteSec(v) {
+  S.noteSec = v; S.lamKind = "all";
+  document.querySelectorAll("#noteSeg button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  $("#noteSource").hidden = !(v === "audio" || v === "reading");
+  $("#noteText").placeholder = { lamasat: "لغز، بيت شعر، قصة، حكمة…", audio: "وش سمعت واستفدت منه؟", reading: "وش قرأت واستفدت منه؟", general: "ملاحظة عامة" }[v];
+  $("#noteHint").textContent = v === "general" ? "" : "كلود يصنّفها ويستخلص الفائدة";
+  renderNotes();
+}
+async function enrichNote(id, section, text) {
+  if (!sample) return;
+  try {
+    let prompt;
+    if (section === "lamasat") prompt = `صنّف هذا النص الذي حفظه أبو مالك ضمن "لمسات". النص قد يكون مملى بالصوت وفيه أخطاء إملائية.
+أعد JSON فقط: {"kind":"riddle|poem|story|wisdom|quote|joke|fact|other","title":"عنوان قصير جداً","body":"النص منقحاً إملائياً دون تغيير معناه أو كلماته الأصلية قدر الإمكان؛ للشعر ضع كل شطر في سطر","answer":"جواب اللغز إن كان مذكوراً في النص وإلا فارغ"}
+النص: """${text}"""`;
+    else prompt = `هذه تدوينة ${section === "audio" ? "من شيء سمعه" : "من شيء قرأه"} أبو مالك (قد تكون مملاة بالصوت). أعد JSON فقط: {"title":"عنوان قصير","takeaway":"الفائدة العملية في جملة واحدة","tags":["وسم","وسم"]} بدون اختلاق معلومات غير موجودة.
+النص: """${text}"""`;
+    const r = await sample.json(prompt, { modelTier: "quick" });
+    const upd = { title: String(r.title || "").slice(0, 80), classified: true };
+    if (section === "lamasat") { upd.kind = LAM_KINDS[r.kind] ? r.kind : "other"; if (r.body) upd.body = String(r.body); if (r.answer) upd.answer = String(r.answer); }
+    else { upd.takeaway = String(r.takeaway || ""); upd.tags = Array.isArray(r.tags) ? r.tags.slice(0, 5).map(String) : []; }
+    await patch("notes", id, upd);
+  } catch (e) { /* stays unclassified; can be retried */ }
+}
+async function saveNote() {
+  const text = $("#noteText").value.trim(); if (!text) return;
+  const id = newId(), sec = S.noteSec;
+  await put("notes", id, { section: sec, text, source: $("#noteSource").value.trim(), createdAt: Date.now() });
+  $("#noteText").value = ""; $("#noteSource").value = "";
+  toast("انحفظت"); if (sec !== "general") enrichNote(id, sec, text);
+}
+function renderNotes() {
+  const q = $("#noteSearch").value.trim();
+  let ns = S.notes.filter(n => n.section === S.noteSec).sort((a, b) => b.createdAt - a.createdAt);
+  if (q) ns = ns.filter(n => [n.text, n.title, n.body, n.source, n.takeaway, (n.tags || []).join(" ")].join(" ").includes(q));
+  const kinds = $("#lamKinds");
+  if (S.noteSec === "lamasat") {
+    const present = Object.keys(LAM_KINDS).filter(k => ns.some(n => n.kind === k));
+    const un = ns.filter(n => !n.classified).length;
+    kinds.hidden = !present.length && !un;
+    kinds.innerHTML = [`<button class="${S.lamKind === "all" ? "on" : ""}" data-act="lamKind" data-v="all">الكل ${ar(ns.length)}</button>`,
+      ...present.map(k => `<button class="${S.lamKind === k ? "on" : ""}" data-act="lamKind" data-v="${k}">${LAM_KINDS[k]} ${ar(ns.filter(n => n.kind === k).length)}</button>`),
+      un && sample ? `<button data-act="classifyAll">صنّف الباقي (${ar(un)})</button>` : ""].join("");
+    if (S.lamKind !== "all") ns = ns.filter(n => n.kind === S.lamKind);
+  } else { kinds.hidden = true; kinds.innerHTML = ""; }
+  const empty = { lamasat: "احفظ أول لمسة: لغز، بيت شعر، قصة قصيرة أو حكمة. كلود يصنّفها لك.", audio: "سجّل أول فائدة سمعتها من بودكاست أو محاضرة أو مجلس.", reading: "سجّل أول فائدة من كتاب أو مقال.", general: "ما فيه ملاحظات عامة بعد." }[S.noteSec];
+  $("#notesBody").innerHTML = ns.length ? ns.map(lamCard).join("") : `<div class="empty card">${q ? "ما لقيت شي بهذا البحث." : empty}</div>`;
+}
+function lamCard(n) {
+  const k = n.section === "lamasat" ? (n.kind || "other") : "";
+  const cls = { poem: "k-poem", wisdom: "k-wisdom", quote: "k-quote", riddle: "k-riddle", story: "k-story" }[k] || "";
+  const txt = n.body || n.text;
+  const conf = S.confirm === "n:" + n.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الملاحظة نهائياً؟</p><button class="btn danger sm" data-act="noteDelYes" data-id="${n.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  return `<article class="lam ${cls}">
+    <div class="row"><span class="kind grow">${k ? (n.classified ? LAM_KINDS[k] : "لم تُصنّف بعد") : esc(n.source || "")}${n.title ? " · " + esc(n.title) : ""}</span><button class="icon-btn" data-act="noteDel" data-id="${n.id}" aria-label="احذف">${IC.trash}</button></div>
+    ${n.takeaway ? `<div class="take">${esc(n.takeaway)}</div>` : ""}
+    <div class="txt">${esc(txt).replace(/\n/g, "<br>")}</div>
+    ${k === "story" && txt.length > 280 ? `<button class="btn sm ghost" data-act="expand" style="align-self:flex-start">اقرأ كاملة</button>` : ""}
+    ${n.answer ? `<details><summary>الجواب</summary><div>${esc(n.answer)}</div></details>` : ""}
+    ${(n.tags || []).length ? `<div class="row wrapr">${n.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : ""}
+    ${n.source && k ? `<span class="small muted">${esc(n.source)}</span>` : ""}
+    ${conf}
+  </article>`;
+}
+
+/* ---------- files ---------- */
+const extOf = (ct, name) => { const m = (name || "").match(/\.[a-z0-9]{2,5}$/i); if (m) return ""; return ct === "application/pdf" ? ".pdf" : ct === "image/png" ? ".png" : ct === "image/webp" ? ".webp" : ct === "image/heic" ? ".heic" : ".jpg"; };
+function allTags() { const m = {}; S.files.forEach(f => (f.tags || []).forEach(t => m[t] = (m[t] || 0) + 1)); return Object.keys(m).sort((a, b) => m[b] - m[a]); }
+function renderFiles() {
+  const n = $("#filesNotice");
+  if (!base) { n.hidden = false; n.textContent = "رفع الملفات يحتاج تفتح الدفتر من claude.ai وأنت مسجّل الدخول."; }
+  else if (!assets) { n.hidden = false; n.textContent = "رفع الملفات متاح لصاحب الدفتر فقط."; }
+  else n.hidden = true;
+  const tags = allTags();
+  $("#fileTags").innerHTML = tags.length ? [`<button class="${!S.fileTag ? "on" : ""}" data-act="fileTag" data-v="">الكل</button>`, ...tags.map(t => `<button class="${S.fileTag === t ? "on" : ""}" data-act="fileTag" data-v="${esc(t)}">${esc(t)}</button>`)].join("") : "";
+  const q = $("#fileSearch").value.trim();
+  let fs = S.files.slice().sort((a, b) => b.createdAt - a.createdAt);
+  if (S.fileTag) fs = fs.filter(f => (f.tags || []).includes(S.fileTag));
+  if (q) fs = fs.filter(f => (f.name + " " + (f.tags || []).join(" ")).includes(q));
+  $("#filesGrid").innerHTML = fs.length ? fs.map(f => {
+    const url = "/_blob/" + f.assetId; const img = (f.contentType || "").startsWith("image/");
+    const conf = S.confirm === "f:" + f.id ? `<div class="confirm" style="border-radius:0"><p>تحذف الملف نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+    return `<div class="fcard"><div class="thumb">${img ? `<img src="${url}" alt="${esc(f.name)}" loading="lazy">` : IC.pdf}</div>
+      <div class="b"><span class="nm">${esc(f.name)}</span>${(f.tags || []).length ? `<div class="row wrapr">${f.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a></div>
+      <div class="acts"><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div></div>${conf}</div>`;
+  }).join("") : `<div class="empty card" style="grid-column:1/-1">${S.files.length ? "ما لقيت ملف بهذا البحث." : "ارفع صور الهوية والرخص والسجلات والعقود هنا، وسمّها بالتصنيف اللي يناسبك عشان تلقاها بضغطة."}</div>`;
+}
+function renderUploadForm() {
+  const box = $("#uploadForm");
+  if (!S.pendingFiles.length) { box.innerHTML = ""; return; }
+  const tags = allTags();
+  box.innerHTML = `<div class="card sec review"><h2>تجهيز الرفع</h2>
+    ${S.pendingFiles.map((f, i) => `<label class="f">اسم الملف<input type="text" data-pf="${i}" value="${esc(f.name.replace(/\.[^.]+$/, ""))}"></label>`).join("")}
+    <label class="f">التصنيف (افصل بفاصلة)<input type="text" id="pfTags" placeholder="هوية، رخص، سجلات"></label>
+    ${tags.length ? `<div class="row wrapr">${tags.map(t => `<button class="chip" data-act="pfTag" data-v="${esc(t)}">+ ${esc(t)}</button>`).join("")}</div>` : ""}
+    <div class="row"><button class="btn pri" data-act="pfUpload" id="pfBtn">ارفع</button><button class="btn ghost" data-act="pfCancel">إلغاء</button></div></div>`;
+}
+const splitTags = s => [...new Set(s.split(/[,،\n]+/).map(x => x.trim()).filter(Boolean))];
+async function uploadPending() {
+  if (!assets || !base) { toast("الرفع غير متاح في هذا العرض"); return; }
+  const btn = $("#pfBtn"); btn.disabled = true; btn.textContent = "يرفع…";
+  const tags = splitTags($("#pfTags").value);
+  for (let i = 0; i < S.pendingFiles.length; i++) {
+    const file = S.pendingFiles[i]; const name = document.querySelector(`[data-pf="${i}"]`)?.value.trim() || file.name;
+    try {
+      const r = await assets.upload(file);
+      await put("files", newId(), { assetId: r.id, name, tags, contentType: r.contentType, size: r.sizeBytes, createdAt: Date.now() });
+    } catch (e) { toast(`ما انرفع «${name}»: ${e?.code === "too_large" ? "الملف أكبر من ٢٠ ميجا" : "جرّب مرة ثانية"}`); }
+  }
+  S.pendingFiles = []; renderUploadForm(); toast("انرفعت");
+}
+async function sendFile(id) {
+  const f = S.files.find(x => x.id === id); if (!f) return;
+  if (!downloads) { toast("اضغط «افتح» ثم شاركه من المتصفح للواتساب"); return; }
+  try {
+    const res = await fetch("/_blob/" + f.assetId); const blob = await res.blob();
+    await downloads.save({ filename: f.name + extOf(f.contentType, f.name), data: blob });
+    toast("اختر واتساب من قائمة المشاركة، أو أرفقه من الملفات");
+  } catch (e) { if (e?.code === "rate_limited") toast("فيه نافذة حفظ مفتوحة، أكملها أولاً"); else if (e?.code !== "declined") toast("ما قدرت أجهّز الملف. جرّب «افتح»."); }
+}
+function editFile(id) {
+  const f = S.files.find(x => x.id === id); if (!f) return;
+  openSheet(`<h2>تعديل الملف</h2><label class="f">الاسم<input type="text" id="efName" value="${esc(f.name)}"></label>
+    <label class="f">التصنيف (افصل بفاصلة)<input type="text" id="efTags" value="${esc((f.tags || []).join("، "))}"></label>
+    <div class="row"><button class="btn pri" data-act="fileSave" data-id="${id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`);
+}
+
+/* ---------- kitchen (encrypted vault) ---------- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(pass, saltB64) {
+  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: unb64(saltB64), iterations: 310000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function enc(key, obj) { const iv = crypto.getRandomValues(new Uint8Array(12)); const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(obj))); return { iv: b64(iv), ct: b64(ct) }; }
+async function dec(key, o) { const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(o.iv) }, key, unb64(o.ct)); return JSON.parse(new TextDecoder().decode(pt)); }
+let lockTimer = null;
+function touchVault() { clearTimeout(lockTimer); lockTimer = setTimeout(lockVault, 3 * 60 * 1000); }
+function lockVault() { S.vaultKey = null; S.revealed = {}; clearTimeout(lockTimer); renderKitchen(); }
+function renderKitchen() {
+  const box = $("#kitchen"), meta = S.meta.vault;
+  $("#lockBtn").hidden = !S.vaultKey;
+  if (!base) { box.innerHTML = `<div class="banner">وصفات البيت تحتاج تفتح الدفتر من claude.ai وأنت مسجّل الدخول.</div>`; return; }
+  if (!meta) {
+    box.innerHTML = `<div class="kitchen-hero"><h2>افتح مطبخك</h2>
+      <p class="muted small" style="margin:0">هنا تحفظ أرقامك السرية على شكل وصفات. اسم الطبخة يكون كناية تعرفها أنت (مثلاً «كبسة الأهلي» لتطبيق البنك)، والمقادير الحقيقية تنقفل بتشفير لا يُفك إلا بسر الطبخة. حتى كلود ما يقدر يقرأها.</p>
+      <label class="f">سر الطبخة<input type="password" id="vp1" autocomplete="new-password"></label>
+      <label class="f">أعد كتابته<input type="password" id="vp2" autocomplete="new-password"></label>
+      <p class="small" style="margin:0;color:var(--danger)">إذا نسيت سر الطبخة ما فيه طريقة لاسترجاع الوصفات.</p>
+      <div><button class="btn pri" data-act="vaultSetup">ابدأ</button></div></div>`;
+    return;
+  }
+  const list = S.vault.slice().sort((a, b) => (a.dish || "").localeCompare(b.dish || "", "ar"));
+  if (!S.vaultKey) {
+    box.innerHTML = `<div class="kitchen-hero"><h2>المطبخ مقفل</h2>
+      <label class="f">سر الطبخة<input type="password" id="vpu" autocomplete="current-password"></label>
+      <div><button class="btn pri" data-act="vaultUnlock">افتح</button></div></div>
+      <div class="sec">${list.map(v => `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span><span class="muted">${IC.lock}</span></div><span class="small muted">مقادير محفوظة</span></div>`).join("")}</div>`;
+    return;
+  }
+  touchVault();
+  box.innerHTML = `<details class="fold"><summary><span>وصفة جديدة</span><span class="small muted">+</span></summary>
+    <div class="body sec" style="padding:12px">
+      <label class="f">اسم الطبخة (كناية تعرفها)<input type="text" id="vDish" placeholder="مثل: كبسة الأهلي"></label>
+      <label class="f">التطبيق أو الموقع<input type="text" id="vApp"></label>
+      <label class="f">اسم المستخدم<input type="text" id="vUser" autocomplete="off"></label>
+      <label class="f">الرقم السري<input type="text" id="vSecret" autocomplete="off"></label>
+      <label class="f">ملاحظة<input type="text" id="vNote" autocomplete="off"></label>
+      <div><button class="btn pri" data-act="vaultAdd">احفظ الوصفة</button></div></div></details>
+    <div class="sec">${list.length ? list.map(v => {
+      const r = S.revealed[v.id];
+      const conf = S.confirm === "v:" + v.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الوصفة نهائياً؟</p><button class="btn danger sm" data-act="vaultDelYes" data-id="${v.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+      return `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span>
+        <button class="btn sm ghost" data-act="vaultReveal" data-id="${v.id}">${r ? "أخفِ" : "المقادير"}</button>
+        <button class="icon-btn" data-act="vaultDel" data-id="${v.id}" aria-label="احذف">${IC.trash}</button></div>
+        ${r ? `<dl class="ing">
+          ${r.app ? `<dt>التطبيق</dt><dd>${esc(r.app)}</dd><span></span>` : ""}
+          ${r.user ? `<dt>المستخدم</dt><dd id="vu-${v.id}">${esc(r.user)}</dd><button class="btn sm" data-act="copy" data-src="vu-${v.id}">نسخ</button>` : ""}
+          ${r.secret ? `<dt>الرقم</dt><dd id="vs-${v.id}">${esc(r.secret)}</dd><button class="btn sm" data-act="copy" data-src="vs-${v.id}">نسخ</button>` : ""}
+          ${r.note ? `<dt>ملاحظة</dt><dd>${esc(r.note)}</dd><span></span>` : ""}
+        </dl>` : ""}${conf}</div>`;
+    }).join("") : `<div class="empty card">ما فيه وصفات بعد. أضف أول وصفة من فوق.</div>`}</div>`;
+}
+async function vaultSetup() {
+  const a = $("#vp1").value, b = $("#vp2").value;
+  if (a.length < 6) { toast("خلّ سر الطبخة ٦ أحرف أو أكثر"); return; }
+  if (a !== b) { toast("السرّين مو متطابقين"); return; }
+  const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+  const key = await deriveKey(a, salt); const chk = await enc(key, { ok: "baraka" });
+  await put("meta", "vault", { salt, ...chk }); S.vaultKey = key; renderKitchen();
+}
+async function vaultUnlock() {
+  const meta = S.meta.vault, p = $("#vpu").value; if (!meta || !p) return;
+  try { const key = await deriveKey(p, meta.salt); const r = await dec(key, meta); if (r.ok !== "baraka") throw 0; S.vaultKey = key; renderKitchen(); }
+  catch (e) { toast("السر غلط"); }
+}
+async function vaultAdd() {
+  if (!S.vaultKey) return;
+  const dish = $("#vDish").value.trim(); if (!dish) { toast("اكتب اسم الطبخة"); return; }
+  const payload = { app: $("#vApp").value.trim(), user: $("#vUser").value.trim(), secret: $("#vSecret").value, note: $("#vNote").value.trim() };
+  const e = await enc(S.vaultKey, payload);
+  await put("vault", newId(), { dish, ...e, createdAt: Date.now() }); toast("انحفظت الوصفة");
+}
+
+/* ---------- render all ---------- */
+let curTab = "today";
+function renderAll() {
+  renderToday();
+  if (curTab === "projects") renderProjects();
+  if (curTab === "notes") renderNotes();
+  if (curTab === "files") renderFiles();
+  if (curTab === "kitchen") renderKitchen();
+}
+function setTab(v) {
+  curTab = v; S.confirm = null;
+  document.querySelectorAll("nav.bottom button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "p-" + v));
+  if (v !== "kitchen" && S.vaultKey) lockVault();
+  renderAll(); scrollTo({ top: 0 });
+}
+
+/* ---------- actions ---------- */
+const A = {
+  parse: doParse, fallback: useFallback,
+  rvDrop: b => { S.review = readAllReview(); S.review.splice(+b.dataset.i, 1); if (!S.review.length) S.review = null; renderReview(); },
+  rvCancel: () => { S.review = null; renderReview(); },
+  rvAdd: addFromReview,
+  seg: b => { const seg = b.closest("[data-seg]"); seg.querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b)); if (seg.dataset.seg === "kind") b.closest("[data-form]").dataset.kind = b.dataset.v; },
+  day: b => b.classList.toggle("on"),
+  start: b => startTimer(b.dataset.id),
+  pause: b => { const t = item(b.dataset.id); if (t) stopTimer(t); },
+  done: async b => { const t = item(b.dataset.id); if (!t) return; await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
+  markDone: async b => { const t = item(b.dataset.id); closeSheet(); if (t) await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
+  undo: b => patch("items", b.dataset.id, { done: false, doneAt: null }),
+  askDel: b => { S.confirm = b.dataset.id; renderAll(); },
+  delNo: () => { S.confirm = null; renderAll(); },
+  delYes: b => deleteItem(b.dataset.id),
+  delNow: b => del("items", b.dataset.id),
+  edit: b => openEdit(b.dataset.id),
+  saveEdit: b => saveEdit(b.dataset.id),
+  closeSheet,
+  calAdd: b => { const t = item(b.dataset.id); if (!t) return; if (!t.date || !t.time) { openEdit(t.id); toast("حدّد التاريخ والوقت"); return; } calCreate(t.id, t); },
+  filter: b => { S.filter = b.dataset.v; S.branch = null; renderToday(); },
+  branch: b => { S.branch = b.dataset.v || null; renderToday(); },
+  doIt: b => openDo(b.dataset.id), doGen: b => genDraft(b.dataset.id),
+  copy: b => copyFrom(b.dataset.src),
+  ask: askClaude,
+  habit: b => toggleHabit(b.dataset.id),
+  habitEdit: () => { S.habitEdit = !S.habitEdit; renderHabits(); },
+  habitDel: b => put("meta", "habits", { list: habitList().filter(h => h.id !== b.dataset.id) }),
+  habitAdd: () => { const v = $("#habitNew").value.trim(); if (!v) return; put("meta", "habits", { list: [...habitList(), { id: newId(), name: v }] }); $("#habitNew").value = ""; },
+  todoAdd: () => { const v = $("#todoNew").value.trim(); if (!v) return; put("items", newId(), { kind: "todo", title: v, area: "pers", done: false, createdAt: Date.now() }); $("#todoNew").value = ""; },
+  tab: b => setTab(b.dataset.v),
+  proj: b => { S.project = b.dataset.v; renderProjects(); scrollTo({ top: 0 }); },
+  projBack: () => { S.project = null; renderProjects(); },
+  projNoteAdd: async () => { const v = $("#projNote").value.trim(); if (!v) return; $("#projNote").value = ""; await put("notes", newId(), { section: "project", project: S.project, text: v, createdAt: Date.now() }); toast("انحفظت"); },
+  noteDel: b => { S.confirm = "n:" + b.dataset.id; renderAll(); },
+  noteDelYes: b => { S.confirm = null; del("notes", b.dataset.id); },
+  noteSec: b => setNoteSec(b.dataset.v), noteSave: saveNote,
+  lamKind: b => { S.lamKind = b.dataset.v; renderNotes(); },
+  classifyAll: async b => { b.disabled = true; b.textContent = "يصنّف…"; for (const n of S.notes.filter(n => n.section === "lamasat" && !n.classified).slice(0, 15)) await enrichNote(n.id, "lamasat", n.text); },
+  expand: b => b.closest(".lam").classList.toggle("open"),
+  fileTag: b => { S.fileTag = b.dataset.v || null; renderFiles(); },
+  pfTag: b => { const i = $("#pfTags"); const cur = splitTags(i.value); if (!cur.includes(b.dataset.v)) cur.push(b.dataset.v); i.value = cur.join("، "); },
+  pfUpload: uploadPending, pfCancel: () => { S.pendingFiles = []; renderUploadForm(); },
+  fileSend: b => sendFile(b.dataset.id), fileEdit: b => editFile(b.dataset.id),
+  fileSave: async b => { await patch("files", b.dataset.id, { name: $("#efName").value.trim() || "ملف", tags: splitTags($("#efTags").value) }); closeSheet(); },
+  fileDel: b => { S.confirm = "f:" + b.dataset.id; renderFiles(); },
+  fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
+  vaultSetup, vaultUnlock, vaultAdd, vaultLock: lockVault,
+  vaultReveal: async b => { touchVault(); const id = b.dataset.id; if (S.revealed[id]) { delete S.revealed[id]; } else { const v = S.vault.find(x => x.id === id); try { S.revealed[id] = await dec(S.vaultKey, v); } catch (e) { toast("ما قدرت أفتح هذه الوصفة"); } } renderKitchen(); },
+  vaultDel: b => { S.confirm = "v:" + b.dataset.id; renderKitchen(); },
+  vaultDelYes: b => { S.confirm = null; delete S.revealed[b.dataset.id]; del("vault", b.dataset.id); },
+};
+function readAllReview() { return [...document.querySelectorAll("#review [data-form]")].map(el => { const i = +el.dataset.form; return { ...S.review[i], ...readForm(el) }; }); }
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-act]"); if (!b) return;
+  const fn = A[b.dataset.act]; if (!fn) return;
+  if (b.tagName === "BUTTON" || b.dataset.act) e.preventDefault();
+  fn(b, e);
+});
+document.addEventListener("change", e => {
+  const s = e.target;
+  if (s.matches('[data-f="area"]')) { const f = s.closest("[data-form]"); f.querySelector('[data-f="branch"]').innerHTML = branchOptions(s.value, s.value === "work" ? "SANS" : ""); }
+  if (s.matches('[data-f="date"],[data-f="time"]')) s.closest("label")?.classList.toggle("f-missing", !s.value);
+});
+$("#fileIn").addEventListener("change", e => { S.pendingFiles = [...e.target.files]; e.target.value = ""; renderUploadForm(); });
+$("#fileSearch").addEventListener("input", renderFiles);
+$("#noteSearch").addEventListener("input", renderNotes);
+$("#dump").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) doParse(); });
+["#todoNew", "#habitNew"].forEach(s => $(s).addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); A[s === "#todoNew" ? "todoAdd" : "habitAdd"](); } }));
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "vpu") vaultUnlock(); if (e.key === "Escape") closeSheet(); });
+let lastDay = today();
+setInterval(() => { renderTick(); if (today() !== lastDay) { lastDay = today(); renderAll(); } }, 1000);
+boot();
+})();
+</script>
