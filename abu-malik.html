@@ -218,17 +218,32 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
 .take{border-inline-start:3px solid var(--line);padding-inline-start:10px;font-weight:500}
 
 /* files */
-.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
-.fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
-.fcard .thumb{aspect-ratio:4/3;background:var(--surface2);display:grid;place-items:center;overflow:hidden;max-width:100%}
+.fgrid{display:flex;flex-direction:column;gap:12px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:12px}
+.fcard .top{display:flex;gap:12px;align-items:flex-start}
+.fcard .thumb{width:84px;height:64px;flex:none;border-radius:10px;background:var(--surface2);display:grid;place-items:center;overflow:hidden}
 .fcard .thumb img{width:100%;height:100%;object-fit:cover}
-.fcard .thumb svg{width:38px;height:38px;color:var(--muted)}
-.fcard .b{padding:9px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.fcard .nm{font-weight:600;font-size:14px;word-wrap:break-word}
-.fcard .acts{display:flex;gap:4px}
-.fcard .acts .btn{flex:1;padding:7px 4px}
-.fcard a.btn{color:inherit;text-decoration:none}
-
+.fcard .thumb svg{width:30px;height:30px;color:var(--muted)}
+.fcard .b{display:flex;flex-direction:column;gap:6px;min-width:0;flex:1}
+.fcard .nm{font-weight:600;font-size:15px;word-wrap:break-word}
+.fcard .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.fcard .acts .btn{padding:7px 4px}
+.fcard .confirm{border-radius:10px}
+dl.fields{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 10px;margin:0;align-items:center;font-size:14px}
+dl.fields dt{color:var(--muted);font-size:12.5px}
+dl.fields dd{margin:0;display:flex;align-items:center;gap:6px;min-width:0;background:var(--surface2);border-radius:9px;padding:3px 3px 3px 10px;padding-inline-start:10px}
+dl.fields .val{flex:1;min-width:0;font-variant-numeric:tabular-nums;word-break:break-all;unicode-bidi:plaintext;text-align:start;font-weight:500}
+dl.fields .pw{cursor:pointer;padding:4px 0;font-family:ui-monospace,Menlo,monospace}
+.cp{flex:none;padding:5px 11px;border-radius:7px;background:var(--surface);border:1px solid var(--line);font-size:12.5px;font-weight:600}
+.cp.pri{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.tl{display:flex;flex-direction:column;gap:6px;--tc:var(--ok)}
+.tl.soon{--tc:var(--biz)} .tl.urgent,.tl.gone{--tc:var(--danger)}
+.tl-bar{position:relative;height:8px;border-radius:99px;background:var(--surface2)}
+.tl-bar span{position:absolute;inset-block:0;inset-inline-start:0;border-radius:99px;background:var(--tc)}
+.tl-bar i{position:absolute;top:-4px;width:3px;height:16px;border-radius:2px;background:var(--ink);transform:translateX(50%)}
+.tl-lbl{display:flex;justify-content:space-between;gap:8px;font-size:11.5px;color:var(--muted);line-height:1.4}
+.tl-lbl span:last-child{text-align:end}
+.tl-lbl b{color:var(--tc);font-size:12.5px;white-space:nowrap}
 /* gym */
 .gym-week{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
 .wk7{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
@@ -1251,7 +1266,7 @@ const fmtDate = s => new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "
 function expiryInfo(f) {
   if (!f.expiry || !/^\d{4}-\d{2}-\d{2}$/.test(f.expiry)) return null;
   const n = dayDiff(today(), f.expiry);
-  return { n, lvl: n < 0 ? "gone" : n <= 14 ? "urgent" : n <= 60 ? "soon" : "ok" };
+  return { n, lvl: n < 0 ? "gone" : n <= 10 ? "urgent" : n <= 31 ? "soon" : "ok" };
 }
 function expiryText(n) {
   if (n < 0) return `انتهت من ${lateWord(-n)}`;
@@ -1286,14 +1301,34 @@ function renderFiles() {
   $("#filesGrid").innerHTML = fs.length ? fs.map(f => {
     const url = "/_blob/" + f.assetId; const img = (f.contentType || "").startsWith("image/");
     const x = expiryInfo(f);
-    const conf = S.confirm === "f:" + f.id ? `<div class="confirm" style="border-radius:0"><p>تحذف الملف نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
-    return `<div class="fcard"><div class="thumb">${img ? `<img src="${url}" alt="${esc(f.name)}" loading="lazy">` : IC.pdf}</div>
-      <div class="b"><span class="nm">${esc(f.name)}</span>
-      <div class="row wrapr">${f.group ? `<span class="chip">${DOC_GROUPS[f.group]}${f.sub ? " · " + esc(f.sub) : ""}</span>` : ""}${f.docType && f.docType !== f.sub ? `<span class="chip">${esc(f.docType)}</span>` : ""}</div>
-      ${x ? `<span class="exp-chip ${x.lvl}">${x.lvl === "ok" ? "تنتهي " + fmtDate(f.expiry) : expiryText(x.n)}</span>` : f.reading ? `<span class="small muted">كلود يقرأها…</span>` : f.readAt ? `<span class="small muted">بدون تاريخ انتهاء</span>` : ""}
-      <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a></div>
-      <div class="acts"><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div></div>${conf}</div>`;
-  }).join("") : `<div class="empty card" style="grid-column:1/-1">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويسجّل تاريخ انتهائها وينبهك قبلها."}</div>`;
+    const conf = S.confirm === "f:" + f.id ? `<div class="confirm"><p>تحذف الملف نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+    const fields = Array.isArray(f.fields) ? f.fields.filter(x => x && x.value) : [];
+    return `<article class="fcard">
+      <div class="top"><a class="thumb" href="${url}" target="_blank" rel="noopener">${img ? `<img src="${url}" alt="${esc(f.name)}" loading="lazy">` : IC.pdf}</a>
+        <div class="b"><span class="nm">${esc(f.name)}</span>
+          <div class="row wrapr">${f.group ? `<span class="chip">${DOC_GROUPS[f.group]}${f.sub ? " · " + esc(f.sub) : ""}</span>` : ""}${f.docType && f.docType !== f.sub ? `<span class="chip">${esc(f.docType)}</span>` : ""}</div>
+          ${x && x.lvl !== "ok" ? `<span class="exp-chip ${x.lvl}">${expiryText(x.n)}</span>` : ""}
+          ${f.reading ? `<span class="small muted">كلود يقرأها…</span>` : ""}</div></div>
+      ${x ? timeline(f, x) : ""}
+      ${fields.length ? `<dl class="fields">${fields.map((d, i) => `<dt>${esc(d.label)}</dt><dd><span class="val">${esc(d.value)}</span><button class="cp" data-act="fCopy" data-id="${f.id}" data-i="${i}" aria-label="نسخ ${esc(d.label)}">نسخ</button></dd>`).join("")}</dl>`
+        : !f.reading && sample ? `<button class="btn sm ghost" data-act="fileRead" data-id="${f.id}" style="align-self:flex-start">استخرج البيانات</button>` : ""}
+      <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div>
+      ${conf}</article>`;
+  }).join("") : `<div class="empty card">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويستخرج أرقامها وتاريخ انتهائها وينبهك قبلها بشهر."}</div>`;
+}
+function fmtRemain(n) {
+  if (n < 0) return expiryText(n);
+  if (n >= 365) { const y = Math.floor(n / 365), m = Math.floor((n % 365) / 30.4); return `باقي ${y === 1 ? "سنة" : y === 2 ? "سنتين" : ar(y) + " سنوات"}${m ? " و" + (m === 1 ? "شهر" : m === 2 ? "شهرين" : ar(m) + " شهور") : ""}`; }
+  if (n >= 60) { const m = Math.floor(n / 30.4); return `باقي ${m === 2 ? "شهرين" : ar(m) + " شهور"}`; }
+  return n === 0 ? "تنتهي اليوم" : `باقي ${lateWord(n)}`;
+}
+function timeline(f, x) {
+  const end = parseISO(f.expiry);
+  let start = f.issue && /^\d{4}-\d{2}-\d{2}$/.test(f.issue) && f.issue < f.expiry ? parseISO(f.issue) : new Date(f.createdAt || Date.now());
+  if (start >= end) start = new Date(end.getTime() - 365 * 864e5);
+  const pct = Math.max(0, Math.min(100, (Date.now() - start) / (end - start) * 100));
+  return `<div class="tl ${x.lvl}"><div class="tl-bar"><span style="width:${pct.toFixed(1)}%"></span><i style="inset-inline-start:${pct.toFixed(1)}%"></i></div>
+    <div class="tl-lbl"><span>${f.issue ? "إصدار " + fmtDate(iso(start)) : ""}</span><b>${fmtRemain(x.n)}</b><span>ينتهي ${fmtDate(f.expiry)}${f.expiryHijri ? "<br>" + esc(f.expiryHijri) + " هـ" : ""}</span></div></div>`;
 }
 function subOptions(id) { return `<datalist id="${id}">${[...new Set([...Object.values(DOC_SUBS).flat(), ...S.files.map(f => f.sub).filter(Boolean)])].map(s => `<option value="${esc(s)}">`).join("")}</datalist>`; }
 function groupSelect(id, sel, auto) { return `<select id="${id}">${auto ? `<option value="">كلود يحدد</option>` : ""}${Object.entries(DOC_GROUPS).map(([k, l]) => `<option value="${k}" ${sel === k ? "selected" : ""}>${l}</option>`).join("")}</select>`; }
@@ -1376,19 +1411,23 @@ async function readDoc(f) {
 "group":"biz إذا كانت لمنشأة تجارية، pers إذا كانت شخصية، fam إذا كانت بوضوح لفرد آخر من العائلة (طفل مثلاً). إذا لم يتضح فاختر pers",
 "sub":"للمنشآت: اسم المنشأة (أو أحد هذه إن طابق: ${AREAS.biz.branches.join("، ")})؛ للشخصي: نوع الوثيقة؛ للعائلة: اسم صاحب الوثيقة الأول",
 "expiry":"تاريخ الانتهاء ميلادي YYYY-MM-DD، أو فارغ إن لم يوجد",
-"expiryHijri":"تاريخ الانتهاء الهجري كما هو مكتوب بصيغة YYYY/MM/DD إن وجد، وإلا فارغ"}
+"expiryHijri":"تاريخ الانتهاء الهجري كما هو مكتوب بصيغة YYYY/MM/DD إن وجد، وإلا فارغ",
+"issue":"تاريخ الإصدار ميلادي YYYY-MM-DD أو فارغ",
+"fields":[{"label":"اسم الحقل بالعربية","value":"القيمة"}]}
+في fields استخرج كل ما قد يحتاج نسخه: كل الأرقام (رقم الهوية، رقم الجواز، رقم الرخصة، رقم السجل، الرقم الموحد، رقم اللوحة، الرقم التسلسلي، رقم الوثيقة، رقم الحدود…)، والاسم بالعربي وبالإنجليزي إن وجد، وتاريخ الميلاد، وتاريخ الإصدار، وتاريخ الانتهاء (هجري وميلادي كما هي مكتوبة)، ومكان الإصدار، واسم المنشأة. اكتب القيمة حرفياً كما في الوثيقة بالأرقام الإنجليزية 0-9 وبدون مسافات زائدة داخل الأرقام. لا تخترع أي قيمة غير ظاهرة بوضوح.
 لا تخمّن: إذا لم يظهر تاريخ انتهاء صريح اترك الحقلين فارغين. إذا كتب الانتهاء بالهجري فقط فحوّله لميلادي بتقويم أم القرى.${text ? `\nنص مستخرج من الملف للمساعدة:\n"""${text}"""` : ""}`;
     const r = await sample.json(prompt, { images: imgs.slice(0, lim.images.maxCount || 2), modelTier: "default" });
     const cur = S.files.find(x => x.id === f.id) || f; const auto = cur.auto || {};
     let expiry = /^\d{4}-\d{2}-\d{2}$/.test(r.expiry || "") ? r.expiry : "";
     const hj = String(r.expiryHijri || "").trim();
     if (hj) { const g = hijriToGreg(hj, expiry); if (g) expiry = g; }
-    const upd = { reading: false, readAt: Date.now(), docType: String(r.docType || ""), expiry, expiryHijri: hj ? ar(hj) : "" };
+    const fields = (Array.isArray(r.fields) ? r.fields : []).filter(x => x && x.label && x.value).slice(0, 20).map(x => ({ label: String(x.label).slice(0, 40), value: en(String(x.value)).trim().slice(0, 120) }));
+    const upd = { reading: false, readAt: Date.now(), docType: String(r.docType || ""), expiry, expiryHijri: hj ? ar(hj) : "", fields, issue: /^\d{4}-\d{2}-\d{2}$/.test(r.issue || "") ? r.issue : "" };
     if (auto.name && r.title) upd.name = String(r.title).slice(0, 80);
     if (auto.group && DOC_GROUPS[r.group]) upd.group = r.group;
     if (auto.sub && r.sub) upd.sub = String(r.sub).slice(0, 60);
     await patch("files", f.id, upd);
-    if (expiry) { const x = expiryInfo({ expiry }); toast(`${upd.name || cur.name}: ${x.n < 0 ? expiryText(x.n) : "تنتهي " + fmtDate(expiry)}`); }
+    if (expiry) { const x = expiryInfo({ expiry }); toast(`${upd.name || cur.name}: ${x.n < 0 ? expiryText(x.n) : "تنتهي " + fmtDate(expiry)}`); } else toast(`استخرجت ${ar(fields.length)} من بيانات «${upd.name || cur.name}»`);
   } catch (e) {
     await patch("files", f.id, { reading: false });
     toast(e?.code === "rate_limited" ? "كلود مشغول، اقرأها لاحقاً من «تعديل»." : "ما قدرت أقرأ الوثيقة. تقدر تكتب تاريخ الانتهاء من «تعديل».");
@@ -1443,10 +1482,10 @@ function renderKitchenResults() {
     const d = S.dec[v.id] || {}; const show = S.showPw[v.id];
     const conf = S.confirm === "v:" + v.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الوصفة نهائياً؟</p><button class="btn danger sm" data-act="vaultDelYes" data-id="${v.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
     return `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span><button class="icon-btn" data-act="vaultDel" data-id="${v.id}" aria-label="احذف">${IC.trash}</button></div>
-      <div class="ing">
-        <span class="k">اسم المستخدم</span><span class="v">${esc(d.user || "—")}</span><button class="btn sm" data-act="vCopy" data-id="${v.id}" data-f="user" ${d.user ? "" : "disabled"}>نسخ</button>
-        <span class="k">الرقم السري</span><button class="v pw" data-act="vShow" data-id="${v.id}">${d.secret ? (show ? esc(d.secret) : "••••••••") : "—"}</button><button class="btn sm pri" data-act="vCopy" data-id="${v.id}" data-f="secret" ${d.secret ? "" : "disabled"}>نسخ</button>
-      </div>${conf}</div>`;
+      <dl class="fields">
+        <dt>اسم المستخدم</dt><dd><span class="val">${esc(d.user || "—")}</span>${d.user ? `<button class="cp" data-act="vCopy" data-id="${v.id}" data-f="user">نسخ</button>` : ""}</dd>
+        <dt>الرقم السري</dt><dd><button class="val pw" data-act="vShow" data-id="${v.id}" aria-label="إظهار">${d.secret ? (show ? esc(d.secret) : "••••••••") : "—"}</button>${d.secret ? `<button class="cp pri" data-act="vCopy" data-id="${v.id}" data-f="secret">نسخ</button>` : ""}</dd>
+      </dl>${conf}</div>`;
   }).join("") : `<div class="empty card">ما لقيت شي.</div>`;
 }
 async function vaultAdd() {
@@ -1693,6 +1732,7 @@ const A = {
   fileRead: b => { const f = S.files.find(x => x.id === b.dataset.id); closeSheet(); if (f) { toast("كلود يقرأ الوثيقة…"); readDoc(f); } },
   fileDel: b => { S.confirm = "f:" + b.dataset.id; renderFiles(); },
   fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
+  fCopy: b => { const f = S.files.find(x => x.id === b.dataset.id); const d = f?.fields?.[+b.dataset.i]; if (d) { touchLock(); copyText(d.value); } },
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
   vaultAdd, vaultLock: lockAll,
   gymDay: b => { S.gymDay = b.dataset.v; renderGym(); },
