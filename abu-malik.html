@@ -232,9 +232,21 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
 /* recipes (vault) */
 .recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
-.recipe .ing{display:grid;grid-template-columns:auto 1fr auto;gap:4px 10px;align-items:center;font-size:14px}
+.recipe .ing{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 10px;align-items:center;font-size:14px}
 .recipe .ing dt{color:var(--muted);font-size:13px}
 .recipe .ing dd{margin:0;word-break:break-all;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+.pin{display:flex;flex-direction:column;align-items:center;gap:14px;padding:28px 16px;text-align:center}
+.pin input{width:200px;text-align:center;font-size:26px;letter-spacing:.5em;font-family:var(--font-display);direction:ltr}
+.recipe .k{color:var(--muted);font-size:13px}
+.recipe .v{font-family:ui-monospace,Menlo,monospace;font-size:15px;word-break:break-all;text-align:start;min-width:0;direction:ltr;unicode-bidi:plaintext}
+.recipe .pw{cursor:pointer;padding:0}
+.exp-card{background:var(--surface);border:1px solid color-mix(in srgb,var(--biz) 40%,var(--line));border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.exp{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line);text-align:start;width:100%}
+.exp-card .sec-h+.exp{border-top:0}
+.exp .when{font-size:13px;font-weight:600;white-space:nowrap}
+.exp.soon .when,.exp-chip.soon{color:var(--biz)}
+.exp.urgent .when,.exp.gone .when,.exp-chip.urgent,.exp-chip.gone{color:var(--danger)}
+.exp-chip{font-size:12px;font-weight:600;color:var(--muted)}
 .kitchen-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
 </style>
 
@@ -257,6 +269,7 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
     <div class="stats" id="stats"></div>
   </header>
 
+  <div id="expiry"></div>
   <div id="noStore" class="banner" hidden>البيانات الآن مؤقتة في هذه الصفحة فقط. افتح الدفتر من claude.ai وأنت مسجّل الدخول لتُحفظ في حسابك وتظهر من أي جهاز.</div>
 
   <div class="sec">
@@ -347,18 +360,22 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
 
 <!-- ============ FILES ============ -->
 <section class="page" id="p-files">
-  <div class="ph"><h1>الوثائق</h1><label class="btn pri" for="fileIn">ارفع ملف</label></div>
+  <div class="ph"><h1>الوثائق</h1><label class="btn pri" for="fileIn" id="uploadBtn" hidden>ارفع ملف</label></div>
   <input type="file" id="fileIn" accept="image/*,application/pdf" multiple hidden>
-  <div id="filesNotice" class="banner" hidden></div>
-  <div id="uploadForm"></div>
-  <input type="search" id="fileSearch" placeholder="ابحث: هوية، رخصة، سجل…">
-  <div class="tabs" id="fileTags"></div>
-  <div class="fgrid" id="filesGrid"></div>
+  <div id="filesGate"></div>
+  <div id="filesInner" class="sec" style="gap:14px" hidden>
+    <div id="filesNotice" class="banner" hidden></div>
+    <div id="uploadForm"></div>
+    <input type="search" id="fileSearch" placeholder="ابحث: هوية، رخصة، سجل، واقا…">
+    <div class="tabs" id="fileGroups"></div>
+    <div class="tabs" id="fileSubs" hidden></div>
+    <div class="fgrid" id="filesGrid"></div>
+  </div>
 </section>
 
 <!-- ============ RECIPES (vault) ============ -->
 <section class="page" id="p-kitchen">
-  <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل المطبخ</button></div>
+  <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل</button></div>
   <div id="kitchen"></div>
 </section>
 </div>
@@ -448,7 +465,7 @@ const S = {
   items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {},
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
-  vaultKey: null, revealed: {},
+  vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
 const COLS = ["items", "notes", "files", "vault", "meta", "habitlog"];
@@ -846,7 +863,7 @@ function sortTasks(a, b) {
   return (a.createdAt || 0) - (b.createdAt || 0);
 }
 function renderToday() {
-  renderHeader();
+  renderHeader(); renderExpiryAlerts();
   // running
   const r = S.items.find(x => x.active && !x.done);
   $("#running").innerHTML = r ? `<div class="running" aria-live="polite">
@@ -1140,52 +1157,205 @@ function lamCard(n) {
   </article>`;
 }
 
-/* ---------- files ---------- */
+/* ---------- lock (PIN shared by documents and kitchen) ---------- */
+const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function deriveKey(pass, saltB64) {
+  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: unb64(saltB64), iterations: 310000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function enc(key, obj) { const iv = crypto.getRandomValues(new Uint8Array(12)); const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(obj))); return { iv: b64(iv), ct: b64(ct) }; }
+async function dec(key, o) { const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(o.iv) }, key, unb64(o.ct)); return JSON.parse(new TextDecoder().decode(pt)); }
+let lockTimer = null;
+function touchLock() { if (!S.vaultKey) return; clearTimeout(lockTimer); lockTimer = setTimeout(lockAll, 3 * 60 * 1000); }
+function lockAll() { S.vaultKey = null; S.dec = {}; S.showPw = {}; clearTimeout(lockTimer); $("#kitchen").dataset.state = ""; renderFiles(); renderKitchen(); }
+function pinGate(t) {
+  if (!base) return `<div class="banner">هذا القسم يحتاج تفتح الدفتر من claude.ai وأنت مسجّل الدخول.</div>`;
+  if (!S.meta.vault) return `<div class="pin card"><h2>اختر رقماً سرياً</h2>
+    <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" id="pinNew1" autocomplete="off" aria-label="الرقم السري">
+    <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" id="pinNew2" autocomplete="off" aria-label="أعد الرقم">
+    <button class="btn pri" data-act="pinSetup">احفظ</button></div>`;
+  return `<div class="pin card"><h2>الرقم السري</h2>
+    <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" class="pinIn" id="pin-${t}" autocomplete="off" aria-label="الرقم السري">
+    <button class="btn pri" data-act="pinGo" data-t="${t}">افتح</button></div>`;
+}
+async function pinUnlock(inp) {
+  const meta = S.meta.vault, p = en(inp.value.trim()); if (!meta || !p) return;
+  inp.disabled = true;
+  try {
+    const key = await deriveKey(p, meta.salt); const r = await dec(key, meta); if (r.ok !== "baraka") throw 0;
+    S.vaultKey = key; touchLock(); await ensureDec(); renderFiles(); renderKitchen();
+  } catch (e) { inp.disabled = false; inp.value = ""; inp.focus(); toast("الرقم غلط"); }
+}
+async function pinSetup() {
+  const a = en($("#pinNew1").value.trim()), b = en($("#pinNew2").value.trim());
+  if (!/^\d{4,8}$/.test(a)) { toast("الرقم من ٤ إلى ٨ أرقام"); return; }
+  if (a !== b) { toast("الرقمين مو متطابقين"); return; }
+  const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
+  const key = await deriveKey(a, salt); const chk = await enc(key, { ok: "baraka" });
+  await put("meta", "vault", { salt, ...chk }); S.vaultKey = key; touchLock(); renderFiles(); renderKitchen();
+}
+async function ensureDec() {
+  if (!S.vaultKey) return false; let changed = false;
+  for (const v of S.vault) if (!S.dec[v.id] || S.dec[v.id]._ct !== v.ct) { try { S.dec[v.id] = { ...(await dec(S.vaultKey, v)), _ct: v.ct }; changed = true; } catch (e) { } }
+  for (const id in S.dec) if (!S.vault.some(v => v.id === id)) { delete S.dec[id]; changed = true; }
+  return changed;
+}
+
+/* ---------- documents ---------- */
+const DOC_GROUPS = { biz: "مشاريعي", pers: "شخصي", fam: "العائلة" };
+const DOC_SUBS = {
+  biz: AREAS.biz.branches,
+  pers: ["الهوية الوطنية", "جواز السفر", "رخصة القيادة", "الاستمارة", "العنوان الوطني", "الفيزا", "التأمين الطبي", "الشهادات"],
+  fam: ["سجل الأسرة", "هويات العائلة", "جوازات العائلة", "شهادات الميلاد", "التطعيمات"],
+};
 const extOf = (ct, name) => { const m = (name || "").match(/\.[a-z0-9]{2,5}$/i); if (m) return ""; return ct === "application/pdf" ? ".pdf" : ct === "image/png" ? ".png" : ct === "image/webp" ? ".webp" : ct === "image/heic" ? ".heic" : ".jpg"; };
-function allTags() { const m = {}; S.files.forEach(f => (f.tags || []).forEach(t => m[t] = (m[t] || 0) + 1)); return Object.keys(m).sort((a, b) => m[b] - m[a]); }
+const fmtDate = s => new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "long", year: "numeric" }).format(parseISO(s));
+function expiryInfo(f) {
+  if (!f.expiry || !/^\d{4}-\d{2}-\d{2}$/.test(f.expiry)) return null;
+  const n = dayDiff(today(), f.expiry);
+  return { n, lvl: n < 0 ? "gone" : n <= 14 ? "urgent" : n <= 60 ? "soon" : "ok" };
+}
+function expiryText(n) {
+  if (n < 0) return `انتهت من ${lateWord(-n)}`;
+  if (n === 0) return "تنتهي اليوم";
+  if (n === 1) return "تنتهي بكرة";
+  return `تنتهي بعد ${lateWord(n)}`;
+}
+function renderExpiryAlerts() {
+  const box = $("#expiry");
+  const list = S.files.map(f => ({ f, x: expiryInfo(f) })).filter(o => o.x && o.x.lvl !== "ok").sort((a, b) => a.x.n - b.x.n);
+  box.innerHTML = list.length ? `<div class="exp-card"><div class="sec-h"><h2>وثائق قربت تنتهي</h2><span class="count">${ar(list.length)}</span></div>
+    ${list.map(({ f, x }) => `<button class="exp ${x.lvl}" data-act="tab" data-v="files"><span class="grow"><b>${esc(f.name)}</b><br><span class="small muted">${fmtDate(f.expiry)}${f.expiryHijri ? " · " + esc(f.expiryHijri) : ""}</span></span><span class="when">${expiryText(x.n)}</span></button>`).join("")}</div>` : "";
+}
 function renderFiles() {
+  renderExpiryAlerts();
+  const locked = !S.vaultKey;
+  $("#filesGate").innerHTML = locked ? pinGate("files") : "";
+  $("#filesInner").hidden = locked; $("#uploadBtn").hidden = locked;
+  if (locked) return;
   const n = $("#filesNotice");
-  if (!base) { n.hidden = false; n.textContent = "رفع الملفات يحتاج تفتح الدفتر من claude.ai وأنت مسجّل الدخول."; }
-  else if (!assets) { n.hidden = false; n.textContent = "رفع الملفات متاح لصاحب الدفتر فقط."; }
-  else n.hidden = true;
-  const tags = allTags();
-  $("#fileTags").innerHTML = tags.length ? [`<button class="${!S.fileTag ? "on" : ""}" data-act="fileTag" data-v="">الكل</button>`, ...tags.map(t => `<button class="${S.fileTag === t ? "on" : ""}" data-act="fileTag" data-v="${esc(t)}">${esc(t)}</button>`)].join("") : "";
+  if (!assets) { n.hidden = false; n.textContent = "رفع الملفات متاح لصاحب الدفتر فقط."; } else n.hidden = true;
+  const g = S.fileGroup;
+  $("#fileGroups").innerHTML = [["", "الكل"], ...Object.entries(DOC_GROUPS)].map(([k, l]) => `<button class="${(g || "") === k ? "on" : ""}" data-act="fileGroup" data-v="${k}">${l} ${ar(S.files.filter(f => !k || f.group === k).length)}</button>`).join("");
+  const subs = g ? [...new Set([...DOC_SUBS[g], ...S.files.filter(f => f.group === g && f.sub).map(f => f.sub)])].filter(s => S.files.some(f => f.group === g && f.sub === s)) : [];
+  $("#fileSubs").hidden = !subs.length;
+  $("#fileSubs").innerHTML = subs.length ? [`<button class="${!S.fileSub ? "on" : ""}" data-act="fileSub" data-v="">الكل</button>`, ...subs.map(s => `<button class="${S.fileSub === s ? "on" : ""}" data-act="fileSub" data-v="${esc(s)}">${esc(s)}</button>`)].join("") : "";
   const q = $("#fileSearch").value.trim();
   let fs = S.files.slice().sort((a, b) => b.createdAt - a.createdAt);
-  if (S.fileTag) fs = fs.filter(f => (f.tags || []).includes(S.fileTag));
-  if (q) fs = fs.filter(f => (f.name + " " + (f.tags || []).join(" ")).includes(q));
+  if (g) fs = fs.filter(f => f.group === g);
+  if (g && S.fileSub) fs = fs.filter(f => f.sub === S.fileSub);
+  if (q) fs = fs.filter(f => [f.name, f.sub, f.docType, DOC_GROUPS[f.group], (f.tags || []).join(" ")].join(" ").includes(q));
   $("#filesGrid").innerHTML = fs.length ? fs.map(f => {
     const url = "/_blob/" + f.assetId; const img = (f.contentType || "").startsWith("image/");
+    const x = expiryInfo(f);
     const conf = S.confirm === "f:" + f.id ? `<div class="confirm" style="border-radius:0"><p>تحذف الملف نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
     return `<div class="fcard"><div class="thumb">${img ? `<img src="${url}" alt="${esc(f.name)}" loading="lazy">` : IC.pdf}</div>
-      <div class="b"><span class="nm">${esc(f.name)}</span>${(f.tags || []).length ? `<div class="row wrapr">${f.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : ""}
+      <div class="b"><span class="nm">${esc(f.name)}</span>
+      <div class="row wrapr">${f.group ? `<span class="chip">${DOC_GROUPS[f.group]}${f.sub ? " · " + esc(f.sub) : ""}</span>` : ""}${f.docType && f.docType !== f.sub ? `<span class="chip">${esc(f.docType)}</span>` : ""}</div>
+      ${x ? `<span class="exp-chip ${x.lvl}">${x.lvl === "ok" ? "تنتهي " + fmtDate(f.expiry) : expiryText(x.n)}</span>` : f.reading ? `<span class="small muted">كلود يقرأها…</span>` : f.readAt ? `<span class="small muted">بدون تاريخ انتهاء</span>` : ""}
       <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a></div>
       <div class="acts"><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div></div>${conf}</div>`;
-  }).join("") : `<div class="empty card" style="grid-column:1/-1">${S.files.length ? "ما لقيت ملف بهذا البحث." : "ارفع صور الهوية والرخص والسجلات والعقود هنا، وسمّها بالتصنيف اللي يناسبك عشان تلقاها بضغطة."}</div>`;
+  }).join("") : `<div class="empty card" style="grid-column:1/-1">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويسجّل تاريخ انتهائها وينبهك قبلها."}</div>`;
 }
+function subOptions(id) { return `<datalist id="${id}">${[...new Set([...Object.values(DOC_SUBS).flat(), ...S.files.map(f => f.sub).filter(Boolean)])].map(s => `<option value="${esc(s)}">`).join("")}</datalist>`; }
+function groupSelect(id, sel, auto) { return `<select id="${id}">${auto ? `<option value="">كلود يحدد</option>` : ""}${Object.entries(DOC_GROUPS).map(([k, l]) => `<option value="${k}" ${sel === k ? "selected" : ""}>${l}</option>`).join("")}</select>`; }
 function renderUploadForm() {
   const box = $("#uploadForm");
   if (!S.pendingFiles.length) { box.innerHTML = ""; return; }
-  const tags = allTags();
   box.innerHTML = `<div class="card sec review"><h2>تجهيز الرفع</h2>
     ${S.pendingFiles.map((f, i) => `<label class="f">اسم الملف<input type="text" data-pf="${i}" value="${esc(f.name.replace(/\.[^.]+$/, ""))}"></label>`).join("")}
-    <label class="f">التصنيف (افصل بفاصلة)<input type="text" id="pfTags" placeholder="هوية، رخص، سجلات"></label>
-    ${tags.length ? `<div class="row wrapr">${tags.map(t => `<button class="chip" data-act="pfTag" data-v="${esc(t)}">+ ${esc(t)}</button>`).join("")}</div>` : ""}
+    <div class="grid2"><label class="f">التصنيف${groupSelect("pfGroup", "", true)}</label>
+    <label class="f">الفرع أو النوع<input type="text" id="pfSub" list="pfSubs" placeholder="كلود يحدد">${subOptions("pfSubs")}</label></div>
     <div class="row"><button class="btn pri" data-act="pfUpload" id="pfBtn">ارفع</button><button class="btn ghost" data-act="pfCancel">إلغاء</button></div></div>`;
 }
-const splitTags = s => [...new Set(s.split(/[,،\n]+/).map(x => x.trim()).filter(Boolean))];
 async function uploadPending() {
   if (!assets || !base) { toast("الرفع غير متاح في هذا العرض"); return; }
   const btn = $("#pfBtn"); btn.disabled = true; btn.textContent = "يرفع…";
-  const tags = splitTags($("#pfTags").value);
+  const group = $("#pfGroup").value, sub = $("#pfSub").value.trim();
   for (let i = 0; i < S.pendingFiles.length; i++) {
-    const file = S.pendingFiles[i]; const name = document.querySelector(`[data-pf="${i}"]`)?.value.trim() || file.name;
+    const file = S.pendingFiles[i]; const orig = file.name.replace(/\.[^.]+$/, "");
+    const name = document.querySelector(`[data-pf="${i}"]`)?.value.trim() || orig;
     try {
-      const r = await assets.upload(file);
-      await put("files", newId(), { assetId: r.id, name, tags, contentType: r.contentType, size: r.sizeBytes, createdAt: Date.now() });
+      const r = await assets.upload(file); const id = newId();
+      const doc = { assetId: r.id, name, group: group || "pers", sub, contentType: r.contentType, size: r.sizeBytes, createdAt: Date.now(),
+        auto: { name: name === orig, group: !group, sub: !sub } };
+      await put("files", id, doc);
+      readDoc({ id, ...doc });
     } catch (e) { toast(`ما انرفع «${name}»: ${e?.code === "too_large" ? "الملف أكبر من ٢٠ ميجا" : "جرّب مرة ثانية"}`); }
   }
   S.pendingFiles = []; renderUploadForm(); toast("انرفعت");
+}
+function loadScript(src) { return new Promise((res, rej) => { const s = document.createElement("script"); s.src = src; s.onload = res; s.onerror = rej; document.head.appendChild(s); }); }
+async function loadPdfJs() {
+  if (window.pdfjsLib) return;
+  const v = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+  await loadScript(v + "pdf.min.js"); await loadScript(v + "pdf.worker.min.js");
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = v + "pdf.worker.min.js";
+}
+const canvasBlob = c => new Promise(r => c.toBlob(r, "image/jpeg", 0.88));
+async function docImages(f) {
+  const blob = await (await fetch("/_blob/" + f.assetId)).blob();
+  const ct = f.contentType || blob.type;
+  if (ct === "application/pdf") {
+    await loadPdfJs();
+    const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(await blob.arrayBuffer()), disableWorker: true }).promise;
+    const imgs = []; let text = "";
+    for (let i = 1; i <= Math.min(2, pdf.numPages); i++) {
+      const page = await pdf.getPage(i);
+      try { const tc = await page.getTextContent(); text += tc.items.map(t => t.str).join(" ") + "\n"; } catch (e) { }
+      const vp = page.getViewport({ scale: 2 }); const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+      await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise; imgs.push(await canvasBlob(c));
+    }
+    return { imgs, text: text.trim().slice(0, 6000) };
+  }
+  if (/^image\/(jpeg|png|webp|gif)$/.test(ct)) return { imgs: [blob], text: "" };
+  const bmp = await createImageBitmap(blob); const c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height; c.getContext("2d").drawImage(bmp, 0, 0);
+  return { imgs: [await canvasBlob(c)], text: "" };
+}
+function hijriToGreg(h, guess) {
+  const m = en(h || "").match(/(\d{4})\D+(\d{1,2})\D+(\d{1,2})|(\d{1,2})\D+(\d{1,2})\D+(\d{4})/); if (!m) return null;
+  const [y, mo, d] = m[1] ? [+m[1], +m[2], +m[3]] : [+m[6], +m[5], +m[4]];
+  if (y < 1350 || y > 1500) return null;
+  let fmt; try { fmt = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn", { year: "numeric", month: "numeric", day: "numeric" }); } catch (e) { return null; }
+  const parts = dt => { const o = {}; fmt.formatToParts(dt).forEach(p => o[p.type] = p.value); return [parseInt(o.year), +o.month, +o.day]; };
+  const start = guess && /^\d{4}-\d{2}-\d{2}$/.test(guess) ? parseISO(guess) : new Date(Math.round((y - 1389) * 354.367 * 864e5 + Date.UTC(1969, 2, 19)));
+  for (let k = 0; k <= 400; k++) for (const s of k ? [k, -k] : [0]) {
+    const dt = new Date(start); dt.setDate(dt.getDate() + s); const [py, pm, pd] = parts(dt);
+    if (py === y && pm === mo && pd === d) return iso(dt);
+  }
+  return null;
+}
+async function readDoc(f) {
+  if (!sample) return;
+  const lim = await sample.limits().catch(() => null);
+  if (!lim?.images) { toast("قراءة الوثائق تحتاج إذن الصور لكلود"); return; }
+  await patch("files", f.id, { reading: true });
+  try {
+    const { imgs, text } = await docImages(f);
+    const prompt = `هذه صورة وثيقة رفعها أبو مالك (سعودي) باسم «${f.name}». اقرأها بدقة وأعد JSON فقط:
+{"docType":"نوع الوثيقة بالعربية: هوية وطنية، إقامة، جواز سفر، رخصة قيادة، استمارة مركبة، عنوان وطني، تأشيرة، تأمين طبي، سجل تجاري، رخصة بلدية، شهادة الزكاة، شهادة، عقد، أخرى",
+"title":"اسم مختصر للوثيقة مع اسم صاحبها الأول أو اسم المنشأة إن ظهر، مثل: رخصة قيادة - محمد",
+"group":"biz إذا كانت لمنشأة تجارية، pers إذا كانت شخصية، fam إذا كانت بوضوح لفرد آخر من العائلة (طفل مثلاً). إذا لم يتضح فاختر pers",
+"sub":"للمنشآت: اسم المنشأة (أو أحد هذه إن طابق: ${AREAS.biz.branches.join("، ")})؛ للشخصي: نوع الوثيقة؛ للعائلة: اسم صاحب الوثيقة الأول",
+"expiry":"تاريخ الانتهاء ميلادي YYYY-MM-DD، أو فارغ إن لم يوجد",
+"expiryHijri":"تاريخ الانتهاء الهجري كما هو مكتوب بصيغة YYYY/MM/DD إن وجد، وإلا فارغ"}
+لا تخمّن: إذا لم يظهر تاريخ انتهاء صريح اترك الحقلين فارغين. إذا كتب الانتهاء بالهجري فقط فحوّله لميلادي بتقويم أم القرى.${text ? `\nنص مستخرج من الملف للمساعدة:\n"""${text}"""` : ""}`;
+    const r = await sample.json(prompt, { images: imgs.slice(0, lim.images.maxCount || 2), modelTier: "default" });
+    const cur = S.files.find(x => x.id === f.id) || f; const auto = cur.auto || {};
+    let expiry = /^\d{4}-\d{2}-\d{2}$/.test(r.expiry || "") ? r.expiry : "";
+    const hj = String(r.expiryHijri || "").trim();
+    if (hj) { const g = hijriToGreg(hj, expiry); if (g) expiry = g; }
+    const upd = { reading: false, readAt: Date.now(), docType: String(r.docType || ""), expiry, expiryHijri: hj ? ar(hj) : "" };
+    if (auto.name && r.title) upd.name = String(r.title).slice(0, 80);
+    if (auto.group && DOC_GROUPS[r.group]) upd.group = r.group;
+    if (auto.sub && r.sub) upd.sub = String(r.sub).slice(0, 60);
+    await patch("files", f.id, upd);
+    if (expiry) { const x = expiryInfo({ expiry }); toast(`${upd.name || cur.name}: ${x.n < 0 ? expiryText(x.n) : "تنتهي " + fmtDate(expiry)}`); }
+  } catch (e) {
+    await patch("files", f.id, { reading: false });
+    toast(e?.code === "rate_limited" ? "كلود مشغول، اقرأها لاحقاً من «تعديل»." : "ما قدرت أقرأ الوثيقة. تقدر تكتب تاريخ الانتهاء من «تعديل».");
+  }
 }
 async function sendFile(id) {
   const f = S.files.find(x => x.id === id); if (!f) return;
@@ -1198,86 +1368,62 @@ async function sendFile(id) {
 }
 function editFile(id) {
   const f = S.files.find(x => x.id === id); if (!f) return;
-  openSheet(`<h2>تعديل الملف</h2><label class="f">الاسم<input type="text" id="efName" value="${esc(f.name)}"></label>
-    <label class="f">التصنيف (افصل بفاصلة)<input type="text" id="efTags" value="${esc((f.tags || []).join("، "))}"></label>
-    <div class="row"><button class="btn pri" data-act="fileSave" data-id="${id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`);
+  openSheet(`<h2>تعديل الوثيقة</h2><label class="f">الاسم<input type="text" id="efName" value="${esc(f.name)}"></label>
+    <div class="grid2"><label class="f">التصنيف${groupSelect("efGroup", f.group || "pers", false)}</label>
+    <label class="f">الفرع أو النوع<input type="text" id="efSub" list="efSubs" value="${esc(f.sub || "")}">${subOptions("efSubs")}</label></div>
+    <label class="f">تاريخ الانتهاء<input type="date" id="efExp" value="${esc(f.expiry || "")}"></label>
+    <div class="row wrapr"><button class="btn pri" data-act="fileSave" data-id="${id}">احفظ</button>${sample ? `<button class="btn" data-act="fileRead" data-id="${id}">خلّ كلود يقرأها</button>` : ""}<button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`);
 }
 
 /* ---------- kitchen (encrypted vault) ---------- */
-const b64 = buf => btoa(String.fromCharCode(...new Uint8Array(buf)));
-const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
-async function deriveKey(pass, saltB64) {
-  const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"]);
-  return crypto.subtle.deriveKey({ name: "PBKDF2", salt: unb64(saltB64), iterations: 310000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
-}
-async function enc(key, obj) { const iv = crypto.getRandomValues(new Uint8Array(12)); const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, new TextEncoder().encode(JSON.stringify(obj))); return { iv: b64(iv), ct: b64(ct) }; }
-async function dec(key, o) { const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: unb64(o.iv) }, key, unb64(o.ct)); return JSON.parse(new TextDecoder().decode(pt)); }
-let lockTimer = null;
-function touchVault() { clearTimeout(lockTimer); lockTimer = setTimeout(lockVault, 3 * 60 * 1000); }
-function lockVault() { S.vaultKey = null; S.revealed = {}; clearTimeout(lockTimer); renderKitchen(); }
 function renderKitchen() {
-  const box = $("#kitchen"), meta = S.meta.vault;
+  const box = $("#kitchen");
   $("#lockBtn").hidden = !S.vaultKey;
-  if (!base) { box.innerHTML = `<div class="banner">وصفات البيت تحتاج تفتح الدفتر من claude.ai وأنت مسجّل الدخول.</div>`; return; }
-  if (!meta) {
-    box.innerHTML = `<div class="kitchen-hero"><h2>افتح مطبخك</h2>
-      <p class="muted small" style="margin:0">هنا تحفظ أرقامك السرية على شكل وصفات. اسم الطبخة يكون كناية تعرفها أنت (مثلاً «كبسة الأهلي» لتطبيق البنك)، والمقادير الحقيقية تنقفل بتشفير لا يُفك إلا بسر الطبخة. حتى كلود ما يقدر يقرأها.</p>
-      <label class="f">سر الطبخة<input type="password" id="vp1" autocomplete="new-password"></label>
-      <label class="f">أعد كتابته<input type="password" id="vp2" autocomplete="new-password"></label>
-      <p class="small" style="margin:0;color:var(--danger)">إذا نسيت سر الطبخة ما فيه طريقة لاسترجاع الوصفات.</p>
-      <div><button class="btn pri" data-act="vaultSetup">ابدأ</button></div></div>`;
-    return;
+  if (!S.vaultKey) { box.dataset.state = ""; box.innerHTML = pinGate("kitchen"); return; }
+  touchLock();
+  if (box.dataset.state !== "open") {
+    box.dataset.state = "open";
+    box.innerHTML = `<input type="search" id="vSearch" placeholder="ابحث" autocomplete="off" aria-label="ابحث">
+      <div id="vResults" class="sec"></div>
+      <details class="fold" id="vNewFold"><summary><span>جديد</span><span class="small muted">+</span></summary>
+      <div class="body sec" style="padding:12px">
+        <label class="f">اسم الوصفة<input type="text" id="vDish" autocomplete="off"></label>
+        <label class="f">اسم المستخدم<input type="text" id="vUser" autocomplete="off"></label>
+        <label class="f">الرقم<input type="text" id="vSecret" autocomplete="off"></label>
+        <div><button class="btn pri" data-act="vaultAdd">احفظ</button></div></div></details>`;
+    $("#vSearch").addEventListener("input", renderKitchenResults);
   }
-  const list = S.vault.slice().sort((a, b) => (a.dish || "").localeCompare(b.dish || "", "ar"));
-  if (!S.vaultKey) {
-    box.innerHTML = `<div class="kitchen-hero"><h2>المطبخ مقفل</h2>
-      <label class="f">سر الطبخة<input type="password" id="vpu" autocomplete="current-password"></label>
-      <div><button class="btn pri" data-act="vaultUnlock">افتح</button></div></div>
-      <div class="sec">${list.map(v => `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span><span class="muted">${IC.lock}</span></div><span class="small muted">مقادير محفوظة</span></div>`).join("")}</div>`;
-    return;
-  }
-  touchVault();
-  box.innerHTML = `<details class="fold"><summary><span>وصفة جديدة</span><span class="small muted">+</span></summary>
-    <div class="body sec" style="padding:12px">
-      <label class="f">اسم الطبخة (كناية تعرفها)<input type="text" id="vDish" placeholder="مثل: كبسة الأهلي"></label>
-      <label class="f">التطبيق أو الموقع<input type="text" id="vApp"></label>
-      <label class="f">اسم المستخدم<input type="text" id="vUser" autocomplete="off"></label>
-      <label class="f">الرقم السري<input type="text" id="vSecret" autocomplete="off"></label>
-      <label class="f">ملاحظة<input type="text" id="vNote" autocomplete="off"></label>
-      <div><button class="btn pri" data-act="vaultAdd">احفظ الوصفة</button></div></div></details>
-    <div class="sec">${list.length ? list.map(v => {
-      const r = S.revealed[v.id];
-      const conf = S.confirm === "v:" + v.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الوصفة نهائياً؟</p><button class="btn danger sm" data-act="vaultDelYes" data-id="${v.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
-      return `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span>
-        <button class="btn sm ghost" data-act="vaultReveal" data-id="${v.id}">${r ? "أخفِ" : "المقادير"}</button>
-        <button class="icon-btn" data-act="vaultDel" data-id="${v.id}" aria-label="احذف">${IC.trash}</button></div>
-        ${r ? `<dl class="ing">
-          ${r.app ? `<dt>التطبيق</dt><dd>${esc(r.app)}</dd><span></span>` : ""}
-          ${r.user ? `<dt>المستخدم</dt><dd id="vu-${v.id}">${esc(r.user)}</dd><button class="btn sm" data-act="copy" data-src="vu-${v.id}">نسخ</button>` : ""}
-          ${r.secret ? `<dt>الرقم</dt><dd id="vs-${v.id}">${esc(r.secret)}</dd><button class="btn sm" data-act="copy" data-src="vs-${v.id}">نسخ</button>` : ""}
-          ${r.note ? `<dt>ملاحظة</dt><dd>${esc(r.note)}</dd><span></span>` : ""}
-        </dl>` : ""}${conf}</div>`;
-    }).join("") : `<div class="empty card">ما فيه وصفات بعد. أضف أول وصفة من فوق.</div>`}</div>`;
+  ensureDec().then(ch => { if (ch) renderKitchenResults(); });
+  renderKitchenResults();
 }
-async function vaultSetup() {
-  const a = $("#vp1").value, b = $("#vp2").value;
-  if (a.length < 6) { toast("خلّ سر الطبخة ٦ أحرف أو أكثر"); return; }
-  if (a !== b) { toast("السرّين مو متطابقين"); return; }
-  const salt = b64(crypto.getRandomValues(new Uint8Array(16)));
-  const key = await deriveKey(a, salt); const chk = await enc(key, { ok: "baraka" });
-  await put("meta", "vault", { salt, ...chk }); S.vaultKey = key; renderKitchen();
-}
-async function vaultUnlock() {
-  const meta = S.meta.vault, p = $("#vpu").value; if (!meta || !p) return;
-  try { const key = await deriveKey(p, meta.salt); const r = await dec(key, meta); if (r.ok !== "baraka") throw 0; S.vaultKey = key; renderKitchen(); }
-  catch (e) { toast("السر غلط"); }
+function renderKitchenResults() {
+  const out = $("#vResults"); if (!out) return; touchLock();
+  const q = $("#vSearch").value.trim().toLowerCase();
+  if (!q) { out.innerHTML = ""; return; }
+  const hits = S.vault.filter(v => { const d = S.dec[v.id] || {}; return [v.dish, d.app, d.user, d.note].join(" ").toLowerCase().includes(q); })
+    .sort((a, b) => (a.dish || "").localeCompare(b.dish || "", "ar"));
+  out.innerHTML = hits.length ? hits.map(v => {
+    const d = S.dec[v.id] || {}; const show = S.showPw[v.id];
+    const conf = S.confirm === "v:" + v.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذه الوصفة نهائياً؟</p><button class="btn danger sm" data-act="vaultDelYes" data-id="${v.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+    return `<div class="recipe"><div class="row"><span class="dish grow">${esc(v.dish)}</span><button class="icon-btn" data-act="vaultDel" data-id="${v.id}" aria-label="احذف">${IC.trash}</button></div>
+      <div class="ing">
+        <span class="k">اسم المستخدم</span><span class="v">${esc(d.user || "—")}</span><button class="btn sm" data-act="vCopy" data-id="${v.id}" data-f="user" ${d.user ? "" : "disabled"}>نسخ</button>
+        <span class="k">الرقم السري</span><button class="v pw" data-act="vShow" data-id="${v.id}">${d.secret ? (show ? esc(d.secret) : "••••••••") : "—"}</button><button class="btn sm pri" data-act="vCopy" data-id="${v.id}" data-f="secret" ${d.secret ? "" : "disabled"}>نسخ</button>
+      </div>${conf}</div>`;
+  }).join("") : `<div class="empty card">ما لقيت شي.</div>`;
 }
 async function vaultAdd() {
   if (!S.vaultKey) return;
-  const dish = $("#vDish").value.trim(); if (!dish) { toast("اكتب اسم الطبخة"); return; }
-  const payload = { app: $("#vApp").value.trim(), user: $("#vUser").value.trim(), secret: $("#vSecret").value, note: $("#vNote").value.trim() };
-  const e = await enc(S.vaultKey, payload);
-  await put("vault", newId(), { dish, ...e, createdAt: Date.now() }); toast("انحفظت الوصفة");
+  const dish = $("#vDish").value.trim(); if (!dish) { toast("اكتب اسم الوصفة"); return; }
+  const e = await enc(S.vaultKey, { user: $("#vUser").value.trim(), secret: $("#vSecret").value });
+  await put("vault", newId(), { dish, ...e, createdAt: Date.now() });
+  ["#vDish", "#vUser", "#vSecret"].forEach(s => $(s).value = ""); $("#vNewFold").open = false;
+  $("#vSearch").value = dish; toast("انحفظت");
+  setTimeout(() => ensureDec().then(renderKitchenResults), 300);
+}
+async function copyText(txt) {
+  try { await navigator.clipboard.writeText(txt); toast("انسخ"); }
+  catch (e) { toast("ما قدرت أنسخ، اضغط على الرقم لإظهاره وانسخه يدوياً"); }
 }
 
 /* ---------- render all ---------- */
@@ -1293,7 +1439,7 @@ function setTab(v) {
   curTab = v; S.confirm = null;
   document.querySelectorAll("nav.bottom button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "p-" + v));
-  if (v !== "kitchen" && S.vaultKey) lockVault();
+  if (v !== "kitchen" && v !== "files" && S.vaultKey) lockAll();
   renderAll(); scrollTo({ top: 0 });
 }
 
@@ -1311,7 +1457,7 @@ const A = {
   markDone: async b => { const t = item(b.dataset.id); closeSheet(); if (t) await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
   undo: b => patch("items", b.dataset.id, { done: false, doneAt: null }),
   askDel: b => { S.confirm = b.dataset.id; renderAll(); },
-  delNo: () => { S.confirm = null; renderAll(); },
+  delNo: () => { S.confirm = null; renderAll(); renderKitchenResults(); },
   delYes: b => deleteItem(b.dataset.id),
   delNow: b => del("items", b.dataset.id),
   edit: b => openEdit(b.dataset.id),
@@ -1338,17 +1484,21 @@ const A = {
   lamKind: b => { S.lamKind = b.dataset.v; renderNotes(); },
   classifyAll: async b => { b.disabled = true; b.textContent = "يصنّف…"; for (const n of S.notes.filter(n => n.section === "lamasat" && !n.classified).slice(0, 15)) await enrichNote(n.id, "lamasat", n.text); },
   expand: b => b.closest(".lam").classList.toggle("open"),
-  fileTag: b => { S.fileTag = b.dataset.v || null; renderFiles(); },
-  pfTag: b => { const i = $("#pfTags"); const cur = splitTags(i.value); if (!cur.includes(b.dataset.v)) cur.push(b.dataset.v); i.value = cur.join("، "); },
+  fileGroup: b => { S.fileGroup = b.dataset.v; S.fileSub = ""; renderFiles(); },
+  fileSub: b => { S.fileSub = b.dataset.v; renderFiles(); },
   pfUpload: uploadPending, pfCancel: () => { S.pendingFiles = []; renderUploadForm(); },
   fileSend: b => sendFile(b.dataset.id), fileEdit: b => editFile(b.dataset.id),
-  fileSave: async b => { await patch("files", b.dataset.id, { name: $("#efName").value.trim() || "ملف", tags: splitTags($("#efTags").value) }); closeSheet(); },
+  fileSave: async b => { const f = S.files.find(x => x.id === b.dataset.id); const name = $("#efName").value.trim() || "ملف";
+    await patch("files", b.dataset.id, { name, group: $("#efGroup").value, sub: $("#efSub").value.trim(), expiry: $("#efExp").value, ...(f && f.expiry !== $("#efExp").value ? { expiryHijri: "" } : {}), auto: { name: false, group: false, sub: false } }); closeSheet(); },
+  fileRead: b => { const f = S.files.find(x => x.id === b.dataset.id); closeSheet(); if (f) { toast("كلود يقرأ الوثيقة…"); readDoc(f); } },
   fileDel: b => { S.confirm = "f:" + b.dataset.id; renderFiles(); },
   fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
-  vaultSetup, vaultUnlock, vaultAdd, vaultLock: lockVault,
-  vaultReveal: async b => { touchVault(); const id = b.dataset.id; if (S.revealed[id]) { delete S.revealed[id]; } else { const v = S.vault.find(x => x.id === id); try { S.revealed[id] = await dec(S.vaultKey, v); } catch (e) { toast("ما قدرت أفتح هذه الوصفة"); } } renderKitchen(); },
-  vaultDel: b => { S.confirm = "v:" + b.dataset.id; renderKitchen(); },
-  vaultDelYes: b => { S.confirm = null; delete S.revealed[b.dataset.id]; del("vault", b.dataset.id); },
+  pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
+  vaultAdd, vaultLock: lockAll,
+  vShow: b => { S.showPw[b.dataset.id] = !S.showPw[b.dataset.id]; renderKitchenResults(); },
+  vCopy: b => { touchLock(); const d = S.dec[b.dataset.id]; if (d) copyText(d[b.dataset.f] || ""); },
+  vaultDel: b => { S.confirm = "v:" + b.dataset.id; renderKitchenResults(); },
+  vaultDelYes: b => { S.confirm = null; delete S.dec[b.dataset.id]; del("vault", b.dataset.id); },
 };
 function readAllReview() { return [...document.querySelectorAll("#review [data-form]")].map(el => { const i = +el.dataset.form; return { ...S.review[i], ...readForm(el) }; }); }
 document.addEventListener("click", e => {
@@ -1364,10 +1514,12 @@ document.addEventListener("change", e => {
 });
 $("#fileIn").addEventListener("change", e => { S.pendingFiles = [...e.target.files]; e.target.value = ""; renderUploadForm(); });
 $("#fileSearch").addEventListener("input", renderFiles);
+document.addEventListener("input", e => { if (e.target.classList?.contains("pinIn") && /^\d{4}$/.test(en(e.target.value)) && S.meta.vault) pinUnlock(e.target); });
+document.addEventListener("pointerdown", e => { if (e.target.closest("#p-files,#p-kitchen")) touchLock(); });
 $("#noteSearch").addEventListener("input", renderNotes);
 $("#dump").addEventListener("keydown", e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) doParse(); });
 ["#todoNew", "#habitNew"].forEach(s => $(s).addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); A[s === "#todoNew" ? "todoAdd" : "habitAdd"](); } }));
-document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.id === "vpu") vaultUnlock(); if (e.key === "Escape") closeSheet(); });
+document.addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList?.contains("pinIn")) pinUnlock(e.target); if (e.key === "Escape") closeSheet(); });
 let lastDay = today();
 setInterval(() => { renderTick(); if (today() !== lastDay) { lastDay = today(); renderAll(); } }, 1000);
 boot();
