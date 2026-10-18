@@ -218,7 +218,30 @@ nav.bottom button.on{color:var(--ink);font-weight:600}
 .take{border-inline-start:3px solid var(--line);padding-inline-start:10px;font-weight:500}
 
 /* files */
-.fgrid{display:flex;flex-direction:column;gap:12px}
+.fgrid{display:flex;flex-direction:column;gap:14px}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:12px}
+.dname{font-size:17px;word-wrap:break-word}
+.dprev{display:block;border-radius:12px;overflow:hidden;background:var(--surface2);border:1px solid var(--line);max-width:100%}
+.dprev img{display:block;width:100%;max-height:340px;object-fit:contain;background:var(--surface2)}
+.pdfph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;height:160px}
+.pdfph svg{width:42px;height:42px;color:var(--muted)}
+.dexp{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:12px;background:var(--surface2);--tc:var(--ok)}
+.dexp.soon{--tc:var(--biz)} .dexp.urgent,.dexp.gone{--tc:var(--danger)}
+.dexp .remain{color:var(--tc);font-family:var(--font-display);font-size:16px;white-space:nowrap}
+.dexp .alert{font-size:13px;font-weight:600;color:var(--tc);background:color-mix(in srgb,var(--tc) 12%,var(--surface));border-radius:8px;padding:7px 10px}
+.dexp .tl-lbl{display:none}
+.dprev{text-decoration:none;color:inherit}
+.dgrp{background:color-mix(in srgb,var(--biz) 12%,var(--surface2));color:var(--ink)}
+.dcopy{display:flex;flex-direction:column;gap:6px}
+.dcp{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:11px;border:1px solid var(--line);background:var(--surface);text-align:start;width:100%}
+.dcp:active{background:var(--surface2)}
+.dcp .lbl{font-size:12px;color:var(--muted);flex:none;min-width:72px}
+.dcp .v{flex:1;min-width:0;font-weight:600;font-variant-numeric:tabular-nums;word-break:break-all;unicode-bidi:plaintext}
+.dcp .cpi{flex:none;color:var(--work);display:grid}
+.dcp .cpi svg{width:18px;height:18px}
+.more{align-self:flex-start;font-size:13px;color:var(--work);font-weight:600;padding:2px 0}
+.dcard .acts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.dcard .acts .btn{padding:8px 4px}
 .fcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:12px}
 .fcard .top{display:flex;gap:12px;align-items:flex-start}
 .fcard .thumb{width:84px;height:64px;flex:none;border-radius:10px;background:var(--surface2);display:grid;place-items:center;overflow:hidden}
@@ -1346,23 +1369,63 @@ function renderFiles() {
   if (g) fs = fs.filter(f => f.group === g);
   if (g && S.fileSub) fs = fs.filter(f => f.sub === S.fileSub);
   if (q) fs = fs.filter(f => [f.name, f.sub, f.docType, DOC_GROUPS[f.group], (f.tags || []).join(" ")].join(" ").includes(q));
-  $("#filesGrid").innerHTML = fs.length ? fs.map(f => {
-    const url = "/_blob/" + f.assetId; const img = (f.contentType || "").startsWith("image/");
-    const x = expiryInfo(f);
-    const conf = S.confirm === "f:" + f.id ? `<div class="confirm"><p>تحذف الملف نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
-    const fields = Array.isArray(f.fields) ? f.fields.filter(x => x && x.value) : [];
-    return `<article class="fcard">
-      <div class="top"><a class="thumb" href="${url}" target="_blank" rel="noopener">${img ? `<img src="${url}" alt="${esc(f.name)}" loading="lazy">` : IC.pdf}</a>
-        <div class="b"><span class="nm">${esc(f.name)}</span>
-          <div class="row wrapr">${f.group ? `<span class="chip">${DOC_GROUPS[f.group]}${f.sub ? " · " + esc(f.sub) : ""}</span>` : ""}${f.docType && f.docType !== f.sub ? `<span class="chip">${esc(f.docType)}</span>` : ""}</div>
-          ${x && x.lvl !== "ok" ? `<span class="exp-chip ${x.lvl}">${expiryText(x.n)}</span>` : ""}
-          ${f.reading ? `<span class="small muted">كلود يقرأها…</span>` : ""}</div></div>
-      ${x ? timeline(f, x) : ""}
-      ${fields.length ? `<dl class="fields">${fields.map((d, i) => `<dt>${esc(d.label)}</dt><dd><span class="val">${esc(d.value)}</span><button class="cp" data-act="fCopy" data-id="${f.id}" data-i="${i}" aria-label="نسخ ${esc(d.label)}">نسخ</button></dd>`).join("")}</dl>`
-        : !f.reading && sample ? `<button class="btn sm ghost" data-act="fileRead" data-id="${f.id}" style="align-self:flex-start">استخرج البيانات</button>` : ""}
-      <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div>
-      ${conf}</article>`;
-  }).join("") : `<div class="empty card">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويستخرج أرقامها وتاريخ انتهائها وينبهك قبلها بشهر."}</div>`;
+  $("#filesGrid").innerHTML = fs.length ? fs.map(docCard).join("") : `<div class="empty card">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويستخرج أرقامها وتاريخ انتهائها وينبهك قبلها بشهر."}</div>`;
+  hydratePdfPreviews();
+}
+const KEY_RULES = [/^الاسم|اسم صاحب|اسم المالك|اسم المنشأة$|اسم المنشأة \(|الاسم بالعربي/, /رقم الهوية|رقم الإقامة|رقم الجواز|رقم الرخصة|رقم السجل|الرقم الموحد|رقم اللوحة|رقم الوثيقة|رقم الفاتورة|رقم الحدود|^الرقم$|رقم التأشيرة|رقم البوليصة/, /تاريخ الانتهاء ميلادي|^تاريخ الانتهاء$|تاريخ الانتهاء(?! هجري)/, /^الإجمالي بعد|الإجمالي شامل|^المبلغ/];
+function keyFields(f) {
+  const fs = (Array.isArray(f.fields) ? f.fields : []).map((x, i) => ({ ...x, i })).filter(x => x && x.value);
+  const marked = fs.filter(x => x.key); if (marked.length) return marked.slice(0, 5);
+  const out = [];
+  for (const re of KEY_RULES) { const m = fs.find(x => re.test(x.label) && !out.includes(x)); if (m) out.push(m); }
+  return out.length ? out : fs.slice(0, 3);
+}
+const shortLabel = l => String(l).replace(/\s*(بالعربي|ميلادي)$/, "").replace(/\s*\(.*?\)\s*/g, " ").trim();
+function docCard(f) {
+  const url = "/_blob/" + f.assetId; const img = (f.contentType || "").startsWith("image/");
+  const x = expiryInfo(f);
+  const conf = S.confirm === "f:" + f.id ? `<div class="confirm"><p>تحذف الوثيقة نهائياً؟</p><button class="btn danger sm" data-act="fileDelYes" data-id="${f.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  const all = (Array.isArray(f.fields) ? f.fields : []).map((d, i) => ({ ...d, i })).filter(d => d && d.value);
+  const keys = keyFields(f), open = S.docMore === f.id;
+  const pdfCached = !img && pdfPrevCache.get(f.assetId);
+  return `<article class="dcard">
+    <h3 class="dname">${esc(f.name)}</h3>
+    <a class="dprev ${img ? "" : "pdf"}" href="${url}" target="_blank" rel="noopener" aria-label="افتح ${esc(f.name)}">
+      ${img ? `<img src="${url}" alt="" loading="lazy">` : pdfCached ? `<img src="${pdfCached}" alt="">` : `<span class="pdfph" data-pdf="${f.assetId}">${IC.pdf}<span class="small muted">PDF</span></span>`}
+    </a>
+    ${x ? `<div class="dexp ${x.lvl}">
+        <div class="row" style="justify-content:space-between;align-items:baseline"><span><span class="small muted">تاريخ الانتهاء</span><br><b>${fmtDate(f.expiry)}</b>${f.expiryHijri ? ` <span class="small muted">· ${esc(f.expiryHijri)} هـ</span>` : ""}</span><b class="remain">${fmtRemain(x.n)}</b></div>
+        ${timeline(f, x)}
+        ${x.lvl !== "ok" ? `<div class="alert">${x.n < 0 ? "انتهت هذه الوثيقة. جدّدها في أقرب وقت." : x.n <= 10 ? "باقي أيام قليلة على انتهائها. جدّدها الحين." : "قربت تنتهي، باقي أقل من شهر. ابدأ بالتجديد."}</div>` : ""}
+      </div>` : f.reading ? `<div class="small muted">كلود يقرأ الوثيقة…</div>` : `<div class="small muted">${f.readAt ? "بدون تاريخ انتهاء" : ""}</div>`}
+    <div class="row wrapr">${f.group ? `<span class="chip dgrp">${DOC_GROUPS[f.group]}${f.sub ? " · " + esc(f.sub) : ""}</span>` : ""}${f.docType && f.docType !== f.sub && f.docType !== "أخرى" ? `<span class="chip">${esc(f.docType)}</span>` : ""}</div>
+    ${keys.length ? `<div class="dcopy">${keys.map(d => `<button class="dcp" data-act="fCopy" data-id="${f.id}" data-i="${d.i}"><span class="lbl">${esc(shortLabel(d.label))}</span><span class="v">${esc(d.value)}</span><span class="cpi">${IC.copy}</span></button>`).join("")}</div>`
+      : !f.reading && sample ? `<button class="btn sm ghost" data-act="fileRead" data-id="${f.id}" style="align-self:flex-start">استخرج البيانات</button>` : ""}
+    ${all.length > keys.length ? `<button class="more" data-act="docMore" data-id="${f.id}">${open ? "أخفِ باقي البيانات" : `كل البيانات (${ar(all.length)})`}</button>
+      ${open ? `<dl class="fields">${all.map(d => `<dt>${esc(d.label)}</dt><dd><span class="val">${esc(d.value)}</span><button class="cp" data-act="fCopy" data-id="${f.id}" data-i="${d.i}">نسخ</button></dd>`).join("")}</dl>` : ""}` : ""}
+    <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div>
+    ${conf}</article>`;
+}
+const pdfPrevCache = new Map(); let pdfBusy = false;
+async function hydratePdfPreviews() {
+  if (pdfBusy) return; pdfBusy = true;
+  try {
+    for (const ph of [...document.querySelectorAll("[data-pdf]")]) {
+      const id = ph.dataset.pdf; let src = pdfPrevCache.get(id);
+      if (!src) {
+        try {
+          await loadPdfJs();
+          const buf = await (await fetch("/_blob/" + id)).arrayBuffer();
+          const pdf = await window.pdfjsLib.getDocument({ data: new Uint8Array(buf), disableWorker: true }).promise;
+          const page = await pdf.getPage(1); const v1 = page.getViewport({ scale: 1 }); const vp = page.getViewport({ scale: Math.min(2, 700 / v1.width) });
+          const c = document.createElement("canvas"); c.width = vp.width; c.height = vp.height;
+          await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+          src = c.toDataURL("image/jpeg", 0.82); pdfPrevCache.set(id, src);
+        } catch (e) { continue; }
+      }
+      document.querySelectorAll(`[data-pdf="${id}"]`).forEach(el => { el.outerHTML = `<img src="${src}" alt="">`; });
+    }
+  } finally { pdfBusy = false; }
 }
 function fmtRemain(n) {
   if (n < 0) return expiryText(n);
@@ -1461,7 +1524,8 @@ async function readDoc(f) {
 "expiry":"تاريخ الانتهاء ميلادي YYYY-MM-DD، أو فارغ إن لم يوجد",
 "expiryHijri":"تاريخ الانتهاء الهجري كما هو مكتوب بصيغة YYYY/MM/DD إن وجد، وإلا فارغ",
 "issue":"تاريخ الإصدار ميلادي YYYY-MM-DD أو فارغ",
-"fields":[{"label":"اسم الحقل بالعربية","value":"القيمة"}]}
+"fields":[{"label":"اسم الحقل بالعربية","value":"القيمة","key":false}]}
+ضع "key":true على أهم ٣ إلى ٤ حقول فقط يحتاج نسخها غالباً: الاسم، والرقم الأساسي للوثيقة، وتاريخ الانتهاء الميلادي (وللفواتير: رقم الفاتورة والإجمالي).
 في fields استخرج كل ما قد يحتاج نسخه: كل الأرقام (رقم الهوية، رقم الجواز، رقم الرخصة، رقم السجل، الرقم الموحد، رقم اللوحة، الرقم التسلسلي، رقم الوثيقة، رقم الحدود…)، والاسم بالعربي وبالإنجليزي إن وجد، وتاريخ الميلاد، وتاريخ الإصدار، وتاريخ الانتهاء (هجري وميلادي كما هي مكتوبة)، ومكان الإصدار، واسم المنشأة. اكتب القيمة حرفياً كما في الوثيقة بالأرقام الإنجليزية 0-9 وبدون مسافات زائدة داخل الأرقام. لا تخترع أي قيمة غير ظاهرة بوضوح.
 لا تخمّن: إذا لم يظهر تاريخ انتهاء صريح اترك الحقلين فارغين. إذا كتب الانتهاء بالهجري فقط فحوّله لميلادي بتقويم أم القرى.${text ? `\nنص مستخرج من الملف للمساعدة:\n"""${text}"""` : ""}`;
     const r = await sample.json(prompt, { images: imgs.slice(0, lim.images.maxCount || 2), modelTier: "default" });
@@ -1469,7 +1533,7 @@ async function readDoc(f) {
     let expiry = /^\d{4}-\d{2}-\d{2}$/.test(r.expiry || "") ? r.expiry : "";
     const hj = String(r.expiryHijri || "").trim();
     if (hj) { const g = hijriToGreg(hj, expiry); if (g) expiry = g; }
-    const fields = (Array.isArray(r.fields) ? r.fields : []).filter(x => x && x.label && x.value).slice(0, 20).map(x => ({ label: String(x.label).slice(0, 40), value: en(String(x.value)).trim().slice(0, 120) }));
+    const fields = (Array.isArray(r.fields) ? r.fields : []).filter(x => x && x.label && x.value).slice(0, 20).map(x => ({ label: String(x.label).slice(0, 40), value: en(String(x.value)).trim().slice(0, 120), ...(x.key ? { key: true } : {}) }));
     const upd = { reading: false, readAt: Date.now(), docType: String(r.docType || ""), expiry, expiryHijri: hj ? ar(hj) : "", fields, issue: /^\d{4}-\d{2}-\d{2}$/.test(r.issue || "") ? r.issue : "" };
     if (auto.name && r.title) upd.name = String(r.title).slice(0, 80);
     if (auto.group && DOC_GROUPS[r.group]) upd.group = r.group;
@@ -2011,6 +2075,7 @@ const A = {
   fileRead: b => { const f = S.files.find(x => x.id === b.dataset.id); closeSheet(); if (f) { toast("كلود يقرأ الوثيقة…"); readDoc(f); } },
   fileDel: b => { S.confirm = "f:" + b.dataset.id; renderFiles(); },
   fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
+  docMore: b => { S.docMore = S.docMore === b.dataset.id ? null : b.dataset.id; renderFiles(); },
   fCopy: b => { const f = S.files.find(x => x.id === b.dataset.id); const d = f?.fields?.[+b.dataset.i]; if (d) { touchLock(); copyText(d.value); } },
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
   vaultAdd, vaultLock: lockAll,
