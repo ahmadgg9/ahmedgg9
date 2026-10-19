@@ -931,7 +931,7 @@ function calErr(e) {
   if (c === "needs_reauth") return "أعد ربط Google Calendar من إعدادات claude.ai ← الموصلات";
   if (c === "not_in_manifest" || c === "approval_required") return "الدفتر يحتاج إذنك للوصول للتقويم";
   if (c === "server_unavailable") return "التقويم ما رد الحين، جرّب بعد شوي";
-  return "ما قدرت أضيفه للتقويم";
+  return "Google رفض الطلب. افصل Google Calendar وأعد ربطه من claude.ai/customize/connectors ثم اضغط «أضف للتقويم»";
 }
 function meetDesc(t) { return `من دفتر مهام أبو مالك · ${AREAS[t.area]?.label || ""}${t.branch ? " · " + t.branch : ""}`; }
 async function calCreate(id, t) {
