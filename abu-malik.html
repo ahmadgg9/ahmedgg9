@@ -120,7 +120,9 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .only-task,.only-meeting,.only-note{display:none!important}
 [data-kind=task] .only-task,[data-kind=note] label.only-note{display:flex!important}
 [data-kind=meeting] .grid2.only-meeting,[data-kind=note] .grid2.only-note{display:grid!important}
-[data-kind=note] .only-notnote{display:none!important}
+[data-kind=note] .only-notnote,[data-kind=expense] .only-notnote,[data-kind=shop] .only-notnote,[data-kind=meal] .only-notnote{display:none!important}
+.only-expense{display:none!important}
+[data-kind=expense] .grid2.only-expense{display:grid!important}
 
 /* running */
 .running{background:var(--deep);color:var(--on-deep);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
@@ -186,7 +188,7 @@ details.fold>.body{border:1px solid var(--line);border-top:0;border-radius:0 0 v
 /* nav */
 nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);
   padding:6px max(8px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(8px,env(safe-area-inset-left,0px))}
-nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(7,1fr)}
+nav.bottom .in{max-width:640px;margin:0 auto;display:grid;grid-template-columns:repeat(5,1fr)}
 nav.bottom button{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;color:var(--muted);padding:6px 0;border-radius:10px}
 nav.bottom button svg{width:22px;height:22px}
 nav.bottom button.on{color:var(--ink);font-weight:600}
@@ -323,8 +325,42 @@ nav.bottom button{font-size:10.5px}
 .eng-due{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--work) 10%,var(--surface));border:1px solid color-mix(in srgb,var(--work) 30%,var(--line));font-size:14px;color:var(--ink);text-align:start}
 .eng-due span:last-child{color:var(--work);font-weight:600;white-space:nowrap}
 #engStats.stats .stat b{font-size:20px}
-nav.bottom button{font-size:10px}
-nav.bottom button svg{width:21px;height:21px}
+nav.bottom button{font-size:11.5px}
+nav.bottom button svg{width:22px;height:22px}
+/* hubs & life sections */
+.subnav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-block:10px 6px;margin-bottom:-8px}
+.meter{display:flex;flex-direction:column;gap:5px;font-size:13px;min-width:0}
+.meter .bar{height:8px}
+.kcal{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0}
+.kcal .big{font-family:var(--font-display);font-size:38px;font-weight:600;line-height:1.1}
+.kbars{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:110px;align-items:end;padding-bottom:18px}
+.kb{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;border-radius:8px}
+.kb i{display:block;width:70%;min-height:2px;border-radius:6px 6px 2px 2px}
+.kb span{position:absolute;bottom:-18px;font-size:11px;color:var(--muted)}
+.kb.sel span{color:var(--ink);font-weight:700}
+.kgoal{position:absolute;left:0;right:0;border-top:1.5px dashed var(--muted);opacity:.6;pointer-events:none;margin-bottom:18px}
+.catrow{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;font-size:13px}
+.catrow .bar{height:8px}
+.amt{font-size:14px;white-space:nowrap;align-self:center}
+.amt.in{color:var(--ok)} .amt.out{color:var(--danger)}
+.money-t td{font-size:12.5px}
+.goal h2{font-size:17px;color:var(--a)}
+.goal.gdone{opacity:.7}
+.steps{display:flex;flex-direction:column;gap:2px}
+.step{display:flex;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
+.step:first-child{border-top:0}
+.step .check{margin:0}
+.step.sd span.grow{text-decoration:line-through;color:var(--muted)}
+.qcard{background:color-mix(in srgb,var(--pers) 8%,var(--surface))}
+.qpage{font-family:var(--font-display);font-size:26px;font-weight:600;line-height:1.2}
+.ok-t{color:var(--ok)}
+.qdays{display:grid;grid-template-columns:repeat(14,1fr);gap:4px;height:70px;align-items:end;padding-bottom:16px;position:relative}
+.qd{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;background:var(--surface2);border-radius:5px}
+.qd i{display:block;width:100%;border-radius:5px;background:var(--pers);opacity:.55}
+.qd.full i{opacity:1}
+.qd span{position:absolute;bottom:-16px;font-size:10px;color:var(--muted)}
+.weekcta{border:1.5px solid var(--work)}
+#moneyBody .stat b{font-size:16px;white-space:nowrap}
 /* recipes (vault) */
 .recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
@@ -347,6 +383,7 @@ nav.bottom button svg{width:21px;height:21px}
 </style>
 
 <div class="wrap">
+<div class="subnav tabs" id="subnav" hidden></div>
 
 <!-- ============ TODAY ============ -->
 <section class="page on" id="p-today">
@@ -420,6 +457,8 @@ nav.bottom button svg{width:21px;height:21px}
     <div class="body list" id="doneList" style="border-top:0"></div>
   </details>
 
+  <div id="weekly"></div>
+
   <details class="fold">
     <summary><span>اسأل كلود عن دفترك</span><span class="small muted">مهامك وملاحظاتك</span></summary>
     <div class="body" style="padding:12px;display:flex;flex-direction:column;gap:10px">
@@ -490,6 +529,38 @@ nav.bottom button svg{width:21px;height:21px}
   <div id="engBody" class="sec" style="gap:14px"></div>
 </section>
 
+<!-- ============ GOALS ============ -->
+<section class="page" id="p-goals"><div class="ph"><h1>الأهداف</h1></div><div id="goalsBody" class="sec" style="gap:14px"></div></section>
+
+<!-- ============ MONEY ============ -->
+<section class="page" id="p-money">
+  <div class="ph"><h1>المالية</h1><button class="btn sm ghost" data-act="mManual">إدخال يدوي</button></div>
+  <div class="card sec"><textarea id="moneyIn" rows="2" placeholder="دفعت ١٥٠ بنزين، ودخل مبيعات تحميرة فرن ٣٥٠٠"></textarea><div><button class="btn pri" data-act="moneyAdd">سجّل</button></div></div>
+  <div id="moneyBody" class="sec" style="gap:14px"></div>
+</section>
+
+<!-- ============ FOOD ============ -->
+<section class="page" id="p-food">
+  <div class="ph"><h1>غذائي</h1></div>
+  <div class="card sec"><textarea id="foodIn" rows="2" placeholder="وش أكلت؟ مثل: تغديت كبسة دجاج وسلطة"></textarea>
+    <input type="file" id="foodImg" accept="image/*" hidden>
+    <div class="row wrapr"><button class="btn pri" data-act="mealAdd">سجّل</button><label class="btn ghost" for="foodImg">صوّر الوجبة</label><span id="foodImgChip"></span></div></div>
+  <div id="foodBody" class="sec" style="gap:14px"></div>
+</section>
+
+<!-- ============ QURAN ============ -->
+<section class="page" id="p-quran"><div class="ph"><h1>قرآني</h1></div><div id="quranBody" class="sec" style="gap:14px"></div></section>
+
+<!-- ============ SHOP ============ -->
+<section class="page" id="p-shop">
+  <div class="ph"><h1>المشتريات</h1></div>
+  <div class="card sec"><textarea id="shopIn" rows="2" placeholder="حليب، خبز، ٢ كيلو طماطم، صابون"></textarea><div><button class="btn pri" data-act="shopAdd">أضف</button></div></div>
+  <div id="shopBody" class="sec" style="gap:14px"></div>
+</section>
+
+<!-- ============ CAR ============ -->
+<section class="page" id="p-car"><div class="ph"><h1>السيارة</h1></div><div id="carBody" class="sec" style="gap:14px"></div></section>
+
 <!-- ============ RECIPES (vault) ============ -->
 <section class="page" id="p-kitchen">
   <div class="ph"><h1>وصفات البيت</h1><button class="btn sm ghost" data-act="vaultLock" id="lockBtn" hidden>اقفل</button></div>
@@ -498,13 +569,11 @@ nav.bottom button svg{width:21px;height:21px}
 </div>
 
 <nav class="bottom" aria-label="الأقسام"><div class="in">
-  <button data-act="tab" data-v="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>اليوم</button>
-  <button data-act="tab" data-v="projects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>المشاريع</button>
-  <button data-act="tab" data-v="notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>الدفتر</button>
-  <button data-act="tab" data-v="files"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h4"/></svg>الوثائق</button>
-  <button data-act="tab" data-v="gym"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>تمريني</button>
-  <button data-act="tab" data-v="eng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h7M7.5 3v2M5.5 5c0 4 2.5 7 5.5 8M10 5c-.5 3.5-3 7-6 8"/><path d="M12 21l4-10 4 10M13.5 17.5h5"/></svg>إنجليزي</button>
-  <button data-act="tab" data-v="kitchen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6z"/><path d="M6 17h12"/></svg>وصفات</button>
+  <button data-act="hub" data-v="today" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg>اليوم</button>
+  <button data-act="hub" data-v="work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/></svg>أعمالي</button>
+  <button data-act="hub" data-v="self"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/></svg>نفسي</button>
+  <button data-act="hub" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>بيتي</button>
+  <button data-act="hub" data-v="book"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></svg>دفتري</button>
 </div></nav>
 
 <script>
@@ -583,14 +652,14 @@ const IC = {
 
 /* ---------- state & store ---------- */
 const S = {
-  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, engTab: "review", engSource: "",
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, money: [], goals: [], shop: [], cars: [], foodlog: {}, qlog: {}, reviews: {}, engTab: "review", engSource: "",
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
   vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
-const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily"];
-const MAPCOLS = ["meta", "habitlog", "gymlog", "engdaily"];
+const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily", "money", "goals", "shop", "cars", "foodlog", "qlog", "reviews"];
+const MAPCOLS = ["meta", "habitlog", "gymlog", "engdaily", "foodlog", "qlog", "reviews"];
 
 function memApply(col, id, data, merge) {
   if (col === "meta") { S.meta[id] = merge ? deepMerge(S.meta[id] || {}, data) : data; return; }
@@ -711,7 +780,7 @@ function formHTML(it) {
   return `
   <label class="f">العنوان<input type="text" data-f="title" value="${esc(it.title)}"></label>
   <div class="row wrapr">
-    <div class="seg" data-seg="kind">${[["task", "مهمة"], ["meeting", "اجتماع"], ["todo", "سريعة"], ["note", "ملاحظة"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" class="${k === v ? "on" : ""}">${l}</button>`).join("")}</div>
+    <div class="seg" data-seg="kind">${[["task", "مهمة"], ["meeting", "اجتماع"], ["todo", "سريعة"], ["note", "ملاحظة"], ["expense", "فلوس"], ["shop", "مشتريات"], ["meal", "أكل"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" class="${k === v ? "on" : ""}">${l}</button>`).join("")}</div>
     <div class="seg only-task" data-seg="size">${[["big", "كبيرة"], ["small", "صغيرة"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" class="${(it.size || "small") === v ? "on" : ""}">${l}</button>`).join("")}</div>
   </div>
   <div class="grid2 only-notnote">
@@ -731,7 +800,11 @@ function formHTML(it) {
     <label class="f">القسم<select data-f="noteSection">${[["project", "ملاحظة مشروع"], ["lamasat", "لمسات"], ["audio", "تدوينة سماعية"], ["reading", "من القراءة"], ["general", "عامة"]].map(([v, l]) => `<option value="${v}" ${v === (it.noteSection || "general") ? "selected" : ""}>${l}</option>`).join("")}</select></label>
     <label class="f">المشروع<select data-f="noteProject"><option value="">—</option>${PROJECTS.map(p => `<option ${p.key === it.noteProject ? "selected" : ""}>${esc(p.key)}</option>`).join("")}</select></label>
   </div>
-  <label class="f only-note">النص<textarea data-f="text" rows="3">${esc(it.text || it.title || "")}</textarea></label>`;
+  <label class="f only-note">النص<textarea data-f="text" rows="3">${esc(it.text || it.title || "")}</textarea></label>
+  <div class="grid2 only-expense"><label class="f">المبلغ (ريال)<input type="number" inputmode="decimal" data-f="amount" value="${esc(it.amount || "")}"></label>
+    <label class="f">الجهة<select data-f="scope">${SCOPES.map(x => `<option ${x === it.scope ? "selected" : ""}>${esc(x)}</option>`).join("")}</select></label></div>
+  <div class="grid2 only-expense"><label class="f">النوع<select data-f="moneyType"><option value="out" ${it.moneyType !== "in" ? "selected" : ""}>مصروف</option><option value="in" ${it.moneyType === "in" ? "selected" : ""}>دخل</option></select></label>
+    <label class="f">التصنيف<select data-f="cat">${[...OUT_CATS, ...IN_CATS.filter(c => !OUT_CATS.includes(c))].map(c => `<option ${c === it.cat ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></label></div>`;
 }
 function readForm(el) {
   const v = f => el.querySelector(`[data-f="${f}"]`)?.value?.trim() ?? "";
@@ -742,6 +815,7 @@ function readForm(el) {
     days: [...el.querySelectorAll(".days .on")].map(b => b.dataset.d),
     date: v("date"), time: v("time"), duration: Number(v("duration")) || 60, location: v("location"),
     noteSection: v("noteSection"), noteProject: v("noteProject"), text: v("text"),
+    amount: +en(v("amount")) || 0, scope: v("scope") || "شخصي", moneyType: v("moneyType") || "out", cat: v("cat") || "أخرى",
   };
 }
 function renderReview() {
@@ -777,7 +851,9 @@ ${dayTable()}
 - "fam" = الأسرة والبيت (الزوجة، الأولاد، الأهل، صيانة البيت، المشتريات).
 
 لكل عنصر حدّد:
-- kind: "task" مهمة، "meeting" اجتماع/موعد/لقاء، "todo" شيء سريع جداً ومؤقت، "note" إذا كان ملاحظة أو فكرة أو تعليق وليس عملاً يُنجز.
+- kind: "task" مهمة، "meeting" اجتماع/موعد/لقاء، "todo" شيء سريع جداً ومؤقت، "note" إذا كان ملاحظة أو فكرة أو تعليق وليس عملاً يُنجز،
+  "expense" إذا ذكر مبلغاً دفعه أو استلمه (amount بالريال، moneyType "out" أو "in"، scope واحد من: ${SCOPES.join("، ")}، cat واحد من: ${[...OUT_CATS, ...IN_CATS].join("، ")})،
+  "shop" غرض يحتاج يشتريه للبيت (كل غرض عنصر منفصل، title = الغرض والكمية)، "meal" إذا قال إنه أكل أو شرب شيئاً (title = وصف الوجبة).
 - title: عنوان قصير واضح بالعربية الفصحى المبسطة، بدون ذكر اليوم أو الوقت.
 - area, branch (اترك branch فارغاً إذا لم يُذكر أو لم يتضح).
 - size: "big" أو "small" حسب كلامه أو الجهد المتوقع (أكثر من ساعتين أو متعدد الخطوات = big).
@@ -787,14 +863,14 @@ ${dayTable()}
 - للملاحظات: noteSection واحدة من "project" (ملاحظة أو تعليق على مشروع/جهة)، "lamasat" (لغز، شعر، قصة، حكمة)، "audio" (شيء سمعه)، "reading" (شيء قرأه)، "general". noteProject اسم المشروع إن وجد من: ${PROJECTS.map(p => p.key).join("، ")}. text = نص الملاحظة كاملاً منقحاً إملائياً.
 
 لا تخترع عناصر غير موجودة في الكلام. أعد JSON فقط بهذا الشكل:
-{"items":[{"kind":"task","title":"","area":"work","branch":"","size":"small","days":[],"date":"","time":"","duration":60,"location":"","canDo":false,"doType":"","noteSection":"","noteProject":"","text":""}]}
+{"items":[{"kind":"task","title":"","area":"work","branch":"","size":"small","days":[],"date":"","time":"","duration":60,"location":"","canDo":false,"doType":"","noteSection":"","noteProject":"","text":"","amount":0,"moneyType":"out","scope":"","cat":""}]}
 
 الكلام:
 """${text}"""`;
 }
 function normalize(it) {
   const o = {
-    kind: ["task", "meeting", "todo", "note"].includes(it.kind) ? it.kind : "task",
+    kind: ["task", "meeting", "todo", "note", "expense", "shop", "meal"].includes(it.kind) ? it.kind : "task",
     title: String(it.title || it.text || "").trim().slice(0, 200),
     area: AREA_KEYS.includes(it.area) ? it.area : "pers",
     branch: "", size: it.size === "big" ? "big" : "small",
@@ -804,6 +880,7 @@ function normalize(it) {
     duration: Number(it.duration) || 60, location: String(it.location || ""),
     canDo: !!it.canDo, doType: DO_TYPES.includes(it.doType) ? it.doType : (it.canDo ? it.doType || "" : ""),
     noteSection: it.noteSection || "general", noteProject: it.noteProject || "", text: String(it.text || ""),
+    amount: +it.amount || 0, moneyType: it.moneyType === "in" ? "in" : "out", scope: SCOPES.includes(it.scope) ? it.scope : "شخصي", cat: [...OUT_CATS, ...IN_CATS].includes(it.cat) ? it.cat : "أخرى",
   };
   if (AREAS[o.area].branches.includes(it.branch)) o.branch = it.branch;
   else if (o.area === "work") o.branch = "SANS";
@@ -850,6 +927,9 @@ function localParse(raw) {
   return parts.map(p => {
     const it = { kind: "task", title: p, area: "pers", branch: "", size: "small", days: [], date: "", time: "", duration: 60, location: "", canDo: false, doType: "" };
     if (has(p, /اجتماع|ميتنق|ميتينق|meeting|موعد|لقاء|مقابلة/i)) it.kind = "meeting";
+    const money = p.match(/(\d+(?:\.\d+)?)\s*(?:ريال|ر\.س)|(?:دفعت|صرفت|استلمت)\s*(\d+(?:\.\d+)?)/);
+    if (money) { it.kind = "expense"; it.amount = +(money[1] || money[2]); it.moneyType = /دخل|استلمت|بعت/.test(p) ? "in" : "out"; }
+    else if (has(p, /^(?:و\s*)?(?:أكلت|اكلت|فطرت|تغديت|تعشيت|شربت)/)) it.kind = "meal";
     if (has(p, /sans|سانس|الدوام|الشغل|المدير|الإدارة|الادارة|الزملاء/i)) { it.area = "work"; it.branch = "SANS"; }
     const bmap = [[/waga|واقا|واجا|وقا/i, "WAGA"], [/تحميرة|تحميره|فرن/, "تحميرة فرن"], [/تاجر حكيم/, "تاجر حكيم"], [/بيت البركة|بيت البركه/, "بيت البركة"], [/الهندسة|الهندسه/, "الهندسة المحترفة"]];
     for (const [re, b] of bmap) if (re.test(p)) { it.area = "biz"; it.branch = b; }
@@ -889,6 +969,9 @@ async function addFromReview() {
   for (const el of forms) {
     const i = +el.dataset.form; const src = S.review[i] || {}; const f = readForm(el);
     if (!f.title && !f.text) continue;
+    if (f.kind === "expense") { if (f.amount > 0) await addMoney([{ amount: f.amount, type: f.moneyType, scope: f.scope, cat: f.cat, note: f.title }]); continue; }
+    if (f.kind === "shop") { await addShop(f.title); continue; }
+    if (f.kind === "meal") { addMeal(f.title); continue; }
     if (f.kind === "note") {
       const sec = f.noteSection || "general";
       const id = newId();
@@ -985,7 +1068,7 @@ function sortTasks(a, b) {
   return (a.createdAt || 0) - (b.createdAt || 0);
 }
 function renderToday() {
-  renderHeader(); renderExpiryAlerts();
+  renderHeader(); renderExpiryAlerts(); renderWeekly();
   // running
   const r = S.items.find(x => x.active && !x.done);
   $("#running").innerHTML = r ? `<div class="running" aria-live="polite">
@@ -1348,7 +1431,9 @@ function expiryText(n) {
 function renderExpiryAlerts() {
   const box = $("#expiry");
   const list = S.files.map(f => ({ f, x: expiryInfo(f) })).filter(o => o.x && o.x.lvl !== "ok").sort((a, b) => a.x.n - b.x.n);
-  box.innerHTML = list.length ? `<div class="exp-card"><div class="sec-h"><h2>وثائق قربت تنتهي</h2><span class="count">${ar(list.length)}</span></div>
+  const cars = carAlerts();
+  box.innerHTML = list.length || cars.length ? `<div class="exp-card"><div class="sec-h"><h2>${list.length && !cars.length ? "وثائق قربت تنتهي" : "تنبيهات"}</h2><span class="count">${ar(list.length + cars.length)}</span></div>
+    ${cars.map(c => `<button class="exp ${c.lvl === "gone" ? "urgent" : "soon"}" data-act="tab" data-v="car"><span class="grow"><b>${esc(c.name)}</b></span><span class="when">${c.when}</span></button>`).join("")}
     ${list.map(({ f, x }) => `<button class="exp ${x.lvl}" data-act="tab" data-v="files"><span class="grow"><b>${esc(f.name)}</b><br><span class="small muted">${fmtDate(f.expiry)}${f.expiryHijri ? " · " + esc(f.expiryHijri) : ""}</span></span><span class="when">${expiryText(x.n)}</span></button>`).join("")}</div>` : "";
 }
 function renderFiles() {
@@ -1988,6 +2073,344 @@ ${context}
 أعد JSON فقط: {"score":رقم من 1 إلى 10 حسب مستواه,"praise":"جملة تشجيع قصيرة بالعربي عن شيء أحسن فيه","corrected":"نصه نفسه بعد تصحيح الأخطاء فقط","better":"نسخة أطبع وأقرب لكلام الناطقين بنفس مستواه تقريباً","notes":["أهم 3 ملاحظات بالعربي: الخطأ ← الصحيح ولماذا"]}`, { modelTier: "default" });
 }
 
+/* ---------- hubs (bottom navigation groups) ---------- */
+const HUBS = [
+  { id: "today", label: "اليوم", tabs: [["today", "اليوم"]] },
+  { id: "work", label: "أعمالي", tabs: [["projects", "المشاريع"], ["goals", "الأهداف"], ["money", "المالية"]] },
+  { id: "self", label: "نفسي", tabs: [["gym", "تمريني"], ["food", "غذائي"], ["eng", "إنجليزي"], ["quran", "قرآني"]] },
+  { id: "home", label: "بيتي", tabs: [["shop", "المشتريات"], ["car", "السيارة"]] },
+  { id: "book", label: "دفتري", tabs: [["notes", "الدفتر"], ["files", "الوثائق"], ["kitchen", "وصفات"]] },
+];
+const hubOf = v => HUBS.find(h => h.tabs.some(t => t[0] === v)) || HUBS[0];
+const lastTab = {};
+try { Object.assign(lastTab, JSON.parse(localStorage.getItem("abuMalikTabs") || "{}")); } catch (e) { }
+function renderSubnav(v) {
+  const h = hubOf(v), el = $("#subnav");
+  el.hidden = h.tabs.length < 2;
+  el.innerHTML = h.tabs.map(([k, l]) => `<button class="${k === v ? "on" : ""}" data-act="tab" data-v="${k}">${l}</button>`).join("");
+}
+
+/* ---------- shared bits ---------- */
+const SCOPES = ["شخصي", "البيت والأسرة", ...AREAS.biz.branches];
+const OUT_CATS = ["أكل ومطاعم", "بنزين ومواصلات", "فواتير", "مشتريات البيت", "صيانة", "رواتب", "إيجار", "مواد وبضاعة", "تسويق", "صحة", "تعليم", "أخرى"];
+const IN_CATS = ["مبيعات", "راتب", "أرباح", "أخرى"];
+const SAR = n => `${ar((Math.round((+n || 0) * 100) / 100).toLocaleString("en-US"))} ر.س`;
+const monthKey = d => d.slice(0, 7);
+const monthName = k => new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { month: "long", year: "numeric" }).format(parseISO(k + "-01"));
+const pct = (a, b) => b ? Math.max(0, Math.min(100, a / b * 100)) : 0;
+const meter = (label, val, goal, unit, cls = "") => `<div class="meter ${cls}"><div class="row" style="justify-content:space-between"><span>${label}</span><span class="num"><b>${ar(Math.round(val))}</b> / ${ar(Math.round(goal))} ${unit}</span></div><div class="bar"><span style="width:${pct(val, goal)}%;background:${val > goal * 1.08 ? "var(--danger)" : "var(--a, var(--ok))"}"></span></div></div>`;
+function markHabit(id) {
+  if (!habitList().some(h => h.id === id)) return;
+  const hl = S.habitlog[today()]?.done || {}; if (!hl[id]) put("habitlog", today(), { done: { ...hl, [id]: true } });
+}
+
+/* ---------- money ---------- */
+function moneyParseLocal(text) {
+  return en(text).split(/\n+|،|(?:\s+و(?=\s*(?:دفعت|صرفت|دخل|استلمت|بعت)))/).map(x => x.trim()).filter(Boolean).map(l => {
+    const m = l.match(/(\d+(?:[.,]\d+)?)/); if (!m) return null;
+    const type = /دخل|استلمت|بعت|مبيعات|راتب|حوّل لي|حولي/.test(l) ? "in" : "out";
+    let scope = "شخصي"; for (const b of AREAS.biz.branches) if (l.includes(b) || (b === "WAGA" && /واقا|واجا/i.test(l))) scope = b;
+    if (scope === "شخصي" && /البيت|المقاضي|العيال|الأولاد|المدام/.test(l)) scope = "البيت والأسرة";
+    const cat = type === "in" ? (/راتب/.test(l) ? "راتب" : "مبيعات") : /بنزين|وقود|اوبر|أوبر|كريم/.test(l) ? "بنزين ومواصلات" : /غدا|عشا|فطور|مطعم|قهوة|كوفي/.test(l) ? "أكل ومطاعم" : /فاتورة|كهرب|ماء|نت|جوال/.test(l) ? "فواتير" : /مقاضي|سوبر/.test(l) ? "مشتريات البيت" : /صيان|ورشة/.test(l) ? "صيانة" : "أخرى";
+    return { amount: +m[1].replace(",", "."), type, scope, cat, note: l.replace(m[0], "").replace(/ريال|ر\.س|دفعت|صرفت/g, "").trim().slice(0, 80) };
+  }).filter(Boolean);
+}
+async function moneyParse(text) {
+  if (!sample) return moneyParseLocal(text);
+  try {
+    const r = await sample.json(`حوّل كلام أبو مالك عن فلوسه إلى قيود. الكلام قد يكون بالإملاء الصوتي وبلهجة سعودية.
+أعد JSON فقط: {"entries":[{"amount":رقم بالريال,"type":"out للمصروف أو in للدخل","scope":"واحد من: ${SCOPES.join("، ")}","cat":"${'للمصروف واحد من: ' + OUT_CATS.join("، ") + '؛ للدخل واحد من: ' + IN_CATS.join("، ")}","note":"وصف قصير","date":"YYYY-MM-DD إذا ذكر يوماً (اليوم ${today()}، أمس ${addDays(today(), -1)}) وإلا فارغ"}]}
+لا تخترع مبالغ غير مذكورة. الكلام: """${text}"""`, { modelTier: "quick" });
+    const es = (r.entries || []).filter(e => +e.amount > 0).map(e => ({ amount: +e.amount, type: e.type === "in" ? "in" : "out", scope: SCOPES.includes(e.scope) ? e.scope : "شخصي", cat: [...OUT_CATS, ...IN_CATS].includes(e.cat) ? e.cat : "أخرى", note: String(e.note || "").slice(0, 80), date: /^\d{4}-\d{2}-\d{2}$/.test(e.date || "") ? e.date : "" }));
+    return es.length ? es : moneyParseLocal(text);
+  } catch (e) { return moneyParseLocal(text); }
+}
+async function addMoney(entries) {
+  for (const e of entries) await put("money", newId(), { ...e, date: e.date || today(), createdAt: Date.now() });
+}
+function renderMoney() {
+  const box = $("#moneyBody"); if (box.contains(document.activeElement) && document.activeElement.matches("input,textarea,select")) return;
+  const mk = S.moneyMonth || monthKey(today());
+  const rows = S.money.filter(e => monthKey(e.date || "") === mk).sort((a, b) => (b.date || "").localeCompare(a.date || "") || b.createdAt - a.createdAt);
+  const tin = rows.filter(e => e.type === "in").reduce((s, e) => s + +e.amount, 0), tout = rows.filter(e => e.type !== "in").reduce((s, e) => s + +e.amount, 0);
+  const byScope = {}; rows.forEach(e => { const o = byScope[e.scope] ||= { in: 0, out: 0 }; o[e.type === "in" ? "in" : "out"] += +e.amount; });
+  const byCat = {}; rows.filter(e => e.type !== "in").forEach(e => byCat[e.cat] = (byCat[e.cat] || 0) + +e.amount);
+  const maxCat = Math.max(1, ...Object.values(byCat));
+  const prevMk = monthKey(addDays(mk + "-01", -1)), nextMk = monthKey(addDays(mk + "-28", 5));
+  box.innerHTML = `
+    <div class="row" style="justify-content:space-between"><button class="btn sm ghost" data-act="mMonth" data-v="${prevMk}">→ ${monthName(prevMk)}</button><b>${monthName(mk)}</b>${mk < monthKey(today()) ? `<button class="btn sm ghost" data-act="mMonth" data-v="${nextMk}">${monthName(nextMk)} ←</button>` : `<span style="width:60px"></span>`}</div>
+    <div class="stats"><div class="stat"><b class="num" style="color:var(--danger)">${SAR(tout)}</b><span>مصروف</span></div><div class="stat"><b class="num" style="color:var(--ok)">${SAR(tin)}</b><span>دخل</span></div><div class="stat"><b class="num">${SAR(tin - tout)}</b><span>الصافي</span></div></div>
+    ${Object.keys(byScope).length ? `<div class="card sec"><h3>حسب الجهة</h3><div class="tbl-wrap"><table class="prog money-t"><thead><tr><th>الجهة</th><th>دخل</th><th>مصروف</th><th>الصافي</th></tr></thead><tbody>
+      ${Object.entries(byScope).sort((a, b) => (b[1].in + b[1].out) - (a[1].in + a[1].out)).map(([k, v]) => `<tr><th scope="row">${esc(k)}</th><td>${v.in ? SAR(v.in) : "—"}</td><td>${v.out ? SAR(v.out) : "—"}</td><td class="${v.in - v.out >= 0 ? "up" : "down"}">${SAR(v.in - v.out)}</td></tr>`).join("")}</tbody></table></div></div>` : ""}
+    ${Object.keys(byCat).length ? `<div class="card sec"><h3>وين راحت الفلوس</h3>${Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([k, v]) => `<div class="catrow"><span>${esc(k)}</span><div class="bar grow"><span style="width:${v / maxCat * 100}%;background:var(--biz)"></span></div><b class="num">${SAR(v)}</b></div>`).join("")}</div>` : ""}
+    <div class="list">${rows.length ? rows.map(e => {
+      const conf = S.confirm === "m:" + e.id ? `<div class="confirm"><p>تحذف هذا القيد؟</p><button class="btn danger sm" data-act="mDelYes" data-id="${e.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+      return `<div><div class="it"><div class="main"><span class="ttl">${esc(e.note || e.cat)}</span><div class="meta"><span class="chip">${esc(e.scope)}</span><span class="chip">${esc(e.cat)}</span><span class="small muted">${dayLabel(e.date)}</span></div></div>
+        <b class="num amt ${e.type === "in" ? "in" : "out"}">${e.type === "in" ? "+" : "−"}${SAR(e.amount)}</b>
+        <button class="icon-btn" data-act="mEdit" data-id="${e.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="mDel" data-id="${e.id}" aria-label="احذف">${IC.trash}</button></div>${conf}</div>`;
+    }).join("") : `<div class="empty">ما فيه قيود في ${monthName(mk)}. قل مثلاً «دفعت ١٥٠ بنزين» أو «دخل مبيعات تحميرة فرن ٣٥٠٠».</div>`}</div>`;
+}
+function moneyForm(e) {
+  e = e || { type: "out", scope: "شخصي", cat: "أخرى", date: today() };
+  return `<div class="seg" data-seg="mtype"><button type="button" data-act="seg" data-v="out" class="${e.type !== "in" ? "on" : ""}">مصروف</button><button type="button" data-act="seg" data-v="in" class="${e.type === "in" ? "on" : ""}">دخل</button></div>
+    <div class="grid2"><label class="f">المبلغ (ريال)<input type="number" inputmode="decimal" id="mfAmt" value="${esc(e.amount ?? "")}"></label><label class="f">التاريخ<input type="date" id="mfDate" value="${esc(e.date || today())}"></label></div>
+    <div class="grid2"><label class="f">الجهة<select id="mfScope">${SCOPES.map(s => `<option ${s === e.scope ? "selected" : ""}>${esc(s)}</option>`).join("")}</select></label>
+    <label class="f">التصنيف<select id="mfCat">${[...OUT_CATS, ...IN_CATS.filter(c => !OUT_CATS.includes(c))].map(c => `<option ${c === e.cat ? "selected" : ""}>${esc(c)}</option>`).join("")}</select></label></div>
+    <label class="f">الوصف<input type="text" id="mfNote" value="${esc(e.note || "")}"></label>`;
+}
+function readMoneyForm(root) {
+  const q = s => root.querySelector(s);
+  const amount = +en(q("#mfAmt").value); if (!(amount > 0)) { toast("اكتب المبلغ"); return null; }
+  return { amount, type: q('[data-seg="mtype"] .on')?.dataset.v || "out", date: q("#mfDate").value || today(), scope: q("#mfScope").value, cat: q("#mfCat").value, note: q("#mfNote").value.trim() };
+}
+
+/* ---------- goals ---------- */
+function goalProgress(g) { const st = g.steps || []; return st.length ? st.filter(s => s.done).length / st.length * 100 : 0; }
+function horizonOptions(sel) {
+  const d = new Date(), y = d.getFullYear(), q = Math.floor(d.getMonth() / 3) + 1;
+  const opts = [`الربع ${ar(q)} - ${ar(y)}`, `سنة ${ar(y)}`, `الربع ${ar(q % 4 + 1)} - ${ar(q === 4 ? y + 1 : y)}`, `سنة ${ar(y + 1)}`];
+  return opts.map(o => `<option ${o === sel ? "selected" : ""}>${o}</option>`).join("");
+}
+function renderGoals() {
+  const box = $("#goalsBody"); if (box.contains(document.activeElement) && document.activeElement.matches("input,textarea,select")) return;
+  const gs = S.goals.slice().sort((a, b) => (a.done - b.done) || a.createdAt - b.createdAt);
+  box.innerHTML = `<details class="fold" id="goalAddFold"><summary><span>هدف جديد</span><span class="small muted">+</span></summary><div class="body sec" style="padding:12px">
+      <label class="f">الهدف<input type="text" id="gTitle" placeholder="مثال: أفتح فرع ثاني لتحميرة فرن"></label>
+      <div class="grid2"><label class="f">المدة<select id="gHor">${horizonOptions()}</select></label><label class="f">الجهة<select id="gArea">${AREA_KEYS.map(a => `<option value="${a}">${AREAS[a].label}</option>`).join("")}</select></label></div>
+      <label class="f">ليش مهم لك؟ (اختياري)<input type="text" id="gWhy"></label>
+      <div><button class="btn pri" data-act="goalAdd">أضف الهدف</button></div></div></details>
+    ${gs.length ? gs.map(goalCard).join("") : `<div class="empty card">حط هدف أو هدفين لهالربع. كلود يقسّمه لخطوات، وتحوّل أي خطوة لمهمة في يومك بضغطة.</div>`}`;
+}
+function goalCard(g) {
+  const p = goalProgress(g), linked = id => S.items.find(t => t.goal?.stepId === id && !t.done);
+  const conf = S.confirm === "g:" + g.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذا الهدف؟</p><button class="btn danger sm" data-act="goalDelYes" data-id="${g.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  return `<article class="card sec goal a-${g.area || "pers"} ${g.done ? "gdone" : ""}">
+    <div class="row"><div class="grow"><span class="small muted">${esc(g.horizon || "")} · ${AREAS[g.area]?.label || ""}</span><h2>${esc(g.title)}</h2>${g.why ? `<span class="small muted">${esc(g.why)}</span>` : ""}</div>
+      <button class="icon-btn" data-act="goalDel" data-id="${g.id}" aria-label="احذف">${IC.trash}</button></div>
+    <div class="row"><div class="bar grow"><span style="width:${p}%;background:var(--a)"></span></div><b class="num small">${ar(Math.round(p))}٪</b></div>
+    <div class="steps">${(g.steps || []).map(s => { const t = linked(s.id);
+      return `<div class="step ${s.done ? "sd" : ""}"><button class="check ${s.done ? "on" : ""}" data-act="stepToggle" data-g="${g.id}" data-s="${s.id}" aria-label="تم">${s.done ? IC.check : ""}</button><span class="grow">${esc(s.t)}</span>
+        ${s.done ? "" : t ? `<span class="chip st-today">في مهامك</span>` : `<button class="cp" data-act="stepTask" data-g="${g.id}" data-s="${s.id}">مهمة</button>`}</div>`; }).join("")}</div>
+    <div class="row"><input type="text" placeholder="خطوة جديدة" data-stepin="${g.id}"><button class="btn sm" data-act="stepAdd" data-g="${g.id}">أضف</button></div>
+    ${sample ? `<button class="btn sm ghost" data-act="goalAI" data-id="${g.id}" style="align-self:flex-start">${(g.steps || []).length ? "اقترح خطوات إضافية" : "قسّمه لخطوات بكلود"}</button>` : ""}
+    ${conf}</article>`;
+}
+
+/* ---------- shopping ---------- */
+const SHOP_CATS = ["خضار وفواكه", "لحوم ودواجن", "ألبان وبيض", "مخبوزات", "معلبات وجاف", "مشروبات", "منظفات", "عناية شخصية", "أخرى"];
+async function addShop(text) {
+  const parts = text.split(/\n+|،|,|(?:\s+و\s*)(?=\S)/).map(x => x.trim()).filter(x => x.length > 1).slice(0, 40);
+  const ids = [];
+  for (const p of parts) { const id = newId(); ids.push(id); await put("shop", id, { text: p, cat: "أخرى", done: false, createdAt: Date.now() }); }
+  if (sample && ids.length) {
+    try {
+      const r = await sample.json(`صنّف أغراض قائمة مشتريات سعودية. أعد JSON فقط: {"items":[{"text":"اسم الغرض منقحاً مع الكمية إن ذكرت","cat":"واحد من: ${SHOP_CATS.join("، ")}"}]} بنفس الترتيب.
+الأغراض: ${parts.map((p, i) => `${i + 1}. ${p}`).join(" | ")}`, { modelTier: "quick" });
+      for (let i = 0; i < ids.length; i++) { const x = r.items?.[i]; if (x) await patch("shop", ids[i], { text: String(x.text || parts[i]).slice(0, 80), cat: SHOP_CATS.includes(x.cat) ? x.cat : "أخرى" }); }
+    } catch (e) { }
+  }
+  return parts.length;
+}
+function renderShop() {
+  const box = $("#shopBody");
+  const items = S.shop.slice().sort((a, b) => a.createdAt - b.createdAt);
+  const open = items.filter(x => !x.done), done = items.filter(x => x.done);
+  const groups = SHOP_CATS.map(c => [c, open.filter(x => (x.cat || "أخرى") === c)]).filter(g => g[1].length);
+  box.innerHTML = `${open.length ? `<div class="row"><span class="small muted grow">${ar(open.length)} غرض</span><button class="btn sm ghost" data-act="shopCopy">${IC.copy} انسخ القائمة</button></div>` : ""}
+    ${groups.map(([c, xs]) => `<div class="sec" style="gap:6px"><h3 class="small muted">${c}</h3><div class="list">${xs.map(x => `<div class="it"><button class="check" data-act="shopToggle" data-id="${x.id}" aria-label="اشتريته"></button><div class="main"><span class="ttl">${esc(x.text)}</span></div><button class="icon-btn" data-act="shopDel" data-id="${x.id}" aria-label="احذف">${IC.x}</button></div>`).join("")}</div></div>`).join("")}
+    ${!open.length ? `<div class="empty card">القائمة فاضية. اكتب أو أملِ «حليب، خبز، ٢ كيلو طماطم، صابون» وتنقسم وتتصنّف لحالها.</div>` : ""}
+    ${done.length ? `<details class="fold"><summary><span>اشتريتها</span><span class="small muted">${ar(done.length)}</span></summary><div class="body list">${done.map(x => `<div class="it done"><button class="check on" data-act="shopToggle" data-id="${x.id}">${IC.check}</button><div class="main"><span class="ttl">${esc(x.text)}</span></div></div>`).join("")}
+      <div style="padding:10px"><button class="btn sm ghost" data-act="shopClear">امسح اللي اشتريته</button></div></div></details>` : ""}`;
+}
+
+/* ---------- car ---------- */
+const SERVICE_TYPES = ["تغيير زيت", "فحص دوري", "كفرات", "بطارية", "فرامل", "مكيف", "غسيل وتلميع", "أخرى"];
+function carStatus(c) {
+  const out = [];
+  const lo = c.lastOil;
+  if (lo) {
+    const kmLeft = lo.km + (c.oilKm || 5000) - (c.km || 0);
+    const due = addDays(lo.date, Math.round((c.oilMonths || 6) * 30.4)); const dLeft = dayDiff(today(), due);
+    out.push({ key: "oil", label: "تغيير الزيت", kmLeft, dLeft, due, lvl: kmLeft <= 0 || dLeft <= 0 ? "gone" : kmLeft <= 500 || dLeft <= 14 ? "soon" : "ok" });
+  }
+  return out;
+}
+function carDocs(c) {
+  return S.files.filter(f => /استمارة|تأمين|فحص/.test([f.docType, f.sub, f.name].join(" ")) && (!c.plate || [f.name, ...(f.fields || []).map(x => x.value)].join(" ").replace(/\s/g, "").includes(String(c.plate).replace(/\s/g, "")) || S.cars.length === 1));
+}
+function renderCar() {
+  const box = $("#carBody"); if (box.contains(document.activeElement) && document.activeElement.matches("input,textarea,select")) return;
+  const cars = S.cars.slice().sort((a, b) => a.createdAt - b.createdAt);
+  box.innerHTML = cars.map(c => {
+    const st = carStatus(c), docs = carDocs(c);
+    const conf = S.confirm === "c:" + c.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف السيارة وسجلها؟</p><button class="btn danger sm" data-act="carDelYes" data-id="${c.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+    return `<article class="card sec">
+      <div class="row"><div class="grow"><h2>${esc(c.name)}</h2>${c.plate ? `<span class="small muted">لوحة ${esc(c.plate)}</span>` : ""}</div><button class="icon-btn" data-act="carDel" data-id="${c.id}" aria-label="احذف">${IC.trash}</button></div>
+      <div class="row"><label class="f grow">العداد الحالي (كم)<input type="number" inputmode="numeric" data-carkm="${c.id}" value="${esc(c.km || "")}"></label><button class="btn" data-act="carKm" data-id="${c.id}">حدّث</button></div>
+      ${st.map(s => `<div class="dexp ${s.lvl === "gone" ? "gone" : s.lvl}"><div class="row" style="justify-content:space-between"><b>${s.label}</b><b class="remain">${s.kmLeft <= 0 ? "حان وقته" : `باقي ${ar(s.kmLeft.toLocaleString("en-US"))} كم`}</b></div>
+        <span class="small muted">أو بتاريخ ${fmtDate(s.due)} (${s.dLeft < 0 ? "فات" : "باقي " + lateWord(s.dLeft)})</span></div>`).join("") || `<div class="small muted">سجّل آخر تغيير زيت تحت عشان أنبهك على اللي بعده.</div>`}
+      ${docs.length ? `<div class="sec" style="gap:6px"><h3 class="small muted">وثائق السيارة</h3>${docs.map(f => { const x = expiryInfo(f); return `<button class="exp ${x?.lvl || ""}" data-act="tab" data-v="files"><span class="grow">${esc(f.name)}</span><span class="when">${x ? (x.lvl === "ok" ? "تنتهي " + fmtDate(f.expiry) : expiryText(x.n)) : ""}</span></button>`; }).join("")}</div>` : ""}
+      <details class="fold"><summary><span>سجّل صيانة</span><span class="small muted">+</span></summary><div class="body sec" style="padding:12px" data-svc="${c.id}">
+        <div class="grid2"><label class="f">النوع<select class="sType">${SERVICE_TYPES.map(t => `<option>${t}</option>`).join("")}</select></label><label class="f">التاريخ<input type="date" class="sDate" value="${today()}"></label></div>
+        <div class="grid2"><label class="f">العداد<input type="number" inputmode="numeric" class="sKm" value="${esc(c.km || "")}"></label><label class="f">التكلفة (ريال)<input type="number" inputmode="decimal" class="sCost"></label></div>
+        <label class="f">ملاحظة<input type="text" class="sNote" placeholder="نوع الزيت، اسم الورشة…"></label>
+        <div><button class="btn pri" data-act="svcAdd" data-id="${c.id}">احفظ</button></div></div></details>
+      ${(c.services || []).length ? `<details class="fold"><summary><span>سجل الصيانة</span><span class="small muted">${ar(c.services.length)}</span></summary><div class="body list">${c.services.slice().sort((a, b) => b.date.localeCompare(a.date)).map(s => `<div class="it"><div class="main"><span class="ttl">${esc(s.type)}</span><div class="meta"><span class="small muted">${fmtDate(s.date)}${s.km ? " · " + ar(s.km.toLocaleString("en-US")) + " كم" : ""}${s.cost ? " · " + SAR(s.cost) : ""}</span></div>${s.note ? `<span class="small muted">${esc(s.note)}</span>` : ""}</div><button class="icon-btn" data-act="svcDel" data-id="${c.id}" data-s="${s.id}" aria-label="احذف">${IC.x}</button></div>`).join("")}</div></details>` : ""}
+      <details class="fold"><summary><span>إعدادات الزيت</span></summary><div class="body grid2" style="padding:12px"><label class="f">كل كم كيلو<input type="number" data-oilkm="${c.id}" value="${esc(c.oilKm || 5000)}"></label><label class="f">أو كل كم شهر<input type="number" data-oilm="${c.id}" value="${esc(c.oilMonths || 6)}"></label><div><button class="btn sm" data-act="oilSave" data-id="${c.id}">احفظ</button></div></div></details>
+      ${conf}</article>`;
+  }).join("") + `<details class="fold" ${cars.length ? "" : "open"}><summary><span>أضف سيارة</span><span class="small muted">+</span></summary><div class="body sec" style="padding:12px">
+    <div class="grid2"><label class="f">الاسم<input type="text" id="carName" placeholder="كامري ٢٠٢٢"></label><label class="f">اللوحة<input type="text" id="carPlate"></label></div>
+    <label class="f">العداد الحالي (كم)<input type="number" inputmode="numeric" id="carKm0"></label>
+    <div><button class="btn pri" data-act="carAdd">أضف</button></div></div></details>`;
+}
+
+/* ---------- quran ---------- */
+const SURAH_START = [1, 2, 50, 77, 106, 128, 151, 177, 187, 208, 221, 235, 249, 255, 262, 267, 282, 293, 305, 312, 322, 332, 342, 350, 359, 367, 377, 385, 396, 404, 411, 415, 418, 428, 434, 440, 446, 453, 458, 467, 477, 483, 489, 496, 499, 502, 507, 511, 515, 518, 520, 523, 526, 528, 531, 534, 537, 542, 545, 549, 551, 553, 554, 556, 558, 560, 562, 564, 566, 568, 570, 572, 574, 575, 577, 578, 580, 582, 583, 585, 586, 587, 587, 589, 590, 591, 591, 592, 593, 594, 595, 595, 596, 596, 597, 597, 598, 598, 599, 599, 600, 600, 601, 601, 601, 602, 602, 602, 603, 603, 603, 604, 604, 604];
+const SURAH_NAMES = "الفاتحة البقرة آل_عمران النساء المائدة الأنعام الأعراف الأنفال التوبة يونس هود يوسف الرعد إبراهيم الحجر النحل الإسراء الكهف مريم طه الأنبياء الحج المؤمنون النور الفرقان الشعراء النمل القصص العنكبوت الروم لقمان السجدة الأحزاب سبأ فاطر يس الصافات ص الزمر غافر فصلت الشورى الزخرف الدخان الجاثية الأحقاف محمد الفتح الحجرات ق الذاريات الطور النجم القمر الرحمن الواقعة الحديد المجادلة الحشر الممتحنة الصف الجمعة المنافقون التغابن الطلاق التحريم الملك القلم الحاقة المعارج نوح الجن المزمل المدثر القيامة الإنسان المرسلات النبأ النازعات عبس التكوير الانفطار المطففين الانشقاق البروج الطارق الأعلى الغاشية الفجر البلد الشمس الليل الضحى الشرح التين العلق القدر البينة الزلزلة العاديات القارعة التكاثر العصر الهمزة الفيل قريش الماعون الكوثر الكافرون النصر المسد الإخلاص الفلق الناس".split(" ").map(s => s.replace("_", " "));
+const JUZ_START = [1, 22, 42, 62, 82, 102, 121, 142, 162, 182, 201, 222, 242, 262, 282, 302, 322, 342, 362, 382, 402, 422, 442, 462, 482, 502, 522, 542, 562, 582];
+const surahAt = p => { let i = 0; for (let k = 0; k < 114; k++) if (SURAH_START[k] <= p) i = k; return SURAH_NAMES[i]; };
+const juzAt = p => { let j = 1; JUZ_START.forEach((s, i) => { if (s <= p) j = i + 1; }); return j; };
+function renderQuran() {
+  const box = $("#quranBody"); if (box.contains(document.activeElement) && document.activeElement.matches("input,textarea,select")) return;
+  const q = S.meta.quran || { page: 0, target: 4, khatmas: 0 };
+  const page = q.page || 0, target = q.target || 4;
+  const tdy = S.qlog[today()]?.pages || 0;
+  const last14 = [...Array(14)].map((_, i) => addDays(today(), -13 + i));
+  const rate = Math.max(target, last14.reduce((s, d) => s + (S.qlog[d]?.pages || 0), 0) / 14);
+  const left = 604 - page, daysLeft = Math.ceil(left / Math.max(0.5, rate));
+  const week = last14.slice(-7).reduce((s, d) => s + (S.qlog[d]?.pages || 0), 0);
+  box.innerHTML = `
+    <div class="card sec qcard">
+      <div class="row" style="justify-content:space-between;align-items:flex-end"><div><span class="small muted">وصلت</span><div class="qpage num">صفحة ${ar(page)}</div><span class="small">${page ? `سورة ${surahAt(page)} · الجزء ${ar(juzAt(page))}` : "ابدأ ختمتك"}</span></div>
+        <div style="text-align:end"><span class="small muted">الختمات</span><div class="qpage num">${ar(q.khatmas || 0)}</div></div></div>
+      <div class="bar" style="height:12px"><span style="width:${page / 604 * 100}%;background:var(--pers)"></span></div>
+      <div class="row small muted" style="justify-content:space-between"><span>${ar(Math.round(page / 604 * 100))}٪ من الختمة</span><span>${page ? `تختم تقريباً ${fmtDate(addDays(today(), daysLeft))}` : ""}</span></div>
+    </div>
+    <div class="card sec">
+      <div class="row" style="justify-content:space-between"><h3>ورد اليوم</h3><span class="num ${tdy >= target ? "ok-t" : ""}"><b>${ar(tdy)}</b> / ${ar(target)} صفحات</span></div>
+      <div class="bar"><span style="width:${pct(tdy, target)}%;background:var(--pers)"></span></div>
+      <div class="row wrapr">${[1, 2, target, 10, 20].filter((v, i, a) => a.indexOf(v) === i).map(n => `<button class="btn sm" data-act="qAdd" data-n="${n}">+${ar(n)} ${n === 20 ? "(جزء)" : n === 1 ? "صفحة" : "صفحات"}</button>`).join("")}</div>
+      <div class="row"><label class="f grow">أو وصلت لين صفحة<input type="number" inputmode="numeric" min="1" max="604" id="qTo" placeholder="${ar(Math.min(604, page + target))}"></label><button class="btn pri" data-act="qTo">سجّل</button></div>
+    </div>
+    <div class="card sec"><div class="row" style="justify-content:space-between"><h3>آخر ١٤ يوم</h3><span class="small muted">${ar(week)} صفحة هالأسبوع</span></div>
+      <div class="qdays">${last14.map(d => { const n = S.qlog[d]?.pages || 0; return `<div class="qd ${n >= target ? "full" : n ? "part" : ""}" title="${d}"><i style="height:${Math.min(100, n / target * 100)}%"></i><span>${ar(parseISO(d).getDate())}</span></div>`; }).join("")}</div></div>
+    <details class="fold"><summary><span>الإعدادات</span></summary><div class="body sec" style="padding:12px">
+      <label class="f">وردي اليومي (صفحات)<select id="qTarget">${[1, 2, 3, 4, 5, 10, 20].map(n => `<option value="${n}" ${n === target ? "selected" : ""}>${ar(n)} ${n === 20 ? "(جزء = ختمة بالشهر)" : n === 10 ? "(ختمة بشهرين)" : n === 4 ? "(ختمة بخمسة شهور)" : ""}</option>`).join("")}</select></label>
+      <label class="f">صفحتي الحالية<input type="number" id="qSet" min="0" max="604" value="${page}"></label>
+      <div><button class="btn" data-act="qSave">احفظ</button></div></div></details>`;
+}
+async function quranTo(newPage) {
+  const q = { page: 0, target: 4, khatmas: 0, ...(S.meta.quran || {}) };
+  newPage = Math.max(0, Math.min(604, Math.round(newPage)));
+  let diff = newPage - q.page; if (diff <= 0) { toast("الصفحة أقل من اللي وصلت له. عدّلها من الإعدادات إذا تبي"); return; }
+  const d = today(), cur = S.qlog[d] || {};
+  await put("qlog", d, { pages: (cur.pages || 0) + diff, to: newPage });
+  if (newPage >= 604) { await put("meta", "quran", { ...q, page: 0, khatmas: (q.khatmas || 0) + 1 }); toast("ختمة مباركة، تقبّل الله منك"); }
+  else await put("meta", "quran", { ...q, page: newPage });
+  if ((cur.pages || 0) + diff >= (q.target || 4)) markHabit("quran");
+}
+
+/* ---------- food ---------- */
+function foodGoals() {
+  const g = S.meta.food; if (!g) return null;
+  const trained = Object.values(S.gymlog[today()]?.entries || {}).some(e => e.done);
+  return { kcal: g.kcal, protein: Math.round(g.protein * (trained ? 1.15 : 1)), carbs: g.carbs, fat: g.fat, trained };
+}
+function calcFoodGoals(w, h, age, goal) {
+  const bmr = 10 * w + 6.25 * h - 5 * age + 5; const tdee = bmr * 1.45;
+  const kcal = Math.round((tdee + (goal === "cut" ? -450 : goal === "bulk" ? 300 : 0)) / 10) * 10;
+  const protein = Math.round(w * (goal === "cut" ? 2 : 1.8)); const fat = Math.round(kcal * 0.27 / 9);
+  return { kcal, protein, fat, carbs: Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4)), weight: w, height: h, age, goal };
+}
+const dayTotals = d => (S.foodlog[d]?.meals || []).reduce((t, m) => ({ kcal: t.kcal + (+m.kcal || 0), p: t.p + (+m.p || 0), c: t.c + (+m.c || 0), f: t.f + (+m.f || 0) }), { kcal: 0, p: 0, c: 0, f: 0 });
+function renderFood() {
+  const box = $("#foodBody"); if (box.contains(document.activeElement) && document.activeElement.matches("input,textarea,select")) return;
+  const g = foodGoals();
+  if (!g) {
+    box.innerHTML = `<div class="card sec"><h2>حدّد هدفك</h2>
+      <div class="grid3"><label class="f">الوزن (كجم)<input type="number" id="fW" inputmode="decimal"></label><label class="f">الطول (سم)<input type="number" id="fH" inputmode="numeric"></label><label class="f">العمر<input type="number" id="fA" inputmode="numeric"></label></div>
+      <div class="seg" data-seg="fgoal"><button type="button" data-act="seg" data-v="cut">تنشيف</button><button type="button" data-act="seg" data-v="keep" class="on">ثبات</button><button type="button" data-act="seg" data-v="bulk">تضخيم</button></div>
+      <div><button class="btn pri" data-act="foodGoal">احسب أهدافي</button></div></div>`;
+    return;
+  }
+  const d = S.foodDay || today(), t = dayTotals(d), meals = S.foodlog[d]?.meals || [];
+  const last7 = [...Array(7)].map((_, i) => addDays(today(), -6 + i)), mx = Math.max(g.kcal, ...last7.map(x => dayTotals(x).kcal));
+  box.innerHTML = `
+    <div class="card sec">
+      <div class="row" style="justify-content:space-between"><b>${d === today() ? "اليوم" : dayLabel(d)}</b>${g.trained && d === today() ? `<span class="chip st-today">يوم تمرين: البروتين أعلى</span>` : ""}</div>
+      <div class="kcal"><span class="num big">${ar(Math.max(0, g.kcal - t.kcal))}</span><span class="small muted">${t.kcal > g.kcal ? "زيادة عن هدفك" : "سعرة باقية"}</span></div>
+      ${meter("السعرات", t.kcal, g.kcal, "")}
+      <div class="grid3">${meter("بروتين", t.p, g.protein, "جم", "a-pers")}${meter("كارب", t.c, g.carbs, "جم", "a-biz")}${meter("دهون", t.f, g.fat, "جم", "a-fam")}</div>
+    </div>
+    <div class="list">${meals.length ? meals.map(m => `<div class="it"><div class="main"><span class="ttl">${esc(m.text)}</span><div class="meta"><span class="small muted num">${ar(Math.round(m.kcal || 0))} سعرة · ${ar(Math.round(m.p || 0))} بروتين · ${ar(Math.round(m.c || 0))} كارب · ${ar(Math.round(m.f || 0))} دهون</span></div>${m.est ? `<span class="small muted">${esc(m.est)}</span>` : ""}</div>
+      <button class="icon-btn" data-act="mealEdit" data-id="${m.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="mealDel" data-id="${m.id}" aria-label="احذف">${IC.x}</button></div>`).join("") : `<div class="empty">ما سجلت أكل ${d === today() ? "اليوم" : ""}. قل مثلاً «فطرت ٣ بيض وتوست وقهوة» أو صوّر وجبتك.</div>`}</div>
+    <div class="card sec"><h3>آخر ٧ أيام</h3><div class="kbars">${last7.map(x => { const k = dayTotals(x).kcal; return `<button class="kb ${x === d ? "sel" : ""}" data-act="foodDay" data-v="${x}"><i style="height:${k / mx * 100}%;background:${k > g.kcal * 1.08 ? "var(--danger)" : "var(--ok)"}"></i><span>${WD[parseISO(x).getDay()].replace("ال", "").slice(0, 2)}</span></button>`; }).join("")}<div class="kgoal" style="bottom:${g.kcal / mx * 100}%"></div></div></div>
+    <details class="fold"><summary><span>أهدافي</span><span class="small muted num">${ar(g.kcal)} سعرة · ${ar(S.meta.food.protein)} بروتين</span></summary><div class="body sec" style="padding:12px">
+      <div class="grid2"><label class="f">السعرات<input type="number" id="fgK" value="${S.meta.food.kcal}"></label><label class="f">البروتين<input type="number" id="fgP" value="${S.meta.food.protein}"></label></div>
+      <div class="grid2"><label class="f">الكارب<input type="number" id="fgC" value="${S.meta.food.carbs}"></label><label class="f">الدهون<input type="number" id="fgF" value="${S.meta.food.fat}"></label></div>
+      <div class="row"><button class="btn" data-act="foodGoalSave">احفظ</button><button class="btn ghost" data-act="foodGoalReset">أعد الحساب</button></div>
+      <p class="small muted" style="margin:0">التقديرات تقريبية وللمتابعة فقط، مو بديل عن أخصائي تغذية.</p></div></details>`;
+}
+async function addMeal(text, img) {
+  const d = S.foodDay || today();
+  let m = { id: newId(), text: text || "وجبة", kcal: 0, p: 0, c: 0, f: 0, at: Date.now() };
+  if (sample) {
+    try {
+      const lim = img ? await sample.limits().catch(() => null) : null;
+      const r = await sample.json(`أنت أخصائي تغذية. قدّر القيم الغذائية لهذه الوجبة (أكل سعودي وخليجي غالباً، والكلام قد يكون بالإملاء الصوتي).${img ? " الصورة المرفقة هي الوجبة." : ""}
+الوجبة: """${text || "انظر الصورة"}"""
+افترض الحصة المعتادة إذا لم تُذكر الكمية. أعد JSON فقط: {"title":"وصف قصير للوجبة","kcal":رقم,"p":بروتين بالجرام,"c":كارب,"f":دهون,"est":"سطر قصير يوضح افتراضك للكمية"}`, { modelTier: "default", ...(img && lim?.images ? { images: [img] } : {}) });
+      m = { ...m, text: String(r.title || text).slice(0, 120), kcal: +r.kcal || 0, p: +r.p || 0, c: +r.c || 0, f: +r.f || 0, est: String(r.est || "").slice(0, 160) };
+    } catch (e) { toast("ما قدرت أقدّر السعرات، عدّلها يدوياً"); }
+  }
+  const cur = S.foodlog[d] || {};
+  await put("foodlog", d, { ...cur, meals: [...(cur.meals || []), m] });
+}
+
+/* ---------- alerts (car) ---------- */
+function carAlerts() {
+  const out = [];
+  S.cars.forEach(c => carStatus(c).forEach(s => { if (s.lvl !== "ok") out.push({ name: `${s.label} - ${c.name}`, when: s.kmLeft <= 0 || s.dLeft <= 0 ? "حان وقته" : `باقي ${ar(s.kmLeft)} كم`, lvl: s.lvl === "gone" ? "gone" : "soon" }); }));
+  return out;
+}
+
+/* ---------- weekly review ---------- */
+function weekKey() { const d = new Date(); const back = (d.getDay() - 4 + 7) % 7; return addDays(today(), -back); }
+function weekStats() {
+  const days = [...Array(7)].map((_, i) => addDays(today(), -6 + i)), inW = ts => ts && days.includes(iso(new Date(ts)));
+  const done = S.items.filter(t => t.done && inW(t.doneAt) && t.kind !== "todo");
+  const late = S.items.filter(t => !t.done && t.kind === "task" && taskStatus(t).k === "late");
+  const secs = {}; S.items.forEach(t => days.forEach(d => { const v = (t.timeLog || {})[d]; if (v) secs[t.area] = (secs[t.area] || 0) + v; }));
+  const gym = days.filter(d => Object.values(S.gymlog[d]?.entries || {}).some(e => e.done)).length;
+  const qp = days.reduce((s, d) => s + (S.qlog[d]?.pages || 0), 0);
+  const words = S.words.filter(w => days.includes(iso(new Date(w.createdAt)))).length;
+  const kc = days.map(d => dayTotals(d).kcal).filter(Boolean);
+  const spent = S.money.filter(e => days.includes(e.date) && e.type !== "in").reduce((s, e) => s + +e.amount, 0);
+  const habits = habitList().map(h => `${h.name}: ${days.filter(d => S.habitlog[d]?.done?.[h.id]).length}/7`);
+  return { done: done.map(t => t.title), late: late.map(t => `${t.title} (${taskStatus(t).label})`), hours: Object.fromEntries(Object.entries(secs).map(([k, v]) => [AREAS[k]?.label || k, Math.round(v / 360) / 10])), gym, quranPages: qp, newWords: words, avgKcal: kc.length ? Math.round(kc.reduce((a, b) => a + b) / kc.length) : null, spent, habits, goals: S.goals.filter(g => !g.done).map(g => `${g.title}: ${Math.round(goalProgress(g))}%`) };
+}
+function renderWeekly() {
+  const box = $("#weekly"); const wk = weekKey(), r = S.reviews[wk], dow = new Date().getDay();
+  if (!r && ![4, 5, 6].includes(dow)) { box.innerHTML = `<details class="fold"><summary><span>مراجعة الأسبوع</span><span class="small muted">تجهز كل خميس</span></summary><div class="body" style="padding:12px"><button class="btn" data-act="weekGen" ${sample ? "" : "disabled"}>جهّزها الحين</button></div></details>`; return; }
+  box.innerHTML = r ? `<details class="fold" ${dow === 4 ? "open" : ""}><summary><span>مراجعة الأسبوع</span><span class="small muted">${dayLabel(wk)}</span></summary><div class="body draft" style="border:0;border-radius:0 0 var(--r) var(--r)">${esc(r.text)}</div></details>`
+    : `<div class="card sec weekcta"><h2>مراجعة أسبوعك جاهزة للتجهيز</h2><p class="small muted" style="margin:0">كلود يلخّص لك وش أنجزت، ووش تأخر، وتطورك، و٣ أولويات للأسبوع الجاي.</p><div><button class="btn pri" data-act="weekGen" ${sample ? "" : "disabled"}>جهّز مراجعتي</button></div></div>`;
+}
+async function genWeekly(b) {
+  if (!sample) return; b.disabled = true; b.textContent = "كلود يراجع أسبوعك…";
+  try {
+    const st = weekStats();
+    const r = await sample(`أنت مساعد أبو مالك الشخصي. هذي بيانات أسبوعه من دفتره (من ${addDays(today(), -6)} إلى ${today()}):
+${JSON.stringify(st)}
+اكتب له مراجعة أسبوعية بالعربي، قصيرة وصادقة ومشجعة، بهذا الترتيب وبعناوين قصيرة:
+١. أبرز ما أنجزت (٣ نقاط كحد أقصى)
+٢. اللي تأخر ولماذا قد يكون تأخر (بدون لوم)
+٣. صحتك ونفسك: التمرين، القرآن، الإنجليزي، الأكل، العادات (سطر لكل واحد فيه بيانات فقط)
+٤. ٣ أولويات للأسبوع الجاي، محددة وقابلة للتنفيذ
+اعتمد على البيانات فقط ولا تخترع أرقاماً.`, { cache: false });
+    await put("reviews", weekKey(), { text: r.text, at: Date.now() });
+  } catch (e) { toast("ما قدرت أجهّز المراجعة. جرّب مرة ثانية."); b.disabled = false; b.textContent = "جهّز مراجعتي"; }
+}
+
 /* ---------- render all ---------- */
 let curTab = "today";
 function renderAll() {
@@ -1998,10 +2421,18 @@ function renderAll() {
   if (curTab === "kitchen") renderKitchen();
   if (curTab === "gym") renderGym();
   if (curTab === "eng") renderEng();
+  if (curTab === "goals") renderGoals();
+  if (curTab === "money") renderMoney();
+  if (curTab === "food") renderFood();
+  if (curTab === "quran") renderQuran();
+  if (curTab === "shop") renderShop();
+  if (curTab === "car") renderCar();
 }
 function setTab(v) {
-  curTab = v; S.confirm = null;
-  document.querySelectorAll("nav.bottom button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  curTab = v; S.confirm = null; const hub = hubOf(v); lastTab[hub.id] = v;
+  try { localStorage.setItem("abuMalikTabs", JSON.stringify(lastTab)); } catch (e) { }
+  document.querySelectorAll("nav.bottom button").forEach(b => b.classList.toggle("on", b.dataset.v === hub.id));
+  renderSubnav(v);
   document.querySelectorAll(".page").forEach(p => p.classList.toggle("on", p.id === "p-" + v));
   if (v !== "kitchen" && v !== "files" && S.vaultKey) lockAll();
   renderAll(); scrollTo({ top: 0 });
@@ -2017,7 +2448,8 @@ const A = {
   day: b => b.classList.toggle("on"),
   start: b => startTimer(b.dataset.id),
   pause: b => { const t = item(b.dataset.id); if (t) stopTimer(t); },
-  done: async b => { const t = item(b.dataset.id); if (!t) return; await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
+  done: async b => { const t = item(b.dataset.id); if (!t) return; await stopTimer(t, { active: false, done: true, doneAt: Date.now() });
+    if (t.goal) { const g = S.goals.find(x => x.id === t.goal.goalId); if (g) await patch("goals", g.id, { steps: (g.steps || []).map(s => s.id === t.goal.stepId ? { ...s, done: true } : s) }); } },
   markDone: async b => { const t = item(b.dataset.id); closeSheet(); if (t) await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
   undo: b => patch("items", b.dataset.id, { done: false, doneAt: null }),
   askDel: b => { S.confirm = b.dataset.id; renderAll(); },
@@ -2093,6 +2525,66 @@ const A = {
     if (habitList().some(h => h.id === "sport")) { const hl = S.habitlog[d]?.done || {}; if (!hl.sport) await put("habitlog", d, { done: { ...hl, sport: true } }); }
     toast("عافية! انحسب تمرين اليوم"); },
   planner: openPlanner, planGen: genPlan, planSave: savePlan,
+  hub: b => { const h = HUBS.find(x => x.id === b.dataset.v); const t = lastTab[h.id] && h.tabs.some(x => x[0] === lastTab[h.id]) ? lastTab[h.id] : h.tabs[0][0]; setTab(t); },
+  moneyAdd: async b => { const t = $("#moneyIn").value.trim(); if (!t) return; b.disabled = true; const es = await moneyParse(t); b.disabled = false;
+    if (!es.length) { toast("ما لقيت مبلغ. اكتب الرقم، مثل «دفعت ٥٠ قهوة»"); return; } await addMoney(es); $("#moneyIn").value = ""; toast(`انسجل ${ar(es.length)} ${es.length === 1 ? "قيد" : "قيود"}`); },
+  mManual: () => openSheet(`<h2>قيد جديد</h2><div class="sec">${moneyForm()}</div><div class="row"><button class="btn pri" data-act="mSave">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`),
+  mEdit: b => { const e = S.money.find(x => x.id === b.dataset.id); if (e) openSheet(`<h2>تعديل القيد</h2><div class="sec">${moneyForm(e)}</div><div class="row"><button class="btn pri" data-act="mSave" data-id="${e.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  mSave: async b => { const o = readMoneyForm($("#sheetBack")); if (!o) return; if (b.dataset.id) await patch("money", b.dataset.id, o); else await addMoney([o]); closeSheet(); },
+  mDel: b => { S.confirm = "m:" + b.dataset.id; renderMoney(); }, mDelYes: b => { S.confirm = null; del("money", b.dataset.id); },
+  mMonth: b => { S.moneyMonth = b.dataset.v; renderMoney(); },
+  goalAdd: async () => { const t = $("#gTitle").value.trim(); if (!t) { toast("اكتب الهدف"); return; }
+    await put("goals", newId(), { title: t, horizon: $("#gHor").value, area: $("#gArea").value, why: $("#gWhy").value.trim(), steps: [], done: false, createdAt: Date.now() }); toast("انضاف الهدف"); },
+  goalDel: b => { S.confirm = "g:" + b.dataset.id; renderGoals(); }, goalDelYes: b => { S.confirm = null; del("goals", b.dataset.id); },
+  stepToggle: async b => { const g = S.goals.find(x => x.id === b.dataset.g); if (!g) return; const steps = (g.steps || []).map(s => s.id === b.dataset.s ? { ...s, done: !s.done } : s);
+    await patch("goals", g.id, { steps, done: steps.length > 0 && steps.every(s => s.done) }); },
+  stepAdd: async b => { const g = S.goals.find(x => x.id === b.dataset.g); const inp = document.querySelector(`[data-stepin="${b.dataset.g}"]`); const t = inp?.value.trim(); if (!g || !t) return; inp.value = "";
+    await patch("goals", g.id, { steps: [...(g.steps || []), { id: newId(), t, done: false }], done: false }); },
+  stepTask: async b => { const g = S.goals.find(x => x.id === b.dataset.g); const st = g?.steps?.find(s => s.id === b.dataset.s); if (!st) return;
+    await put("items", newId(), { kind: "task", title: st.t, area: g.area || "pers", branch: "", size: "small", days: [], done: false, createdAt: Date.now(), goal: { goalId: g.id, stepId: st.id } }); toast("انضافت لمهامك. حدّد أيامها من صفحة اليوم"); },
+  goalAI: async b => { const g = S.goals.find(x => x.id === b.dataset.id); if (!g || !sample) return; b.disabled = true; b.textContent = "كلود يفكر…";
+    try { const r = await sample.json(`أبو مالك (سعودي، موظف في SANS وعنده مشاريع تجارية: ${AREAS.biz.branches.join("، ")}) عنده هذا الهدف: "${g.title}" (${g.horizon})${g.why ? `، والسبب: ${g.why}` : ""}.
+${(g.steps || []).length ? `الخطوات الحالية: ${g.steps.map(s => s.t).join(" | ")}. اقترح خطوات إضافية مكملة فقط.` : "قسّمه إلى خطوات عملية مرتبة."}
+أعد JSON فقط: {"steps":["خطوة محددة قابلة للتنفيذ في أسبوع أو أقل، تبدأ بفعل"]} من ٤ إلى ٧ خطوات. لا تخترع أرقاماً أو أسماء.`, { modelTier: "default" });
+      const add = (r.steps || []).filter(Boolean).slice(0, 8).map(t => ({ id: newId(), t: String(t).slice(0, 140), done: false }));
+      await patch("goals", g.id, { steps: [...(g.steps || []), ...add], done: false }); } catch (e) { toast("ما قدرت أقترح الحين"); b.disabled = false; } },
+  shopAdd: async b => { const t = $("#shopIn").value.trim(); if (!t) return; $("#shopIn").value = ""; b.disabled = true; const n = await addShop(t); b.disabled = false; toast(`انضاف ${ar(n)}`); },
+  shopToggle: b => { const x = S.shop.find(y => y.id === b.dataset.id); if (x) patch("shop", x.id, { done: !x.done }); },
+  shopDel: b => del("shop", b.dataset.id),
+  shopClear: async () => { for (const x of S.shop.filter(y => y.done)) await del("shop", x.id); },
+  shopCopy: () => { const open = S.shop.filter(x => !x.done); copyText("قائمة المشتريات:\n" + SHOP_CATS.map(c => { const xs = open.filter(x => (x.cat || "أخرى") === c); return xs.length ? `${c}:\n` + xs.map(x => "- " + x.text).join("\n") : ""; }).filter(Boolean).join("\n\n")); },
+  carAdd: async () => { const name = $("#carName").value.trim(); if (!name) { toast("اكتب اسم السيارة"); return; }
+    await put("cars", newId(), { name, plate: $("#carPlate").value.trim(), km: +en($("#carKm0").value) || 0, oilKm: 5000, oilMonths: 6, services: [], createdAt: Date.now() }); },
+  carDel: b => { S.confirm = "c:" + b.dataset.id; renderCar(); }, carDelYes: b => { S.confirm = null; del("cars", b.dataset.id); },
+  carKm: b => { const v = +en(document.querySelector(`[data-carkm="${b.dataset.id}"]`).value); if (v > 0) { patch("cars", b.dataset.id, { km: v }); toast("تحدّث العداد"); } },
+  oilSave: b => { patch("cars", b.dataset.id, { oilKm: +document.querySelector(`[data-oilkm="${b.dataset.id}"]`).value || 5000, oilMonths: +document.querySelector(`[data-oilm="${b.dataset.id}"]`).value || 6 }); toast("انحفظ"); },
+  svcAdd: async b => { const c = S.cars.find(x => x.id === b.dataset.id); const box = document.querySelector(`[data-svc="${b.dataset.id}"]`); if (!c || !box) return; const q = s => box.querySelector(s);
+    const sv = { id: newId(), type: q(".sType").value, date: q(".sDate").value || today(), km: +en(q(".sKm").value) || 0, cost: +en(q(".sCost").value) || 0, note: q(".sNote").value.trim() };
+    const upd = { services: [...(c.services || []), sv] }; if (sv.km > (c.km || 0)) upd.km = sv.km;
+    if (sv.type === "تغيير زيت") upd.lastOil = { km: sv.km || c.km || 0, date: sv.date };
+    await patch("cars", c.id, upd);
+    if (sv.cost) await addMoney([{ amount: sv.cost, type: "out", scope: "شخصي", cat: "صيانة", note: `${sv.type} - ${c.name}`, date: sv.date }]);
+    toast(sv.cost ? "انحفظت وانضافت للمصاريف" : "انحفظت"); },
+  svcDel: async b => { const c = S.cars.find(x => x.id === b.dataset.id); if (c) await patch("cars", c.id, { services: (c.services || []).filter(s => s.id !== b.dataset.s) }); },
+  qAdd: b => quranTo((S.meta.quran?.page || 0) + +b.dataset.n),
+  qTo: () => { const v = +en($("#qTo").value); if (v) quranTo(v); },
+  qSave: () => { put("meta", "quran", { ...(S.meta.quran || { khatmas: 0 }), target: +$("#qTarget").value || 4, page: Math.max(0, Math.min(604, +en($("#qSet").value) || 0)) }); toast("انحفظ"); },
+  foodGoal: () => { const w = +en($("#fW").value), h = +en($("#fH").value), a = +en($("#fA").value); if (!w || !h || !a) { toast("عبّ الوزن والطول والعمر"); return; }
+    put("meta", "food", calcFoodGoals(w, h, a, document.querySelector('[data-seg="fgoal"] .on')?.dataset.v || "keep")); },
+  foodGoalSave: () => put("meta", "food", { ...S.meta.food, kcal: +$("#fgK").value, protein: +$("#fgP").value, carbs: +$("#fgC").value, fat: +$("#fgF").value }),
+  foodGoalReset: () => { const f = S.meta.food; if (f?.weight) put("meta", "food", calcFoodGoals(f.weight, f.height, f.age, f.goal)); else del("meta", "food"); },
+  foodDay: b => { S.foodDay = b.dataset.v === today() ? null : b.dataset.v; renderFood(); },
+  mealAdd: async b => { const t = $("#foodIn").value.trim(), img = S.foodPhoto; if (!t && !img) return; b.disabled = true; b.textContent = "يحسب…";
+    await addMeal(t, img); $("#foodIn").value = ""; S.foodPhoto = null; $("#foodImgChip").innerHTML = ""; b.disabled = false; b.textContent = "سجّل"; },
+  mealDel: async b => { const d = S.foodDay || today(), cur = S.foodlog[d] || {}; await put("foodlog", d, { ...cur, meals: (cur.meals || []).filter(m => m.id !== b.dataset.id) }); },
+  mealEdit: b => { const d = S.foodDay || today(), m = (S.foodlog[d]?.meals || []).find(x => x.id === b.dataset.id); if (!m) return;
+    openSheet(`<h2>تعديل الوجبة</h2><label class="f">الوجبة<input type="text" id="meT" value="${esc(m.text)}"></label>
+      <div class="grid2"><label class="f">السعرات<input type="number" id="meK" value="${Math.round(m.kcal || 0)}"></label><label class="f">بروتين<input type="number" id="meP" value="${Math.round(m.p || 0)}"></label></div>
+      <div class="grid2"><label class="f">كارب<input type="number" id="meC" value="${Math.round(m.c || 0)}"></label><label class="f">دهون<input type="number" id="meF" value="${Math.round(m.f || 0)}"></label></div>
+      <div class="row"><button class="btn pri" data-act="mealSave" data-id="${m.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  mealSave: async b => { const d = S.foodDay || today(), cur = S.foodlog[d] || {};
+    await put("foodlog", d, { ...cur, meals: (cur.meals || []).map(m => m.id === b.dataset.id ? { ...m, text: $("#meT").value.trim() || m.text, kcal: +$("#meK").value, p: +$("#meP").value, c: +$("#meC").value, f: +$("#meF").value } : m) }); closeSheet(); },
+  weekGen: b => genWeekly(b),
   engTab: b => { S.engTab = b.dataset.v; renderEng(); },
   engSrc: b => { S.engSource = S.engSource === b.dataset.v ? "" : b.dataset.v; renderEngSources(); },
   engSave: saveWords, engEnrich: () => enrichWords(),
@@ -2149,6 +2641,8 @@ $("#engBody").addEventListener("focusout", () => setTimeout(() => { if (S.engPen
 document.addEventListener("input", e => { if (e.target.id === "engSearch") { S.engQ = e.target.value; $("#wordList").innerHTML = wordListHTML(); } });
 function renderEngSources() { $("#engSources").innerHTML = ENG_SOURCES.map(x => `<button class="${S.engSource === x ? "on" : ""}" data-act="engSrc" data-v="${x}">${x}</button>`).join(""); }
 renderEngSources();
+$("#foodImg").addEventListener("change", e => { const f = e.target.files?.[0]; S.foodPhoto = f || null; e.target.value = ""; $("#foodImgChip").innerHTML = f ? `<span class="chip st-today">صورة مرفقة</span>` : ""; });
+["goalsBody", "moneyBody", "foodBody", "quranBody", "carBody"].forEach(id => $("#" + id).addEventListener("focusout", () => setTimeout(() => { if (!$("#" + id).contains(document.activeElement)) renderAll(); }, 80)));
 $("#gymBody").addEventListener("focusout", () => setTimeout(() => { if (S.gymPending && curTab === "gym") renderGym(); }, 50));
 document.addEventListener("input", e => { if (e.target.classList?.contains("pinIn") && /^\d{4}$/.test(en(e.target.value)) && S.meta.vault) pinUnlock(e.target); });
 document.addEventListener("pointerdown", e => { if (e.target.closest("#p-files,#p-kitchen")) touchLock(); });
