@@ -1929,9 +1929,11 @@ function speak(t) { if (!canSpeak || !t) return; try { speechSynthesis.cancel();
 const isDue = w => w.enriched !== false && (w.srs?.due || today()) <= today();
 function dueQueue() {
   const due = S.words.filter(w => w.term && isDue(w));
-  const fresh = due.filter(w => !w.srs?.reps).sort((a, b) => a.createdAt - b.createdAt).slice(0, 10);
+  const newLeft = Math.max(0, 10 - S.words.filter(w => w.srs?.first === today()).length);
+  const fresh = due.filter(w => !w.srs?.reps).sort((a, b) => a.createdAt - b.createdAt).slice(0, newLeft);
   const old = due.filter(w => w.srs?.reps).sort((a, b) => (a.srs.due || "").localeCompare(b.srs.due || ""));
-  return [...old, ...fresh].slice(0, 20);
+  const again = [...(S.engAgain || [])].map(id => S.words.find(w => w.id === id)).filter(w => w && !due.includes(w));
+  return [...old, ...fresh, ...again].slice(0, 25);
 }
 function nextSrs(srs, grade) {
   const s = { interval: 0, ease: 2.5, reps: 0, lapses: 0, ...(srs || {}) };
@@ -1975,9 +1977,10 @@ function renderEngReview() {
   const q = dueQueue();
   if (!S.words.length) return `<div class="empty card">احفظ أول كلمة أو جملة من فوق. كلود يجهّز معناها ونطقها وأمثلة من شغلك وتجارتك، وتطلع لك هنا للمراجعة في الوقت المناسب.</div>`;
   if (!q.length) return `<div class="card eng-done"><h2>خلصت مراجعة اليوم</h2><p class="muted small">الكلمات الجاية تطلع لك في موعدها. افتح «نص اليوم» وتدرّب.</p>${S.engReviewed ? `<p class="small">راجعت ${ar(S.engReviewed)} ${S.engReviewed > 10 ? "بطاقة" : "بطاقات"} اليوم</p>` : ""}</div>`;
-  const w = q[0], show = S.engShow, cloze = exampleCloze(w);
+  const w = q[0], show = S.engShow, isSent = w.kind === "sentence" || String(w.term).trim().split(/\s+/).length >= 4;
+  const cloze = isSent ? String(w.term).split(/\s+/).map(t => t.replace(/^([^A-Za-z]*[A-Za-z])([A-Za-z']*)/, (m, a, b2) => a + "_".repeat(Math.min(b2.length, 6)))).join(" ") : exampleCloze(w);
   return `<div class="flash card">
-    <div class="row" style="justify-content:space-between"><span class="small muted">${ar(q.length)} باقية</span>${w.srs?.reps ? `<span class="chip">مراجعة</span>` : `<span class="chip st-today">جديدة</span>`}</div>
+    <div class="row" style="justify-content:space-between"><span class="small muted">${ar(q.length)} ${q.length > 10 ? "بطاقة" : q.length > 2 ? "بطاقات" : q.length === 2 ? "بطاقتين" : "بطاقة"} باقية${S.engAgain?.has(w.id) ? " · مرة ثانية" : ""}</span>${w.srs?.reps ? `<span class="chip">مراجعة</span>` : `<span class="chip st-today">جديدة</span>`}</div>
     <div class="q">${esc(w.meaning || "")}</div>
     ${cloze ? `<div class="cloze" dir="ltr">${esc(cloze)}</div>` : ""}
     ${show ? `<div class="ans">
@@ -1991,7 +1994,7 @@ function renderEngReview() {
         <button class="g2" data-act="grade" data-id="${w.id}" data-g="2">عرفتها<small>${ivl(nextSrs(w.srs, 2).interval)}</small></button>
         <button class="g3" data-act="grade" data-id="${w.id}" data-g="3">سهلة<small>${ivl(nextSrs(w.srs, 3).interval)}</small></button>
       </div>`
-    : `<p class="muted small" style="text-align:center;margin:0">تذكّرها بالإنجليزي، قلها بصوت عالي، ثم اضغط</p><button class="btn pri" data-act="engShow">أظهر الجواب</button>`}
+    : `<p class="muted small" style="text-align:center;margin:0">${isSent ? "قل الجملة كاملة بالإنجليزي (أول حرف من كل كلمة يساعدك)، ثم اضغط" : "تذكّر الكلمة بالإنجليزي وقلها بصوت عالي، ثم اضغط"}</p><button class="btn pri" data-act="engShow">أظهر الجواب</button>`}
   </div>
   ${weeklyChallenge()}`;
 }
@@ -2102,8 +2105,12 @@ ${list.map((w, i) => `${i + 1}. "${w.input}"${w.context ? ` (سمعها في: ${
 }
 async function gradeWord(id, g) {
   const w = S.words.find(x => x.id === id); if (!w) return;
+  const srs = { ...nextSrs(w.srs, g), first: w.srs?.first || today() };
   S.engShow = false; S.engReviewed = (S.engReviewed || 0) + 1;
-  await patch("words", id, { srs: nextSrs(w.srs, g) });
+  S.engAgain = S.engAgain || new Set(); if (g === 0) S.engAgain.add(id); else S.engAgain.delete(id);
+  S.words = S.words.map(x => x.id === id ? { ...x, srs } : x); renderEng();
+  try { await base.collection("words").doc(id).set({ ...Object.fromEntries(Object.entries(w).filter(([k]) => k !== "id")), srs }); }
+  catch (e) { if (!base) memApply("words", id, { srs }, true); else { toast("ما انحفظت المراجعة (" + (e?.code || "خطأ") + "). جرّب مرة ثانية."); return; } }
   const days = { ...(S.meta.eng?.days || {}) }; days[today()] = (days[today()] || 0) + 1;
   await put("meta", "eng", { ...(S.meta.eng || {}), days });
   if (dueQueue().filter(x => x.id !== id).length === 0 && habitList().some(h => h.id === "english")) {
