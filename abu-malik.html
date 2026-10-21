@@ -2,32 +2,38 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Readex+Pro:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Noto+Kufi+Arabic:wght@500;600;700&family=Readex+Pro:wght@500;600&display=swap">
 <style>
-/* Layout: one mobile column, sticky greeting header, bottom tab bar; areas carry their own hue, everything else stays quiet ink-on-stone */
+/* Layout: one mobile column, hub sub-tabs, bottom bar. Direction "ليل الرياض": deep navy night, warm gold lamplight, each life area keeps its own hue */
 :root{
-  --bg:#EEF1F0; --surface:#FFFFFF; --surface2:#E3E8E6; --ink:#16201F; --muted:#5C6967; --line:#D3DAD8;
-  --accent:#1E2B33; --on-accent:#F4F7F6;
-  --deep:#16212A; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
-  --work:#2E5F8E; --biz:#B06A22; --pers:#3F7F52; --fam:#934A76;
-  --danger:#C0392B; --ok:#2F7D4F;
-  --font-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --bg:#0D1524; --surface:#152035; --surface2:#1C2A43; --ink:#ECF1F8; --muted:#93A3BC; --line:#253552;
+  --accent:#D9A84E; --on-accent:#1B1406; --glow:rgba(217,168,78,.18);
+  --deep:#0A111E; --on-deep:#F3F6FB; --deep-muted:#A6B3C8;
+  --work:#6DB0EA; --biz:#E8935A; --pers:#7CC59A; --fam:#E59AB4;
+  --danger:#F27A6B; --ok:#5FCC8F;
+  --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.22);
+  --font-display:"Noto Kufi Arabic","Readex Pro",Tahoma,sans-serif;
   --font-body:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
-  --r:14px;
+  --r:16px; --ease:cubic-bezier(.2,.8,.2,1);
+  color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0F1416; --surface:#171E21; --surface2:#1F282C; --ink:#E5ECEA; --muted:#93A19E; --line:#2A3438;
-  --accent:#DCE6E3; --on-accent:#10181B;
-  --deep:#22313D; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
-  --work:#78A9DA; --biz:#E3A35F; --pers:#7DBF8D; --fam:#D08DB5;
-  --danger:#F07A6A; --ok:#6FCB92; color-scheme:dark;
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#EDF1F7; --surface:#FFFFFF; --surface2:#E4EAF3; --ink:#0F1B2E; --muted:#56657D; --line:#D2DBE8;
+  --accent:#A8761C; --on-accent:#FFFFFF; --glow:rgba(168,118,28,.14);
+  --deep:#0F1B2E; --on-deep:#F4F7FB; --deep-muted:#A6B3C8;
+  --work:#2B67AD; --biz:#B5602A; --pers:#2F7F52; --fam:#AE4B70;
+  --danger:#C0392B; --ok:#24804C;
+  --shadow:0 1px 2px rgba(15,27,46,.05),0 6px 18px rgba(15,27,46,.06);
+  color-scheme:light;
 }}
-:root[data-theme="dark"]{
-  --bg:#0F1416; --surface:#171E21; --surface2:#1F282C; --ink:#E5ECEA; --muted:#93A19E; --line:#2A3438;
-  --accent:#DCE6E3; --on-accent:#10181B;
-  --deep:#22313D; --on-deep:#EEF3F5; --deep-muted:#9DB0BC;
-  --work:#78A9DA; --biz:#E3A35F; --pers:#7DBF8D; --fam:#D08DB5;
-  --danger:#F07A6A; --ok:#6FCB92; color-scheme:dark;
+:root[data-theme="light"]{
+  --bg:#EDF1F7; --surface:#FFFFFF; --surface2:#E4EAF3; --ink:#0F1B2E; --muted:#56657D; --line:#D2DBE8;
+  --accent:#A8761C; --on-accent:#FFFFFF; --glow:rgba(168,118,28,.14);
+  --deep:#0F1B2E; --on-deep:#F4F7FB; --deep-muted:#A6B3C8;
+  --work:#2B67AD; --biz:#B5602A; --pers:#2F7F52; --fam:#AE4B70;
+  --danger:#C0392B; --ok:#24804C;
+  --shadow:0 1px 2px rgba(15,27,46,.05),0 6px 18px rgba(15,27,46,.06);
+  color-scheme:light;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.6;direction:rtl;
@@ -380,6 +386,58 @@ nav.bottom button svg{width:22px;height:22px}
 .exp.urgent .when,.exp.gone .when,.exp-chip.urgent,.exp-chip.gone{color:var(--danger)}
 .exp-chip{font-size:12px;font-weight:600;color:var(--muted)}
 .kitchen-hero{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+/* ---- Riyadh night polish ---- */
+h1{font-weight:700;letter-spacing:-.01em}
+.hello h1{font-size:25px}
+.hello h1 .gold,.gold{color:var(--accent)}
+.card,.list,.stat,.dcard,.fcard,.lam,.recipe,.habit,.pcard,details.fold>summary{box-shadow:var(--shadow)}
+.btn.pri,.dump .send{background:var(--accent);color:var(--on-accent);box-shadow:0 4px 14px var(--glow)}
+.tabs button.on,.seg button.on{box-shadow:0 2px 10px var(--glow)}
+.tabs button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.days button.on{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.days button.on b{color:var(--on-accent)}
+.dump textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--glow)}
+.running{background:linear-gradient(165deg,color-mix(in srgb,var(--deep) 70%,#1d3157),var(--deep));border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.running .t{color:var(--accent);text-shadow:0 0 24px var(--glow);font-family:"Readex Pro",var(--font-display);direction:ltr;text-align:right;font-variant-numeric:tabular-nums}
+.running .btn.pri{background:var(--accent);color:var(--on-accent)}
+.running .lbl::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-inline-end:7px;vertical-align:middle;animation:breathe 1.6s ease-in-out infinite}
+.stat b{font-family:var(--font-display);font-weight:700}
+.daytime .big{font-weight:700}
+nav.bottom{background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px) saturate(1.4);-webkit-backdrop-filter:blur(14px) saturate(1.4)}
+nav.bottom button{position:relative;transition:color .2s}
+nav.bottom button.on{color:var(--accent)}
+nav.bottom button.on::before{content:"";position:absolute;top:2px;width:42px;height:30px;border-radius:12px;background:var(--glow);z-index:-1;animation:popin .3s var(--ease)}
+.check.on{background:var(--ok);border-color:var(--ok)}
+.qcard,.weekcta{border-color:color-mix(in srgb,var(--accent) 40%,var(--line))}
+.flash .q,.kcal .big,.qpage{font-family:var(--font-display)}
+
+/* motion */
+button,.btn,.chip,.habit,.dcp{transition:transform .15s var(--ease),background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+button:active,.btn:active,.habit:active,.dcp:active{transform:scale(.97)}
+.page.on>*{animation:rise .42s var(--ease) both}
+.page.on>*:nth-child(2){animation-delay:.04s}.page.on>*:nth-child(3){animation-delay:.08s}.page.on>*:nth-child(4){animation-delay:.12s}
+.page.on>*:nth-child(5){animation-delay:.16s}.page.on>*:nth-child(6){animation-delay:.2s}.page.on>*:nth-child(n+7){animation-delay:.24s}
+.pop{animation:pop .45s var(--ease)}
+.check.pop{animation:pop .45s var(--ease),ring .6s ease-out}
+.sheet-back{animation:fade .2s ease both}
+.sheet{animation:up .32s var(--ease) both}
+.toast{animation:toastin .3s var(--ease) both}
+#review .card{animation:rise .35s var(--ease) both}
+.bar span{transition:width .5s var(--ease)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:70;overflow:hidden}
+.confetti i{position:absolute;top:-12px;width:8px;height:12px;border-radius:2px;animation:fall 1.6s cubic-bezier(.3,.6,.4,1) forwards}
+.celebrate{position:fixed;left:50%;top:38%;transform:translate(-50%,-50%);z-index:71;background:var(--surface);border:1px solid color-mix(in srgb,var(--accent) 50%,var(--line));color:var(--ink);padding:14px 20px;border-radius:18px;font-family:var(--font-display);font-weight:700;font-size:17px;box-shadow:0 20px 50px rgba(0,0,0,.35);animation:celebrate 2.2s var(--ease) forwards;text-align:center;max-width:86vw}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+@keyframes pop{0%{transform:scale(.85)}55%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes ring{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--ok) 55%,transparent)}to{box-shadow:0 0 0 12px transparent}}
+@keyframes popin{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}
+@keyframes breathe{50%{opacity:.35;transform:scale(.8)}}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.9}}
+@keyframes celebrate{0%{opacity:0;transform:translate(-50%,-40%) scale(.9)}12%{opacity:1;transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-56%)}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
 </style>
 
 <div class="wrap">
@@ -625,7 +683,7 @@ const fmtDur = sec => {
   if (h) return `${ar(h)}س ${ar(m)}د`;
   return `${ar(m)}د`;
 };
-const fmtClock = sec => { sec = Math.max(0, Math.floor(sec)); return ar(`${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec % 3600 / 60))}:${pad(sec % 60)}`); };
+const fmtClock = sec => { sec = Math.max(0, Math.floor(sec)); return `${pad(Math.floor(sec / 3600))}:${pad(Math.floor(sec % 3600 / 60))}:${pad(sec % 60)}`; };
 const fmtTime = hm => {
   if (!hm) return "";
   let [h, m] = hm.split(":").map(Number); const pm = h >= 12; const h12 = h % 12 || 12;
@@ -731,7 +789,7 @@ function taskStatus(t) {
 }
 function renderHeader() {
   const d = new Date(), h = d.getHours();
-  $("#greet").textContent = (h < 12 ? "صباح الخير" : "مساء الخير") + " يا أبو مالك";
+  $("#greet").innerHTML = (h < 12 ? "صباح الخير" : "مساء الخير") + ' يا <span class="gold">أبو مالك</span>';
   let hij = "";
   try { hij = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-arab", { day: "numeric", month: "long", year: "numeric" }).format(d); } catch (e) { }
   const greg = new Intl.DateTimeFormat("ar-u-ca-gregory-nu-arab", { day: "numeric", month: "long" }).format(d);
@@ -1130,7 +1188,7 @@ function renderHabits() {
   const nd = S.words.length ? dueQueue().length : 0; const ed = $("#engDue"); ed.hidden = !nd; ed.innerHTML = nd ? `<span>عندك <b>${ar(nd)}</b> ${nd <= 10 ? "كلمات" : "كلمة"} إنجليزي للمراجعة</span><span>راجعها ←</span>` : "";
   const hs = habitList(), log = S.habitlog[today()]?.done || {};
   const week = h => { let n = 0; for (let i = 0; i < 7; i++) if (S.habitlog[addDays(today(), -i)]?.done?.[h.id]) n++; return n; };
-  $("#habits").innerHTML = hs.length ? hs.map(h => `<button class="habit ${log[h.id] ? "on" : ""}" data-act="${S.habitEdit ? "habitDel" : "habit"}" data-id="${h.id}">
+  $("#habits").innerHTML = hs.length ? hs.map(h => `<button class="habit ${log[h.id] ? "on" : ""}${popc("h:" + h.id)}" data-act="${S.habitEdit ? "habitDel" : "habit"}" data-id="${h.id}">
       ${S.habitEdit ? `<span class="x">${IC.x}</span>` : `<span class="check ${log[h.id] ? "on" : ""}">${log[h.id] ? IC.check : ""}</span>`}
       <span class="nm">${esc(h.name)}<br><span class="wk num">${ar(week(h))} من ٧ أيام</span></span></button>`).join("")
     : `<div class="empty" style="grid-column:1/-1">ما فيه عادات بعد. اضغط «تعديل» وأضف أول عادة.</div>`;
@@ -1138,15 +1196,17 @@ function renderHabits() {
   $("#habitEditBtn").textContent = S.habitEdit ? "انتهيت" : "تعديل";
 }
 async function toggleHabit(id) {
-  const d = today(), cur = S.habitlog[d]?.done || {};
-  await put("habitlog", d, { done: { ...cur, [id]: !cur[id] } });
+  const d = today(), cur = S.habitlog[d]?.done || {}; const nowOn = !cur[id];
+  if (nowOn) popMark("h:" + id);
+  await put("habitlog", d, { done: { ...cur, [id]: nowOn } });
+  if (nowOn) { const hs = habitList(); if (hs.length && hs.every(h => h.id === id || cur[h.id])) celebrate("قفلت كل عاداتك اليوم، ما شاء الله"); }
 }
 /* ---------- todos ---------- */
 function renderTodos() {
   const td = today();
   const ts = S.items.filter(x => x.kind === "todo" && (!x.done || (x.doneAt && iso(new Date(x.doneAt)) === td))).sort((a, b) => (a.done - b.done) || (a.createdAt - b.createdAt));
   $("#todoCount").textContent = ts.filter(x => !x.done).length ? ar(ts.filter(x => !x.done).length) : "";
-  $("#todos").innerHTML = ts.map(t => `<div class="it ${t.done ? "done" : ""}"><button class="check ${t.done ? "on" : ""}" data-act="${t.done ? "undo" : "done"}" data-id="${t.id}" aria-label="تم">${t.done ? IC.check : ""}</button><div class="main"><span class="ttl">${esc(t.title)}</span></div><button class="icon-btn" data-act="delNow" data-id="${t.id}" aria-label="احذف">${IC.x}</button></div>`).join("");
+  $("#todos").innerHTML = ts.map(t => `<div class="it ${t.done ? "done" : ""}"><button class="check ${t.done ? "on" : ""}${popc(t.id)}" data-act="${t.done ? "undo" : "done"}" data-id="${t.id}" aria-label="تم">${t.done ? IC.check : ""}</button><div class="main"><span class="ttl">${esc(t.title)}</span></div><button class="icon-btn" data-act="delNow" data-id="${t.id}" aria-label="احذف">${IC.x}</button></div>`).join("");
 }
 
 /* ---------- timer ---------- */
@@ -1761,7 +1821,7 @@ function exRow(w, e) {
   const isPR = e.weight && +e.weight >= best && +e.weight > Math.max(0, ...h.map(x => +x.e.weight || 0)) && h.length;
   const conf = S.confirm === "w:" + w.id ? `<div class="confirm"><p>تحذف هذا التمرين من البرنامج؟</p><button class="btn danger sm" data-act="exDelYes" data-id="${w.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
   return `<div><div class="ex ${e.done ? "done-ex" : ""}">
-    <button class="check ${e.done ? "on" : ""}" data-act="exDone" data-id="${w.id}" aria-label="قفلت التمرين">${e.done ? IC.check : ""}</button>
+    <button class="check ${e.done ? "on" : ""}${popc("x:" + w.id)}" data-act="exDone" data-id="${w.id}" aria-label="قفلت التمرين">${e.done ? IC.check : ""}</button>
     ${w.imageId ? `<a class="ex-img" href="/_blob/${w.imageId}" target="_blank" rel="noopener"><img src="/_blob/${w.imageId}" alt=""></a>` : ""}
     <div class="main">
       <span class="ttl">${esc(w.name)}</span>
@@ -2047,7 +2107,7 @@ async function gradeWord(id, g) {
   const days = { ...(S.meta.eng?.days || {}) }; days[today()] = (days[today()] || 0) + 1;
   await put("meta", "eng", { ...(S.meta.eng || {}), days });
   if (dueQueue().filter(x => x.id !== id).length === 0 && habitList().some(h => h.id === "english")) {
-    const hl = S.habitlog[today()]?.done || {}; if (!hl.english) { await put("habitlog", today(), { done: { ...hl, english: true } }); toast("خلصت مراجعة اليوم، وانحسبت عادة الإنجليزي"); }
+    const hl = S.habitlog[today()]?.done || {}; if (!hl.english) { await put("habitlog", today(), { done: { ...hl, english: true } }); celebrate("خلصت مراجعة الإنجليزي اليوم"); }
   }
 }
 async function genDaily() {
@@ -2071,6 +2131,18 @@ async function checkWriting(text, context) {
 ${context}
 كتابته: """${text}"""
 أعد JSON فقط: {"score":رقم من 1 إلى 10 حسب مستواه,"praise":"جملة تشجيع قصيرة بالعربي عن شيء أحسن فيه","corrected":"نصه نفسه بعد تصحيح الأخطاء فقط","better":"نسخة أطبع وأقرب لكلام الناطقين بنفس مستواه تقريباً","notes":["أهم 3 ملاحظات بالعربي: الخطأ ← الصحيح ولماذا"]}`, { modelTier: "default" });
+}
+
+/* ---------- motion helpers ---------- */
+const popc = id => S.popId === id ? " pop" : "";
+function popMark(id) { S.popId = id; clearTimeout(popMark.t); popMark.t = setTimeout(() => { S.popId = null; }, 700); }
+function celebrate(msg) {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { toast(msg); return; }
+  const box = document.createElement("div"); box.className = "confetti";
+  const cols = ["var(--accent)", "var(--ok)", "var(--work)", "var(--fam)", "var(--biz)"];
+  box.innerHTML = [...Array(34)].map((_, i) => `<i style="left:${Math.random() * 100}%;background:${cols[i % cols.length]};animation-delay:${Math.random() * .35}s;transform:rotate(${Math.random() * 180}deg)"></i>`).join("");
+  const m = document.createElement("div"); m.className = "celebrate"; m.textContent = msg;
+  document.body.append(box, m); setTimeout(() => { box.remove(); m.remove(); }, 2300);
 }
 
 /* ---------- hubs (bottom navigation groups) ---------- */
@@ -2189,7 +2261,7 @@ function goalCard(g) {
       <button class="icon-btn" data-act="goalDel" data-id="${g.id}" aria-label="احذف">${IC.trash}</button></div>
     <div class="row"><div class="bar grow"><span style="width:${p}%;background:var(--a)"></span></div><b class="num small">${ar(Math.round(p))}٪</b></div>
     <div class="steps">${(g.steps || []).map(s => { const t = linked(s.id);
-      return `<div class="step ${s.done ? "sd" : ""}"><button class="check ${s.done ? "on" : ""}" data-act="stepToggle" data-g="${g.id}" data-s="${s.id}" aria-label="تم">${s.done ? IC.check : ""}</button><span class="grow">${esc(s.t)}</span>
+      return `<div class="step ${s.done ? "sd" : ""}"><button class="check ${s.done ? "on" : ""}${popc("s:" + s.id)}" data-act="stepToggle" data-g="${g.id}" data-s="${s.id}" aria-label="تم">${s.done ? IC.check : ""}</button><span class="grow">${esc(s.t)}</span>
         ${s.done ? "" : t ? `<span class="chip st-today">في مهامك</span>` : `<button class="cp" data-act="stepTask" data-g="${g.id}" data-s="${s.id}">مهمة</button>`}</div>`; }).join("")}</div>
     <div class="row"><input type="text" placeholder="خطوة جديدة" data-stepin="${g.id}"><button class="btn sm" data-act="stepAdd" data-g="${g.id}">أضف</button></div>
     ${sample ? `<button class="btn sm ghost" data-act="goalAI" data-id="${g.id}" style="align-self:flex-start">${(g.steps || []).length ? "اقترح خطوات إضافية" : "قسّمه لخطوات بكلود"}</button>` : ""}
@@ -2217,7 +2289,7 @@ function renderShop() {
   const open = items.filter(x => !x.done), done = items.filter(x => x.done);
   const groups = SHOP_CATS.map(c => [c, open.filter(x => (x.cat || "أخرى") === c)]).filter(g => g[1].length);
   box.innerHTML = `${open.length ? `<div class="row"><span class="small muted grow">${ar(open.length)} غرض</span><button class="btn sm ghost" data-act="shopCopy">${IC.copy} انسخ القائمة</button></div>` : ""}
-    ${groups.map(([c, xs]) => `<div class="sec" style="gap:6px"><h3 class="small muted">${c}</h3><div class="list">${xs.map(x => `<div class="it"><button class="check" data-act="shopToggle" data-id="${x.id}" aria-label="اشتريته"></button><div class="main"><span class="ttl">${esc(x.text)}</span></div><button class="icon-btn" data-act="shopDel" data-id="${x.id}" aria-label="احذف">${IC.x}</button></div>`).join("")}</div></div>`).join("")}
+    ${groups.map(([c, xs]) => `<div class="sec" style="gap:6px"><h3 class="small muted">${c}</h3><div class="list">${xs.map(x => `<div class="it"><button class="check${popc("p:" + x.id)}" data-act="shopToggle" data-id="${x.id}" aria-label="اشتريته"></button><div class="main"><span class="ttl">${esc(x.text)}</span></div><button class="icon-btn" data-act="shopDel" data-id="${x.id}" aria-label="احذف">${IC.x}</button></div>`).join("")}</div></div>`).join("")}
     ${!open.length ? `<div class="empty card">القائمة فاضية. اكتب أو أملِ «حليب، خبز، ٢ كيلو طماطم، صابون» وتنقسم وتتصنّف لحالها.</div>` : ""}
     ${done.length ? `<details class="fold"><summary><span>اشتريتها</span><span class="small muted">${ar(done.length)}</span></summary><div class="body list">${done.map(x => `<div class="it done"><button class="check on" data-act="shopToggle" data-id="${x.id}">${IC.check}</button><div class="main"><span class="ttl">${esc(x.text)}</span></div></div>`).join("")}
       <div style="padding:10px"><button class="btn sm ghost" data-act="shopClear">امسح اللي اشتريته</button></div></div></details>` : ""}`;
@@ -2305,7 +2377,7 @@ async function quranTo(newPage) {
   let diff = newPage - q.page; if (diff <= 0) { toast("الصفحة أقل من اللي وصلت له. عدّلها من الإعدادات إذا تبي"); return; }
   const d = today(), cur = S.qlog[d] || {};
   await put("qlog", d, { pages: (cur.pages || 0) + diff, to: newPage });
-  if (newPage >= 604) { await put("meta", "quran", { ...q, page: 0, khatmas: (q.khatmas || 0) + 1 }); toast("ختمة مباركة، تقبّل الله منك"); }
+  if (newPage >= 604) { await put("meta", "quran", { ...q, page: 0, khatmas: (q.khatmas || 0) + 1 }); celebrate("ختمة مباركة، تقبّل الله منك"); }
   else await put("meta", "quran", { ...q, page: newPage });
   if ((cur.pages || 0) + diff >= (q.target || 4)) markHabit("quran");
 }
@@ -2448,7 +2520,7 @@ const A = {
   day: b => b.classList.toggle("on"),
   start: b => startTimer(b.dataset.id),
   pause: b => { const t = item(b.dataset.id); if (t) stopTimer(t); },
-  done: async b => { const t = item(b.dataset.id); if (!t) return; await stopTimer(t, { active: false, done: true, doneAt: Date.now() });
+  done: async b => { const t = item(b.dataset.id); if (!t) return; popMark(t.id); await stopTimer(t, { active: false, done: true, doneAt: Date.now() });
     if (t.goal) { const g = S.goals.find(x => x.id === t.goal.goalId); if (g) await patch("goals", g.id, { steps: (g.steps || []).map(s => s.id === t.goal.stepId ? { ...s, done: true } : s) }); } },
   markDone: async b => { const t = item(b.dataset.id); closeSheet(); if (t) await stopTimer(t, { active: false, done: true, doneAt: Date.now() }); },
   undo: b => patch("items", b.dataset.id, { done: false, doneAt: null }),
@@ -2512,7 +2584,7 @@ const A = {
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
   vaultAdd, vaultLock: lockAll,
   gymDay: b => { S.gymDay = b.dataset.v; renderGym(); },
-  exDone: b => { const e = S.gymlog[today()]?.entries?.[b.dataset.id] || {}; saveGymEntry(b.dataset.id, { done: !e.done }); },
+  exDone: b => { const e = S.gymlog[today()]?.entries?.[b.dataset.id] || {}; if (!e.done) popMark("x:" + b.dataset.id); saveGymEntry(b.dataset.id, { done: !e.done }); },
   exAdd: async b => { b.disabled = true; const o = await readExForm($("#exAddFold"), null); b.disabled = false; if (!o) return;
     const groups = [...(S.meta.gym?.groups || [])]; if (!groups.includes(o.group)) { groups.push(o.group); await put("meta", "gym", { groups }); }
     S.gymDay = o.group; await put("workouts", newId(), { ...o, order: exOf(o.group).length, createdAt: Date.now() }); toast("انضاف التمرين"); },
@@ -2523,7 +2595,7 @@ const A = {
   exDelYes: b => { const w = S.workouts.find(x => x.id === b.dataset.id); S.confirm = null; if (w?.imageId && assets) assets.delete(w.imageId).catch(() => { }); del("workouts", b.dataset.id); },
   gymFinish: async () => { const d = today(), cur = S.gymlog[d] || {}; await put("gymlog", d, { ...cur, entries: cur.entries || {}, group: cur.group || S.gymDay, finished: true });
     if (habitList().some(h => h.id === "sport")) { const hl = S.habitlog[d]?.done || {}; if (!hl.sport) await put("habitlog", d, { done: { ...hl, sport: true } }); }
-    toast("عافية! انحسب تمرين اليوم"); },
+    celebrate("عافية! خلصت تمرين اليوم"); },
   planner: openPlanner, planGen: genPlan, planSave: savePlan,
   hub: b => { const h = HUBS.find(x => x.id === b.dataset.v); const t = lastTab[h.id] && h.tabs.some(x => x[0] === lastTab[h.id]) ? lastTab[h.id] : h.tabs[0][0]; setTab(t); },
   moneyAdd: async b => { const t = $("#moneyIn").value.trim(); if (!t) return; b.disabled = true; const es = await moneyParse(t); b.disabled = false;
@@ -2537,7 +2609,8 @@ const A = {
     await put("goals", newId(), { title: t, horizon: $("#gHor").value, area: $("#gArea").value, why: $("#gWhy").value.trim(), steps: [], done: false, createdAt: Date.now() }); toast("انضاف الهدف"); },
   goalDel: b => { S.confirm = "g:" + b.dataset.id; renderGoals(); }, goalDelYes: b => { S.confirm = null; del("goals", b.dataset.id); },
   stepToggle: async b => { const g = S.goals.find(x => x.id === b.dataset.g); if (!g) return; const steps = (g.steps || []).map(s => s.id === b.dataset.s ? { ...s, done: !s.done } : s);
-    await patch("goals", g.id, { steps, done: steps.length > 0 && steps.every(s => s.done) }); },
+    const fin = steps.length > 0 && steps.every(s => s.done); if (steps.find(s => s.id === b.dataset.s)?.done) popMark("s:" + b.dataset.s);
+    await patch("goals", g.id, { steps, done: fin }); if (fin && !g.done) celebrate("حققت هدفك: " + g.title); },
   stepAdd: async b => { const g = S.goals.find(x => x.id === b.dataset.g); const inp = document.querySelector(`[data-stepin="${b.dataset.g}"]`); const t = inp?.value.trim(); if (!g || !t) return; inp.value = "";
     await patch("goals", g.id, { steps: [...(g.steps || []), { id: newId(), t, done: false }], done: false }); },
   stepTask: async b => { const g = S.goals.find(x => x.id === b.dataset.g); const st = g?.steps?.find(s => s.id === b.dataset.s); if (!st) return;
