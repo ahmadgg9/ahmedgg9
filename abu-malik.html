@@ -367,6 +367,29 @@ nav.bottom button svg{width:22px;height:22px}
 .qd span{position:absolute;bottom:-16px;font-size:10px;color:var(--muted)}
 .weekcta{border:1.5px solid var(--work)}
 #moneyBody .stat b{font-size:16px;white-space:nowrap}
+/* wallet */
+.wl-nav{gap:10px}.wl-nav h2{font-size:18px}
+.wl-h{font-size:13px;color:var(--muted);margin-top:4px}
+.wallets{display:grid;grid-template-columns:1fr;gap:12px}
+.wallets.two{grid-template-columns:1fr 1fr}
+.wallet{position:relative;text-align:start;display:flex;flex-direction:column;gap:10px;min-height:112px;padding:14px 16px;border-radius:18px;color:var(--ink);
+  background:linear-gradient(150deg,color-mix(in srgb,var(--a) 30%,var(--surface)),color-mix(in srgb,var(--a) 10%,var(--surface)));border:1px solid color-mix(in srgb,var(--a) 40%,var(--line));box-shadow:var(--shadow);margin-top:10px}
+.wallet::before,.wallet::after{content:"";position:absolute;inset-inline:12px;height:10px;border-radius:12px 12px 0 0;background:color-mix(in srgb,var(--a) 22%,var(--surface));border:1px solid color-mix(in srgb,var(--a) 30%,var(--line));border-bottom:0;top:-9px;z-index:-1}
+.wallet::after{inset-inline:24px;top:-16px;opacity:.6}
+.wl-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.wl-name{font-family:var(--font-display);font-weight:700;font-size:17px}
+.wl-count{min-width:28px;height:28px;border-radius:99px;display:grid;place-items:center;background:color-mix(in srgb,var(--a) 30%,transparent);font-weight:700;font-size:13px}
+.wl-note{font-size:12.5px;color:var(--muted);line-height:1.5}
+.wl-dot{position:absolute;top:12px;inset-inline-end:48px;width:9px;height:9px;border-radius:50%;background:var(--danger);box-shadow:0 0 0 3px color-mix(in srgb,var(--danger) 25%,transparent)}
+.wl-list{display:flex;flex-direction:column}
+.docrow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-top:1px solid var(--line);text-align:start;width:100%}
+.wl-list>.docrow:first-child{border-top:0}
+.wl-list>.dcard{border-radius:0;box-shadow:none;border-inline:0;border-top:2px solid var(--accent)}
+.dr-ic{width:46px;height:34px;border-radius:7px;overflow:hidden;background:var(--surface2);display:grid;place-items:center;flex:none}
+.dr-ic img{width:100%;height:100%;object-fit:cover}.dr-ic svg{width:20px;height:20px;color:var(--muted)}
+.dcard .acts.two{grid-template-columns:1fr 1fr}
+.dname[data-act]{cursor:pointer}
+.exp .alink{text-align:start;display:block}
 /* recipes (vault) */
 .recipe{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
 .recipe .dish{font-family:var(--font-display);font-weight:600;font-size:16px}
@@ -561,8 +584,7 @@ button:active,.btn:active,.habit:active,.dcp:active{transform:scale(.97)}
     <div id="filesNotice" class="banner" hidden></div>
     <div id="uploadForm"></div>
     <input type="search" id="fileSearch" placeholder="ابحث: هوية، رخصة، سجل، واقا…">
-    <div class="tabs" id="fileGroups"></div>
-    <div class="tabs" id="fileSubs" hidden></div>
+    <div class="row wl-nav" id="walletNav"></div>
     <div class="fgrid" id="filesGrid"></div>
   </div>
 </section>
@@ -710,13 +732,13 @@ const IC = {
 
 /* ---------- state & store ---------- */
 const S = {
-  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, money: [], goals: [], shop: [], cars: [], foodlog: {}, qlog: {}, reviews: {}, engTab: "review", engSource: "",
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, money: [], goals: [], shop: [], cars: [], foodlog: {}, qlog: {}, reviews: {}, subs: [], wallet: null, engTab: "review", engSource: "",
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
   vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
-const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily", "money", "goals", "shop", "cars", "foodlog", "qlog", "reviews"];
+const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily", "money", "goals", "shop", "cars", "foodlog", "qlog", "reviews", "subs"];
 const MAPCOLS = ["meta", "habitlog", "gymlog", "engdaily", "foodlog", "qlog", "reviews"];
 
 function memApply(col, id, data, merge) {
@@ -1488,13 +1510,40 @@ function expiryText(n) {
   if (n === 1) return "تنتهي بكرة";
   return `تنتهي بعد ${lateWord(n)}`;
 }
-function renderExpiryAlerts() {
-  const box = $("#expiry");
-  const list = S.files.map(f => ({ f, x: expiryInfo(f) })).filter(o => o.x && o.x.lvl !== "ok").sort((a, b) => a.x.n - b.x.n);
-  const cars = carAlerts();
-  box.innerHTML = list.length || cars.length ? `<div class="exp-card"><div class="sec-h"><h2>${list.length && !cars.length ? "وثائق قربت تنتهي" : "تنبيهات"}</h2><span class="count">${ar(list.length + cars.length)}</span></div>
-    ${cars.map(c => `<button class="exp ${c.lvl === "gone" ? "urgent" : "soon"}" data-act="tab" data-v="car"><span class="grow"><b>${esc(c.name)}</b></span><span class="when">${c.when}</span></button>`).join("")}
-    ${list.map(({ f, x }) => `<button class="exp ${x.lvl}" data-act="tab" data-v="files"><span class="grow"><b>${esc(f.name)}</b><br><span class="small muted">${fmtDate(f.expiry)}${f.expiryHijri ? " · " + esc(f.expiryHijri) : ""}</span></span><span class="when">${expiryText(x.n)}</span></button>`).join("")}</div>` : "";
+/* ---------- wallet (documents grouped like a wallet) ---------- */
+const BIZ_WALLETS = ["تحميرة فرن", "WAGA", "الهندسة المحترفة"];
+function walletOf(f) {
+  if (f.group === "biz") return "biz:" + (AREAS.biz.branches.includes(f.sub) ? f.sub : "أخرى");
+  return "pers";
+}
+function walletList() {
+  const biz = [...new Set([...BIZ_WALLETS, ...S.files.filter(f => f.group === "biz").map(f => walletOf(f).slice(4))])];
+  return [{ id: "pers", name: "شخصي", note: "الهوية والجواز والرخصة والعائلة", area: "pers" },
+    ...biz.map(b => ({ id: "biz:" + b, name: b === "أخرى" ? "مشاريع أخرى" : b, note: "مشاريعي", area: "biz" }))];
+}
+function walletCard(w) {
+  const docs = S.files.filter(f => walletOf(f) === w.id);
+  const exp = docs.map(f => ({ f, x: expiryInfo(f) })).filter(o => o.x).sort((a, b) => a.x.n - b.x.n)[0];
+  const warn = docs.some(f => { const x = expiryInfo(f); return x && x.lvl !== "ok"; });
+  return `<button class="wallet a-${w.area}" data-act="walletOpen" data-v="${esc(w.id)}">
+    <span class="wl-top"><span class="wl-name">${esc(w.name)}</span><span class="wl-count num">${ar(docs.length)}</span></span>
+    <span class="wl-note">${docs.length ? (exp ? `أقرب انتهاء: ${esc(exp.f.name)} · ${exp.x.n < 0 ? "منتهية" : fmtRemain(exp.x.n)}` : "بدون تواريخ انتهاء") : "فاضية، ارفع أول وثيقة"}</span>
+    ${warn ? `<span class="wl-dot" aria-label="فيها وثيقة قربت تنتهي"></span>` : ""}</button>`;
+}
+function subsCard() {
+  const act = S.subs.filter(s => !s.end || s.end >= today());
+  const monthly = act.reduce((t, s) => t + (s.period === "سنوي" ? (+s.price || 0) / 12 : s.period === "شهري" ? +s.price || 0 : 0), 0);
+  return `<button class="wallet a-work" data-act="walletOpen" data-v="subs">
+    <span class="wl-top"><span class="wl-name">الاشتراكات</span><span class="wl-count num">${ar(S.subs.length)}</span></span>
+    <span class="wl-note">${S.subs.length ? `تقريباً ${SAR(monthly)} بالشهر` : "تابع اشتراكاتك وتواريخ تجديدها"}</span></button>`;
+}
+function docRow(f) {
+  const x = expiryInfo(f), open = S.docOpen === f.id;
+  if (open) return docCard(f);
+  return `<button class="docrow" data-act="docOpen" data-id="${f.id}">
+    <span class="dr-ic">${(f.contentType || "").startsWith("image/") ? `<img src="/_blob/${f.assetId}" alt="" loading="lazy">` : IC.pdf}</span>
+    <span class="grow"><b>${esc(f.name)}</b><br><span class="small muted">${esc(f.docType && f.docType !== "أخرى" ? f.docType : f.sub || "")}</span></span>
+    ${x ? `<span class="exp-chip ${x.lvl}">${x.lvl === "ok" ? fmtRemain(x.n) : expiryText(x.n)}</span>` : ""}</button>`;
 }
 function renderFiles() {
   renderExpiryAlerts();
@@ -1504,18 +1553,82 @@ function renderFiles() {
   if (locked) return;
   const n = $("#filesNotice");
   if (!assets) { n.hidden = false; n.textContent = "رفع الملفات متاح لصاحب الدفتر فقط."; } else n.hidden = true;
-  const g = S.fileGroup;
-  $("#fileGroups").innerHTML = [["", "الكل"], ...Object.entries(DOC_GROUPS)].map(([k, l]) => `<button class="${(g || "") === k ? "on" : ""}" data-act="fileGroup" data-v="${k}">${l} ${ar(S.files.filter(f => !k || f.group === k).length)}</button>`).join("");
-  const subs = g ? [...new Set([...DOC_SUBS[g], ...S.files.filter(f => f.group === g && f.sub).map(f => f.sub)])].filter(s => S.files.some(f => f.group === g && f.sub === s)) : [];
-  $("#fileSubs").hidden = !subs.length;
-  $("#fileSubs").innerHTML = subs.length ? [`<button class="${!S.fileSub ? "on" : ""}" data-act="fileSub" data-v="">الكل</button>`, ...subs.map(s => `<button class="${S.fileSub === s ? "on" : ""}" data-act="fileSub" data-v="${esc(s)}">${esc(s)}</button>`)].join("") : "";
-  const q = $("#fileSearch").value.trim();
-  let fs = S.files.slice().sort((a, b) => b.createdAt - a.createdAt);
-  if (g) fs = fs.filter(f => f.group === g);
-  if (g && S.fileSub) fs = fs.filter(f => f.sub === S.fileSub);
-  if (q) fs = fs.filter(f => [f.name, f.sub, f.docType, DOC_GROUPS[f.group], (f.tags || []).join(" ")].join(" ").includes(q));
-  $("#filesGrid").innerHTML = fs.length ? fs.map(docCard).join("") : `<div class="empty card">${S.files.length ? "ما لقيت ملف هنا." : "ارفع الهوية والجواز والرخص والسجلات هنا. كلود يقرأ كل وثيقة ويستخرج أرقامها وتاريخ انتهائها وينبهك قبلها بشهر."}</div>`;
+  const q = $("#fileSearch").value.trim(), w = S.wallet, nav = $("#walletNav"), grid = $("#filesGrid");
+  $("#uploadBtn").hidden = w === "subs";
+  if (q) {
+    nav.innerHTML = "";
+    const fs = S.files.filter(f => [f.name, f.sub, f.docType, DOC_GROUPS[f.group], ...(f.fields || []).map(x => x.label + " " + x.value)].join(" ").includes(q));
+    grid.innerHTML = fs.length ? `<div class="list wl-list">${fs.map(docRow).join("")}</div>` : `<div class="empty card">ما لقيت شي بهذا البحث.</div>`;
+  } else if (!w) {
+    nav.innerHTML = "";
+    const ws = walletList();
+    grid.innerHTML = `<div class="wallets">${walletCard(ws[0])}</div>
+      <h3 class="wl-h">مشاريعي</h3><div class="wallets two">${ws.slice(1).map(walletCard).join("")}</div>
+      <h3 class="wl-h">الاشتراكات</h3><div class="wallets">${subsCard()}</div>`;
+  } else if (w === "subs") {
+    nav.innerHTML = `<button class="btn sm ghost" data-act="walletOpen" data-v="">→ المحفظة</button><h2>الاشتراكات</h2>`;
+    grid.innerHTML = renderSubs();
+  } else {
+    const ws = walletList().find(x => x.id === w) || { name: "" };
+    nav.innerHTML = `<button class="btn sm ghost" data-act="walletOpen" data-v="">→ المحفظة</button><h2>${esc(ws.name)}</h2>`;
+    const fs = S.files.filter(f => walletOf(f) === w).sort((a, b) => (a.sub || "").localeCompare(b.sub || "", "ar") || b.createdAt - a.createdAt);
+    if (!fs.length) grid.innerHTML = `<div class="empty card">ما فيه وثائق هنا. اضغط «ارفع ملف» فوق وتنحفظ في ${esc(ws.name)} مباشرة.</div>`;
+    else if (w === "pers") {
+      const groups = {}; fs.forEach(f => { const k = f.group === "fam" ? "العائلة" : (f.sub || f.docType || "أخرى"); (groups[k] ||= []).push(f); });
+      grid.innerHTML = Object.entries(groups).map(([k, xs]) => `<h3 class="wl-h">${esc(k)}</h3><div class="list wl-list">${xs.map(docRow).join("")}</div>`).join("");
+    } else grid.innerHTML = `<div class="list wl-list">${fs.map(docRow).join("")}</div>`;
+  }
   hydratePdfPreviews();
+}
+function docAllText(f) {
+  const all = (Array.isArray(f.fields) ? f.fields : []).filter(d => d && d.value);
+  const lines = [f.name, ...all.map(d => `${d.label}: ${d.value}`)];
+  if (!all.length && f.expiry) lines.push(`تاريخ الانتهاء: ${f.expiry}`);
+  return lines.join("\n");
+}
+
+/* ---------- subscriptions ---------- */
+const SUB_PERIODS = ["شهري", "سنوي", "مرة وحدة"];
+function subInfo(s) { return s.end ? expiryInfo({ expiry: s.end }) : null; }
+function renderSubs() {
+  const list = S.subs.slice().sort((a, b) => (a.end || "9").localeCompare(b.end || "9"));
+  return `<details class="fold" id="subAddFold" ${list.length ? "" : "open"}><summary><span>اشتراك جديد</span><span class="small muted">+</span></summary><div class="body sec" style="padding:12px">${subForm()}<div><button class="btn pri" data-act="subSave">أضف</button></div></div></details>
+    ${list.length ? list.map(s => {
+      const x = subInfo(s), conf = S.confirm === "sb:" + s.id ? `<div class="confirm" style="border-radius:10px"><p>تحذف هذا الاشتراك؟</p><button class="btn danger sm" data-act="subDelYes" data-id="${s.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+      return `<article class="dcard">
+        <div class="row"><h3 class="dname grow">${esc(s.name)}</h3><b class="num">${s.price ? SAR(s.price) : ""}<span class="small muted">${s.price && s.period !== "مرة وحدة" ? " / " + (s.period === "سنوي" ? "سنة" : "شهر") : ""}</span></b></div>
+        ${x ? `<div class="dexp ${x.lvl === "ok" ? (x.n <= 7 ? "soon" : "ok") : x.lvl}"><div class="row" style="justify-content:space-between;align-items:baseline"><span><span class="small muted">ينتهي</span><br><b>${fmtDate(s.end)}</b></span><b class="remain">${fmtRemain(x.n)}</b></div>${timeline({ issue: s.start, expiry: s.end, createdAt: s.createdAt }, x)}</div>` : `<span class="small muted">بدون تاريخ نهاية</span>`}
+        ${s.start ? `<span class="small muted">بدأ ${fmtDate(s.start)}</span>` : ""}${s.note ? `<span class="small muted">${esc(s.note)}</span>` : ""}
+        <div class="acts" style="grid-template-columns:repeat(3,1fr)">${s.period !== "مرة وحدة" && s.end ? `<button class="btn sm pri" data-act="subRenew" data-id="${s.id}">جدّدته</button>` : `<span></span>`}<button class="btn sm ghost" data-act="subEdit" data-id="${s.id}">تعديل</button><button class="btn sm ghost" data-act="subDel" data-id="${s.id}">حذف</button></div>${conf}</article>`;
+    }).join("") : ""}`;
+}
+function subForm(s) {
+  s = s || { period: "شهري", start: today() };
+  return `<label class="f">اسم الاشتراك<input type="text" id="sbName" value="${esc(s.name || "")}" placeholder="نتفلكس، النادي، استضافة موقع واقا…"></label>
+    <div class="grid2"><label class="f">السعر (ريال)<input type="number" inputmode="decimal" id="sbPrice" value="${esc(s.price ?? "")}"></label><label class="f">الدفع<select id="sbPeriod">${SUB_PERIODS.map(p => `<option ${p === s.period ? "selected" : ""}>${p}</option>`).join("")}</select></label></div>
+    <div class="grid2"><label class="f">بداية الاشتراك<input type="date" id="sbStart" value="${esc(s.start || "")}"></label><label class="f">نهاية الاشتراك<input type="date" id="sbEnd" value="${esc(s.end || "")}"></label></div>
+    <label class="f">ملاحظة<input type="text" id="sbNote" value="${esc(s.note || "")}"></label>`;
+}
+function readSubForm(root) {
+  const q = s => root.querySelector(s); const name = q("#sbName").value.trim(); if (!name) { toast("اكتب اسم الاشتراك"); return null; }
+  const period = q("#sbPeriod").value, start = q("#sbStart").value;
+  let end = q("#sbEnd").value;
+  if (!end && start && period !== "مرة وحدة") { const d = parseISO(start); if (period === "شهري") d.setMonth(d.getMonth() + 1); else d.setFullYear(d.getFullYear() + 1); end = iso(d); }
+  return { name, price: +en(q("#sbPrice").value) || 0, period, start, end, note: q("#sbNote").value.trim() };
+}
+
+/* ---------- alerts (one-time, dismissable) ---------- */
+function alertItems() {
+  const out = [];
+  S.files.forEach(f => { const x = expiryInfo(f); if (x && x.lvl !== "ok" && f.alertDone !== f.expiry) out.push({ kind: "f", id: f.id, name: f.name, when: expiryText(x.n), sub: fmtDate(f.expiry), lvl: x.lvl, n: x.n, tab: "files" }); });
+  S.subs.forEach(s => { const x = subInfo(s); if (x && x.n <= 7 && s.alertDone !== s.end) out.push({ kind: "s", id: s.id, name: "اشتراك " + s.name, when: x.n < 0 ? "انتهى" : expiryText(x.n), sub: fmtDate(s.end), lvl: x.n < 0 ? "gone" : "soon", n: x.n, tab: "files", wallet: "subs" }); });
+  S.cars.forEach(c => carStatus(c).forEach(st => { if (st.lvl !== "ok" && c.alertDone !== (c.lastOil?.date || "")) out.push({ kind: "c", id: c.id, name: `${st.label} - ${c.name}`, when: st.kmLeft <= 0 || st.dLeft <= 0 ? "حان وقته" : `باقي ${ar(st.kmLeft)} كم`, sub: "", lvl: st.lvl === "gone" ? "urgent" : "soon", n: st.dLeft, tab: "car" }); }));
+  return out.sort((a, b) => a.n - b.n);
+}
+function renderExpiryAlerts() {
+  const box = $("#expiry"), list = alertItems();
+  box.innerHTML = list.length ? `<div class="exp-card"><div class="sec-h"><h2>تنبيهات</h2><span class="count">${ar(list.length)}</span></div>
+    ${list.map(a => `<div class="exp ${a.lvl}"><button class="grow alink" data-act="alertGo" data-v="${a.tab}" data-w="${a.wallet || ""}"><b>${esc(a.name)}</b>${a.sub ? `<br><span class="small muted">${a.sub}</span>` : ""}</button><span class="when">${a.when}</span><button class="cp" data-act="alertDone" data-k="${a.kind}" data-id="${a.id}">تم</button></div>`).join("")}</div>` : "";
 }
 const KEY_RULES = [/^الاسم|اسم صاحب|اسم المالك|اسم المنشأة$|اسم المنشأة \(|الاسم بالعربي/, /رقم الهوية|رقم الإقامة|رقم الجواز|رقم الرخصة|رقم السجل|الرقم الموحد|رقم اللوحة|رقم الوثيقة|رقم الفاتورة|رقم الحدود|^الرقم$|رقم التأشيرة|رقم البوليصة/, /تاريخ الانتهاء ميلادي|^تاريخ الانتهاء$|تاريخ الانتهاء(?! هجري)/, /^الإجمالي بعد|الإجمالي شامل|^المبلغ/];
 function keyFields(f) {
@@ -1534,7 +1647,7 @@ function docCard(f) {
   const keys = keyFields(f), open = S.docMore === f.id;
   const pdfCached = !img && pdfPrevCache.get(f.assetId);
   return `<article class="dcard">
-    <h3 class="dname">${esc(f.name)}</h3>
+    <h3 class="dname" data-act="docOpen" data-id="${f.id}">${esc(f.name)}</h3>
     <a class="dprev ${img ? "" : "pdf"}" href="${url}" target="_blank" rel="noopener" aria-label="افتح ${esc(f.name)}">
       ${img ? `<img src="${url}" alt="" loading="lazy">` : pdfCached ? `<img src="${pdfCached}" alt="">` : `<span class="pdfph" data-pdf="${f.assetId}">${IC.pdf}<span class="small muted">PDF</span></span>`}
     </a>
@@ -1548,7 +1661,8 @@ function docCard(f) {
       : !f.reading && sample ? `<button class="btn sm ghost" data-act="fileRead" data-id="${f.id}" style="align-self:flex-start">استخرج البيانات</button>` : ""}
     ${all.length > keys.length ? `<button class="more" data-act="docMore" data-id="${f.id}">${open ? "أخفِ باقي البيانات" : `كل البيانات (${ar(all.length)})`}</button>
       ${open ? `<dl class="fields">${all.map(d => `<dt>${esc(d.label)}</dt><dd><span class="val">${esc(d.value)}</span><button class="cp" data-act="fCopy" data-id="${f.id}" data-i="${d.i}">نسخ</button></dd>`).join("")}</dl>` : ""}` : ""}
-    <div class="acts"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل</button><a class="btn sm" href="${url}" target="_blank" rel="noopener">افتح</a><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div>
+    <div class="acts two"><button class="btn sm pri" data-act="fileSend" data-id="${f.id}">أرسل بالواتس</button><button class="btn sm" data-act="fCopyAll" data-id="${f.id}">${IC.copy} انسخ الكل</button></div>
+    <div class="acts"><a class="btn sm ghost" href="https://wa.me/?text=${encodeURIComponent(docAllText(f))}" target="_blank" rel="noopener">البيانات بالواتس</a><a class="btn sm ghost" href="${url}" target="_blank" rel="noopener">افتح</a><button class="btn sm ghost" data-act="fileEdit" data-id="${f.id}">تعديل</button><button class="btn sm ghost" data-act="fileDel" data-id="${f.id}">حذف</button></div>
     ${conf}</article>`;
 }
 const pdfPrevCache = new Map(); let pdfBusy = false;
@@ -1593,8 +1707,8 @@ function renderUploadForm() {
   if (!S.pendingFiles.length) { box.innerHTML = ""; return; }
   box.innerHTML = `<div class="card sec review"><h2>تجهيز الرفع</h2>
     ${S.pendingFiles.map((f, i) => `<label class="f">اسم الملف<input type="text" data-pf="${i}" value="${esc(f.name.replace(/\.[^.]+$/, ""))}"></label>`).join("")}
-    <div class="grid2"><label class="f">التصنيف${groupSelect("pfGroup", "", true)}</label>
-    <label class="f">الفرع أو النوع<input type="text" id="pfSub" list="pfSubs" placeholder="كلود يحدد">${subOptions("pfSubs")}</label></div>
+    <div class="grid2"><label class="f">التصنيف${groupSelect("pfGroup", S.wallet?.startsWith("biz:") ? "biz" : "", true)}</label>
+    <label class="f">الفرع أو النوع<input type="text" id="pfSub" list="pfSubs" placeholder="كلود يحدد" value="${S.wallet?.startsWith("biz:") && S.wallet !== "biz:أخرى" ? esc(S.wallet.slice(4)) : ""}">${subOptions("pfSubs")}</label></div>
     <div class="row"><button class="btn pri" data-act="pfUpload" id="pfBtn">ارفع</button><button class="btn ghost" data-act="pfCancel">إلغاء</button></div></div>`;
 }
 async function uploadPending() {
@@ -2586,6 +2700,20 @@ const A = {
   fileRead: b => { const f = S.files.find(x => x.id === b.dataset.id); closeSheet(); if (f) { toast("كلود يقرأ الوثيقة…"); readDoc(f); } },
   fileDel: b => { S.confirm = "f:" + b.dataset.id; renderFiles(); },
   fileDelYes: async b => { const f = S.files.find(x => x.id === b.dataset.id); S.confirm = null; if (f && assets) { try { await assets.delete(f.assetId); } catch (e) { } } await del("files", b.dataset.id); },
+  walletOpen: b => { S.wallet = b.dataset.v || null; S.docOpen = null; $("#fileSearch").value = ""; renderFiles(); scrollTo({ top: 0 }); },
+  docOpen: b => { S.docOpen = S.docOpen === b.dataset.id ? null : b.dataset.id; renderFiles(); },
+  fCopyAll: b => { const f = S.files.find(x => x.id === b.dataset.id); if (f) { touchLock(); copyText(docAllText(f)); } },
+  subSave: async () => { const o = readSubForm($("#subAddFold")); if (!o) return; await put("subs", newId(), { ...o, createdAt: Date.now() }); toast("انضاف الاشتراك"); },
+  subEdit: b => { const x = S.subs.find(y => y.id === b.dataset.id); if (x) openSheet(`<h2>تعديل الاشتراك</h2><div class="sec">${subForm(x)}</div><div class="row"><button class="btn pri" data-act="subUpdate" data-id="${x.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
+  subUpdate: async b => { const o = readSubForm($("#sheetBack")); if (!o) return; await patch("subs", b.dataset.id, o); closeSheet(); },
+  subDel: b => { S.confirm = "sb:" + b.dataset.id; renderFiles(); }, subDelYes: b => { S.confirm = null; del("subs", b.dataset.id); },
+  subRenew: async b => { const x = S.subs.find(y => y.id === b.dataset.id); if (!x?.end) return; const d = parseISO(x.end); if (x.period === "سنوي") d.setFullYear(d.getFullYear() + 1); else d.setMonth(d.getMonth() + 1);
+    await patch("subs", x.id, { start: x.end, end: iso(d) }); if (x.price) await addMoney([{ amount: x.price, type: "out", scope: "شخصي", cat: "فواتير", note: "اشتراك " + x.name }]); toast("تجدّد" + (x.price ? " وانضاف للمصاريف" : "")); },
+  alertDone: b => { const k = b.dataset.k, id = b.dataset.id;
+    if (k === "f") { const f = S.files.find(x => x.id === id); if (f) patch("files", id, { alertDone: f.expiry }); }
+    else if (k === "s") { const x = S.subs.find(y => y.id === id); if (x) patch("subs", id, { alertDone: x.end }); }
+    else if (k === "c") { const c = S.cars.find(y => y.id === id); if (c) patch("cars", id, { alertDone: c.lastOil?.date || "" }); } },
+  alertGo: b => { if (b.dataset.w) S.wallet = b.dataset.w; setTab(b.dataset.v); },
   docMore: b => { S.docMore = S.docMore === b.dataset.id ? null : b.dataset.id; renderFiles(); },
   fCopy: b => { const f = S.files.find(x => x.id === b.dataset.id); const d = f?.fields?.[+b.dataset.i]; if (d) { touchLock(); copyText(d.value); } },
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
