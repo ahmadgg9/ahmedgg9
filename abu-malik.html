@@ -294,6 +294,19 @@ dl.fields .pw{cursor:pointer;padding:4px 0;font-family:ui-monospace,Menlo,monosp
 .ex-in{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
 .ex-in input{padding:7px 9px}
 a.btn{color:inherit;text-decoration:none}
+.prog-card{display:flex;flex-direction:column;gap:8px;padding:12px 14px}
+.flow{display:flex;flex-wrap:wrap;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
+.ss-h{font-size:11.5px;color:var(--muted);padding:10px 10px 0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:8px}
+.list>.ss-h:first-child{border-top:0}
+.ss-h+div>.ex{border-top:0}
+.ex .lbl{display:inline-block;min-width:24px;margin-inline-end:6px;padding:1px 6px;border-radius:6px;background:var(--surface2);color:var(--muted);font-size:11.5px;font-weight:600;text-align:center;direction:ltr}
+.ex .ttl bdi{direction:ltr}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.sets input{padding:7px 6px;text-align:center}
+.cmp{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dl-up{color:var(--ok);font-weight:600}
+.dl-down{color:var(--danger);font-weight:600}
+.nxt{display:flex;gap:8px;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:10px;background:color-mix(in srgb,var(--ok) 12%,transparent);font-size:12.5px}
 .tbl-wrap{overflow-x:auto}
 table.prog{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
 table.prog th,table.prog td{padding:8px 8px;border-bottom:1px solid var(--line);text-align:center;white-space:nowrap}
@@ -732,11 +745,12 @@ const IC = {
 
 /* ---------- state & store ---------- */
 const S = {
-  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, words: [], engdaily: {}, money: [], goals: [], shop: [], cars: [], foodlog: {}, qlog: {}, reviews: {}, subs: [], wallet: null, engTab: "review", engSource: "",
+  items: [], notes: [], files: [], vault: [], meta: {}, habitlog: {}, workouts: [], gymlog: {}, gymDay: null, gymProg: null, words: [], engdaily: {}, money: [], goals: [], shop: [], cars: [], foodlog: {}, qlog: {}, reviews: {}, subs: [], wallet: null, engTab: "review", engSource: "",
   filter: "all", branch: null, review: null, confirm: null, habitEdit: false,
   noteSec: "lamasat", lamKind: "all", project: null, fileTag: null, pendingFiles: [],
   vaultKey: null, dec: {}, showPw: {}, fileGroup: "", fileSub: "",
 };
+const loadedCols = new Set();
 let db = null, base = null, assets = null, sample = null, mcp = null, downloads = null;
 const COLS = ["items", "notes", "files", "vault", "meta", "habitlog", "workouts", "gymlog", "words", "engdaily", "money", "goals", "shop", "cars", "foodlog", "qlog", "reviews", "subs"];
 const MAPCOLS = ["meta", "habitlog", "gymlog", "engdaily", "foodlog", "qlog", "reviews"];
@@ -787,6 +801,7 @@ async function boot() {
       base.collection(col).onSnapshot(snap => {
         if (MAPCOLS.includes(col)) { const o = {}; snap.docs.forEach(x => o[x.id] = x.data()); S[col] = o; }
         else S[col] = snap.docs.map(x => ({ ...x.data(), id: x.id }));
+        loadedCols.add(col);
         renderAll();
       }, () => toast("انقطع الاتصال بالبيانات. أعد فتح الدفتر."));
     }
@@ -1875,19 +1890,110 @@ async function copyText(txt) {
 
 /* ---------- gym ---------- */
 const MUSCLES = ["صدر", "ظهر", "أكتاف", "باي", "تراي", "أرجل", "بطن", "كارديو", "جسم كامل"];
+/* built-in programs: seeded once into "workouts" (deterministic ids), then editable like any exercise */
+const GYM_PROGRAMS = [{
+  id: "home4", name: "تمرين البيت – 4 أيام", mins: 45, rest: "٦٠–٩٠ ث بين جولات السوبرست",
+  flow: [["إحماء", 5], ["التمارين", 30], ["سير", 8], ["إطالة", 2]],
+  rule: "إذا كملت كل المجاميع بالتكرارات المطلوبة: زد التكرارات حتى ٢٠، ثم أبطئ النزول ٣ ثواني، ثم أضف وقفة ثانيتين.",
+  days: [
+    { name: "الأحد · علوي قوة", dow: 0, ex: [
+      ["A1", "Barbell Bench Press", "w", 4, 8, "صدر"],
+      ["A2", "Barbell Bent-over Row", "w", 4, 10, "ظهر"],
+      ["B1", "Seated Dumbbell Shoulder Press", "w", 3, 12, "أكتاف"],
+      ["B2", "Single-arm Dumbbell Row", "w", 3, 12, "ظهر", { side: "لكل يد" }],
+      ["C1", "Push-ups", "max", 3, "أقصى", "صدر"],
+      ["C2", "Dumbbell Bicep Curl", "w", 3, 15, "باي"],
+      ["", "Treadmill Intervals", "cardio", 1, 8, "كارديو", { note: "٣٠ ث سريع / ٦٠ ث مشي", metric: "السرعة" }]] },
+    { name: "الإثنين · سفلي قوة", dow: 1, ex: [
+      ["A1", "Barbell Back Squat", "w", 4, 8, "أرجل"],
+      ["A2", "Plank", "time", 4, 40, "بطن"],
+      ["B1", "Romanian Deadlift", "w", 3, 10, "أرجل"],
+      ["B2", "Dumbbell Lunges", "w", 3, 10, "أرجل", { side: "لكل رجل" }],
+      ["C1", "Bulgarian Split Squat", "w", 3, 10, "أرجل", { side: "لكل رجل" }],
+      ["C2", "Hip Thrust", "w", 3, 15, "أرجل"],
+      ["", "Treadmill Incline Walk", "cardio", 1, 8, "كارديو", { note: "ميل ١٠–١٢٪", metric: "الميل ٪" }]] },
+    { name: "الأربعاء · علوي تكرارات", dow: 3, ex: [
+      ["A1", "Dumbbell Bench Press", "w", 3, 15, "صدر", { tempo: true }],
+      ["A2", "Single-arm Dumbbell Row", "w", 3, 15, "ظهر", { side: "لكل يد" }],
+      ["B1", "Lateral Raise", "w", 3, 20, "أكتاف"],
+      ["B2", "Reverse Fly", "w", 3, 20, "أكتاف"],
+      ["C1", "Overhead Triceps Extension", "w", 3, 15, "تراي"],
+      ["C2", "Hammer Curl", "w", 3, 15, "باي"],
+      ["", "Treadmill Intervals", "cardio", 1, 8, "كارديو", { note: "٣٠ ث سريع / ٦٠ ث مشي", metric: "السرعة" }]] },
+    { name: "الخميس · سفلي + لياقة", dow: 4, ex: [
+      ["A1", "Pause Squat", "w", 3, 10, "أرجل", { pause: true }],
+      ["A2", "Barbell Deadlift", "w", 3, 8, "ظهر"],
+      ["B1", "Dumbbell Step-up", "w", 3, 12, "أرجل", { side: "لكل رجل" }],
+      ["B2", "Dumbbell Swing", "w", 3, 20, "جسم كامل"],
+      ["", "EMOM", "emom", 1, 10, "جسم كامل", { note: "دقيقة ١٠ Jump Squat / دقيقة ١٠ Push-ups بالتناوب" }],
+      ["", "Treadmill Walk", "cardio", 1, 5, "كارديو", { note: "تهدئة", metric: "السرعة" }]] },
+  ],
+}];
+let seeding = false;
+function seedPrograms() {
+  if (seeding || (base && !(loadedCols.has("meta") && loadedCols.has("workouts")))) return;
+  const done = S.meta.gym?.seeded || [];
+  const todo = GYM_PROGRAMS.filter(p => !done.includes(p.id)); if (!todo.length) return;
+  seeding = true;
+  setTimeout(async () => {
+    const gm = S.meta.gym || {}; const groups = [...(gm.groups || [])], programs = [...(gm.programs || [])], writes = [];
+    for (const p of todo) {
+      const { days, ...info } = p;
+      programs.push({ ...info, days: days.map(d => ({ name: d.name, dow: d.dow })) });
+      days.forEach((d, di) => {
+        if (!groups.includes(d.name)) groups.push(d.name);
+        d.ex.forEach(([label, name, kind, sets, reps, muscle, x = {}], i) => {
+          const o = { program: p.id, group: d.name, order: i, createdAt: Date.now(), label, name, nameEn: name, kind, sets, muscle, ...x };
+          if (kind === "cardio" || kind === "emom") o.mins = reps; else { o.reps = String(reps); o.base = String(reps); o.baseTempo = !!x.tempo; o.basePause = !!x.pause; }
+          writes.push(put("workouts", `${p.id}-${di + 1}-${i + 1}`, o));
+        });
+      });
+    }
+    await Promise.all(writes);
+    await put("meta", "gym", { ...(S.meta.gym || {}), groups, programs, seeded: [...done, ...todo.map(p => p.id)], active: todo[0].id });
+    S.gymProg = todo[0].id; S.gymDay = null; seeding = false; renderAll();
+    toast("انضاف برنامج «" + todo[0].name + "»");
+  }, 0);
+}
+const progOf = w => w.program || "main";
+const progDef = id => (S.meta.gym?.programs || []).find(p => p.id === id) || null;
+function gymPrograms() {
+  const out = [];
+  if (S.workouts.some(w => !w.program)) out.push({ id: "main", name: "برنامج النادي" });
+  (S.meta.gym?.programs || []).forEach(p => { if (S.workouts.some(w => w.program === p.id)) out.push(p); });
+  return out;
+}
+function pickProgram() {
+  const ps = gymPrograms(); if (!ps.length) return null;
+  if (S.gymProg && ps.some(p => p.id === S.gymProg)) return S.gymProg;
+  const dow = parseISO(today()).getDay();
+  const hit = ps.find(p => p.days?.some(d => d.dow === dow));
+  if (hit) return hit.id;
+  const a = S.meta.gym?.active; return ps.some(p => p.id === a) ? a : ps[0].id;
+}
 const gymGroups = () => {
+  const prog = S.gymProg || pickProgram();
+  const mine = S.workouts.filter(w => progOf(w) === prog);
   const order = S.meta.gym?.groups || [];
   const seen = [...order];
-  S.workouts.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt).forEach(w => { if (w.group && !seen.includes(w.group)) seen.push(w.group); });
-  return seen.filter(g => S.workouts.some(w => w.group === g));
+  mine.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt).forEach(w => { if (w.group && !seen.includes(w.group)) seen.push(w.group); });
+  return seen.filter(g => mine.some(w => w.group === g));
 };
-const exOf = g => S.workouts.filter(w => w.group === g).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt);
+const exOf = g => S.workouts.filter(w => w.group === g && progOf(w) === (S.gymProg || pickProgram())).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.createdAt - b.createdAt);
 const logDates = () => Object.keys(S.gymlog).filter(d => /^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+const hasSets = e => Array.isArray(e?.sets) && e.sets.some(v => v != null && v !== "");
 function history(exId) {
-  return logDates().map(d => ({ d, e: S.gymlog[d]?.entries?.[exId] })).filter(x => x.e && (x.e.weight || x.e.done));
+  return logDates().map(d => ({ d, e: S.gymlog[d]?.entries?.[exId] })).filter(x => x.e && (x.e.weight || x.e.done || hasSets(x.e) || x.e.min));
 }
 function suggestGroup() {
   const gs = gymGroups(); if (!gs.length) return null;
+  const def = progDef(S.gymProg);
+  if (def?.days?.length) {
+    const dow = parseISO(today()).getDay();
+    const ds = def.days.filter(d => gs.includes(d.name));
+    const hit = ds.find(d => d.dow === dow) || ds.find(d => d.dow > dow) || ds[0];
+    if (hit) return hit.name;
+  }
   const t = S.gymlog[today()]?.group; if (t && gs.includes(t)) return t;
   const past = logDates().filter(d => d < today() && S.gymlog[d]?.group).pop();
   if (!past) return gs[0];
@@ -1895,10 +2001,15 @@ function suggestGroup() {
 }
 const ytLink = w => w.video && /^https?:\/\//.test(w.video) ? w.video : `https://www.youtube.com/results?search_query=${encodeURIComponent((w.nameEn || w.name) + " exercise form")}`;
 const fmtW = n => n || n === 0 ? ar(+(+n).toFixed(1)) : "";
+let gymHold = false; // set while a gym input is committing, so a re-render cannot swap the input the user is moving to
 function renderGym() {
   const body = $("#gymBody");
-  if (body.contains(document.activeElement) && document.activeElement.matches("input,textarea")) { S.gymPending = true; return; }
+  if (gymHold || (body.contains(document.activeElement) && document.activeElement.matches("input,textarea"))) { S.gymPending = true; return; }
   S.gymPending = false;
+  seedPrograms();
+  const progs = gymPrograms();
+  S.gymProg = pickProgram();
+  const def = progDef(S.gymProg);
   const gs = gymGroups();
   if (!S.gymDay || !gs.includes(S.gymDay)) S.gymDay = suggestGroup();
   // week strip
@@ -1919,15 +2030,119 @@ function renderGym() {
   const doneN = exs.filter(w => log[w.id]?.done).length;
   body.innerHTML = `
     <div class="gym-week card"><div class="row" style="justify-content:space-between"><span class="small muted">آخر ٧ أيام</span><b class="small">${ar(sessions7)} ${sessions7 === 1 ? "تمرين" : "تمارين"}</b></div><div class="wk7">${week}</div></div>
+    ${progs.length > 1 ? `<div class="tabs">${progs.map(p => `<button class="${p.id === S.gymProg ? "on" : ""}" data-act="gymProg" data-v="${esc(p.id)}">${esc(p.name)}</button>`).join("")}</div>` : ""}
+    ${def ? progCard(def) : ""}
     <div class="tabs">${gs.map(g => `<button class="${g === S.gymDay ? "on" : ""}" data-act="gymDay" data-v="${esc(g)}">${esc(g)}</button>`).join("")}</div>
     <div class="sec">
       <div class="sec-h"><h2>${esc(S.gymDay)}</h2><span class="count num">${ar(doneN)} من ${ar(exs.length)}</span></div>
       <div class="bar"><span style="width:${exs.length ? doneN / exs.length * 100 : 0}%;background:var(--ok)"></span></div>
-      <div class="list">${exs.map(w => exRow(w, log[w.id] || {})).join("")}</div>
+      <div class="list">${exListHTML(exs, log, def)}</div>
       <button class="btn pri" data-act="gymFinish" ${doneN ? "" : "disabled"}>${S.gymlog[t]?.finished ? "انتهى تمرين اليوم ✓" : "أنهيت التمرين"}</button>
     </div>
-    ${progressTable(exs)}
+    ${def ? weekCompare(exs) : progressTable(exs)}
     ${addExForm(S.gymDay)}`;
+}
+function progCard(p) {
+  return `<div class="card prog-card">
+    <div class="row" style="justify-content:space-between"><b>${esc(p.name)}</b><span class="chip num">${ar(p.mins)} دقيقة</span></div>
+    <span class="small muted">الراحة: ${esc(p.rest)}</span>
+    <div class="flow">${(p.flow || []).map(([n, m]) => `<span class="chip">${esc(n)} <span class="num">${ar(m)}</span> د</span>`).join("<span>←</span>")}</div>
+    ${p.rule ? `<span class="small muted">قاعدة التدرج: ${esc(p.rule)}</span>` : ""}
+  </div>`;
+}
+function exListHTML(exs, log, def) {
+  if (!def) return exs.map(w => exRow(w, log[w.id] || {})).join("");
+  let prev = null, out = "";
+  for (const w of exs) {
+    const L = (w.label || "").charAt(0);
+    if (L !== prev) {
+      const n = exs.filter(x => (x.label || "").charAt(0) === L).length;
+      out += L ? `<div class="ss-h"><span>${n > 1 ? "سوبرست" : "تمرين"} <bdi dir="ltr">${esc(L)}</bdi></span><span>${esc(def.rest.split(" بين")[0])} راحة بعد الجولة</span></div>`
+        : `<div class="ss-h"><span>${w.kind === "emom" ? "لياقة" : "سير"}</span><span></span></div>`;
+      prev = L;
+    }
+    out += w.kind ? exRowP(w, log[w.id] || {}) : exRow(w, log[w.id] || {});
+  }
+  return out;
+}
+/* --- program exercises: per-set logging, week-over-week, progression --- */
+const wkStart = d => addDays(d, -parseISO(d).getDay());
+function weekEntry(exId, offset) {
+  const ws = addDays(wkStart(today()), offset * 7), we = addDays(ws, 6);
+  const h = history(exId).filter(x => x.d >= ws && x.d <= we); return h[h.length - 1] || null;
+}
+const setsOf = (w, e) => [...Array(w.sets || 1)].map((_, i) => e?.sets?.[i] ?? null);
+const repSum = (w, e) => setsOf(w, e).reduce((a, v) => a + (+v || 0), 0);
+function entrySummary(w, e) {
+  if (!e) return "—";
+  if (w.kind === "cardio") return e.min ? `${ar(e.min)} د${e.val ? ` · ${esc(w.metric || "")} ${fmtW(e.val)}` : ""}` : "—";
+  if (w.kind === "emom") return e.min ? `${ar(e.min)}/${ar(w.mins || 10)} د` : "—";
+  const s = setsOf(w, e).map(v => v == null ? "–" : ar(v)).join("/");
+  return (w.kind === "w" && e.weight ? `${fmtW(e.weight)} كجم × ` : "") + s + (w.kind === "time" ? " ث" : "");
+}
+function entryDelta(w, cur, prev) {
+  if (!cur || !prev) return "";
+  const parts = [];
+  const sg = (n, unit) => n ? `<span class="${n > 0 ? "dl-up" : "dl-down"}">${n > 0 ? "+" : "−"}${fmtW(Math.abs(n))} ${unit}</span>` : "";
+  if (w.kind === "cardio" || w.kind === "emom") { parts.push(sg((+cur.min || 0) - (+prev.min || 0), "د")); if (w.kind === "cardio" && cur.val && prev.val) parts.push(sg(+cur.val - +prev.val, w.metric || "")); }
+  else {
+    if (w.kind === "w" && cur.weight && prev.weight) parts.push(sg(+cur.weight - +prev.weight, "كجم"));
+    if (hasSets(cur) && hasSets(prev)) parts.push(sg(repSum(w, cur) - repSum(w, prev), w.kind === "time" ? "ث" : "تكرار"));
+  }
+  const p = parts.filter(Boolean); return p.length ? p.join(" ") : `<span class="muted">نفس الأسبوع الماضي</span>`;
+}
+function nextStep(w) {
+  if (!["w", "bw"].includes(w.kind)) return null;
+  const tgt = +en(w.reps); if (!tgt) return null;
+  const h = history(w.id).filter(x => hasSets(x.e)); const last = h[h.length - 1];
+  if (!last || (w.lvlAt && last.d <= w.lvlAt)) return null;
+  if (setsOf(w, last.e).some(v => v == null || +v < tgt)) return null;
+  if (tgt < 20) { const n = Math.min(20, tgt + 2); return { txt: `كملت كل المجاميع. ارفع التكرارات إلى ${ar(n)}`, upd: { reps: String(n) }, d: last.d }; }
+  if (!w.tempo) return { txt: "وصلت ٢٠ تكرار. الحين أبطئ النزول ٣ ثواني", upd: { tempo: true }, d: last.d };
+  if (!w.pause) return { txt: "كملت بالنزول البطيء. أضف وقفة ثانيتين", upd: { pause: true }, d: last.d };
+  return { txt: "كملت كل المراحل. زد الوزن وارجع لتكرارات البداية", upd: { reps: String(w.base || 8), tempo: !!w.baseTempo, pause: !!w.basePause }, d: last.d };
+}
+function exRowP(w, e) {
+  const conf = S.confirm === "w:" + w.id ? `<div class="confirm"><p>تحذف هذا التمرين من البرنامج؟</p><button class="btn danger sm" data-act="exDelYes" data-id="${w.id}">نعم، احذف</button><button class="btn ghost sm" data-act="delNo">تراجع</button></div>` : "";
+  const lw = weekEntry(w.id, -1)?.e || null;
+  const last = lw || history(w.id).filter(x => x.d < today()).pop()?.e || null;
+  const tw = e && (e.weight || hasSets(e) || e.min) ? e : null;
+  const cardio = w.kind === "cardio" || w.kind === "emom";
+  const target = cardio ? `${ar(w.mins)} د` : w.kind === "max" ? `${ar(w.sets)} × أقصى عدد` : `${ar(w.sets)}×${ar(w.reps)}${w.kind === "time" ? " ث" : ""}`;
+  const st = nextStep(w);
+  let inputs;
+  if (cardio) {
+    inputs = `<div class="ex-in"><label class="f">${w.kind === "emom" ? "الدقائق المكتملة" : "الدقائق"}<input type="number" inputmode="decimal" step="0.5" min="0" data-ex="${w.id}" data-k="min" value="${esc(e.min ?? "")}" placeholder="${w.mins || ""}"></label>
+      ${w.kind === "cardio" ? `<label class="f">${esc(w.metric || "السرعة")}<input type="number" inputmode="decimal" step="0.1" min="0" data-ex="${w.id}" data-k="val" value="${esc(e.val ?? "")}" placeholder="${last?.val ?? ""}"></label>` : "<span></span>"}
+      <a class="btn sm ghost" href="${esc(ytLink(w))}" target="_blank" rel="noopener">يوتيوب</a></div>`;
+  } else {
+    const unit = w.kind === "time" ? "ث" : "تكرار";
+    inputs = `${w.kind === "w" ? `<div class="ex-in"><label class="f">الوزن (كجم)<input type="number" inputmode="decimal" step="0.5" min="0" data-ex="${w.id}" data-k="weight" value="${esc(e.weight ?? "")}" placeholder="${last?.weight ?? ""}"></label><span></span>
+      <a class="btn sm ghost" href="${esc(ytLink(w))}" target="_blank" rel="noopener">يوتيوب</a></div>` : ""}
+      <div class="f"><span class="small muted">${w.kind === "time" ? "الثواني" : "التكرارات"} لكل مجموعة${w.side ? " (" + esc(w.side) + ")" : ""}</span>
+      <div class="sets">${setsOf(w, e).map((v, i) => `<input type="number" inputmode="numeric" min="0" aria-label="المجموعة ${i + 1} ${unit}" data-ex="${w.id}" data-k="s" data-i="${i}" value="${esc(v ?? "")}" placeholder="${w.kind === "max" ? (last?.sets?.[i] ?? "") : w.reps}">`).join("")}</div></div>`;
+  }
+  return `<div><div class="ex ${e.done ? "done-ex" : ""}">
+    <button class="check ${e.done ? "on" : ""}${popc("x:" + w.id)}" data-act="exDone" data-id="${w.id}" aria-label="قفلت التمرين">${e.done ? IC.check : ""}</button>
+    <div class="main">
+      <span class="ttl">${w.label ? `<span class="lbl">${esc(w.label)}</span>` : ""}<bdi>${esc(w.name)}</bdi></span>
+      <div class="meta"><span class="chip num">${target}${w.side ? " " + esc(w.side) : ""}</span>
+        ${w.tempo ? `<span class="chip">نزول ٣ ث</span>` : ""}${w.pause ? `<span class="chip">وقفة ٢ ث</span>` : ""}${w.note ? `<span class="small muted">${esc(w.note)}</span>` : ""}</div>
+      <div class="cmp">${last ? `<span>${lw ? "الأسبوع الماضي" : "آخر مرة"}: <span class="num">${entrySummary(w, last)}</span></span>` : `<span>أول مرة، سجّل وتطلع المقارنة الأسبوع الجاي</span>`}
+        ${tw && last ? `<span>· ${entryDelta(w, tw, last)}</span>` : ""}</div>
+      ${st ? `<div class="nxt"><span>${st.txt}</span><button class="btn sm pri" data-act="progApply" data-id="${w.id}">طبّق</button></div>` : ""}
+      ${inputs}
+    </div>
+    <div class="col"><button class="icon-btn" data-act="exEdit" data-id="${w.id}" aria-label="تعديل">${IC.edit}</button><button class="icon-btn" data-act="exDel" data-id="${w.id}" aria-label="احذف">${IC.trash}</button></div>
+  </div>${conf}</div>`;
+}
+function weekCompare(exs) {
+  const rows = exs.map(w => {
+    const a = weekEntry(w.id, -1)?.e, b = weekEntry(w.id, 0)?.e;
+    return `<tr><th scope="row"><bdi>${esc(w.name)}</bdi></th><td>${entrySummary(w, a)}</td><td>${entrySummary(w, b)}</td><td>${a && b ? entryDelta(w, b, a) : "—"}</td></tr>`;
+  }).join("");
+  return `<details class="fold" open><summary><span>مقارنة بالأسبوع الماضي</span><span class="small muted">الأسبوع يبدأ الأحد</span></summary>
+    <div class="body"><div class="tbl-wrap"><table class="prog"><thead><tr><th>التمرين</th><th>الأسبوع الماضي</th><th>هذا الأسبوع</th><th>الفرق</th></tr></thead><tbody>${rows}</tbody></table></div></div></details>`;
 }
 function exRow(w, e) {
   const h = history(w.id).filter(x => x.d < today());
@@ -1997,6 +2212,11 @@ async function readExForm(root, prev) {
 async function saveGymEntry(exId, upd) {
   const d = today(), cur = S.gymlog[d] || {};
   const entries = { ...(cur.entries || {}) }; entries[exId] = { ...(entries[exId] || {}), ...upd };
+  if ("_set" in upd) {
+    const w = S.workouts.find(x => x.id === exId), e = entries[exId]; const [i, v] = upd._set; delete e._set;
+    const sets = setsOf(w, e); sets[i] = v; e.sets = sets;
+    if (sets.every(x => x != null)) e.done = true;
+  }
   await put("gymlog", d, { ...cur, entries, group: cur.group || S.gymDay });
 }
 function openPlanner() {
@@ -2031,8 +2251,8 @@ async function savePlan() {
     const d = planDraft.days[i]; if (!groups.includes(d.name)) groups.push(d.name);
     for (const x of d.exercises || []) writes.push(put("workouts", newId(), { name: String(x.name || "").slice(0, 80), nameEn: String(x.nameEn || ""), muscle: MUSCLES.includes(x.muscle) ? x.muscle : "جسم كامل", sets: +x.sets || 3, reps: String(x.reps || "10"), tip: String(x.tip || "").slice(0, 140), group: d.name, order: order++, createdAt: Date.now() }));
   }
-  await Promise.all(writes); await put("meta", "gym", { groups });
-  closeSheet(); S.gymDay = planDraft.days[keep[0]]?.name || null; planDraft = null; toast("انضاف البرنامج");
+  await Promise.all(writes); await put("meta", "gym", { ...(S.meta.gym || {}), groups, active: "main" });
+  closeSheet(); S.gymProg = "main"; S.gymDay = planDraft.days[keep[0]]?.name || null; planDraft = null; toast("انضاف البرنامج");
 }
 
 /* ---------- English ---------- */
@@ -2719,10 +2939,14 @@ const A = {
   pinGo: b => pinUnlock(document.getElementById("pin-" + b.dataset.t)), pinSetup,
   vaultAdd, vaultLock: lockAll,
   gymDay: b => { S.gymDay = b.dataset.v; renderGym(); },
+  gymProg: b => { S.gymProg = b.dataset.v; S.gymDay = null; renderGym(); if (S.meta.gym?.active !== b.dataset.v) put("meta", "gym", { ...(S.meta.gym || {}), active: b.dataset.v }); },
+  progApply: async b => { const w = S.workouts.find(x => x.id === b.dataset.id); const st = w && nextStep(w); if (!st) return; await patch("workouts", w.id, { ...st.upd, lvlAt: st.d }); toast("انحدّث هدف التمرين"); },
   exDone: b => { const e = S.gymlog[today()]?.entries?.[b.dataset.id] || {}; if (!e.done) popMark("x:" + b.dataset.id); saveGymEntry(b.dataset.id, { done: !e.done }); },
   exAdd: async b => { b.disabled = true; const o = await readExForm($("#exAddFold"), null); b.disabled = false; if (!o) return;
-    const groups = [...(S.meta.gym?.groups || [])]; if (!groups.includes(o.group)) { groups.push(o.group); await put("meta", "gym", { groups }); }
-    S.gymDay = o.group; await put("workouts", newId(), { ...o, order: exOf(o.group).length, createdAt: Date.now() }); toast("انضاف التمرين"); },
+    const groups = [...(S.meta.gym?.groups || [])]; if (!groups.includes(o.group)) { groups.push(o.group); await put("meta", "gym", { ...(S.meta.gym || {}), groups }); }
+    const pg = S.gymProg && S.gymProg !== "main" && S.workouts.some(w => w.program === S.gymProg && w.group === o.group) ? { program: S.gymProg } : {};
+    if (!pg.program) S.gymProg = "main";
+    S.gymDay = o.group; await put("workouts", newId(), { ...o, ...pg, order: exOf(o.group).length, createdAt: Date.now() }); toast("انضاف التمرين"); },
   exEdit: b => { const w = S.workouts.find(x => x.id === b.dataset.id); if (!w) return;
     openSheet(`<h2>تعديل التمرين</h2>${exFormFields(w)}<div class="row"><button class="btn pri" data-act="exSave" data-id="${w.id}">احفظ</button><button class="btn ghost" data-act="closeSheet">إلغاء</button></div>`); },
   exSave: async b => { const w = S.workouts.find(x => x.id === b.dataset.id); b.disabled = true; const o = await readExForm($("#sheetBack"), w); b.disabled = false; if (!o) return; await patch("workouts", w.id, o); closeSheet(); },
@@ -2844,7 +3068,11 @@ document.addEventListener("change", e => {
 });
 $("#fileIn").addEventListener("change", e => { S.pendingFiles = [...e.target.files]; e.target.value = ""; renderUploadForm(); });
 $("#fileSearch").addEventListener("input", renderFiles);
-document.addEventListener("change", e => { const i = e.target; if (i.dataset?.ex) { const v = i.value === "" ? null : +en(i.value); saveGymEntry(i.dataset.ex, { [i.dataset.k]: v, ...(i.dataset.k === "weight" && v ? { done: true } : {}) }); } });
+document.addEventListener("change", e => { const i = e.target; if (i.dataset?.ex) { const v = i.value === "" ? null : +en(i.value); const k = i.dataset.k;
+  gymHold = true; setTimeout(() => { gymHold = false; if (S.gymPending && curTab === "gym") renderGym(); }, 30);
+  if (k === "s") return saveGymEntry(i.dataset.ex, { _set: [+i.dataset.i, v] });
+  const w = S.workouts.find(x => x.id === i.dataset.ex);
+  saveGymEntry(i.dataset.ex, { [k]: v, ...(((k === "weight" && !w?.kind) || k === "min") && v ? { done: true } : {}) }); } });
 $("#engBody").addEventListener("focusout", () => setTimeout(() => { if (S.engPending && curTab === "eng") renderEng(); }, 50));
 document.addEventListener("input", e => { if (e.target.id === "engSearch") { S.engQ = e.target.value; $("#wordList").innerHTML = wordListHTML(); } });
 function renderEngSources() { $("#engSources").innerHTML = ENG_SOURCES.map(x => `<button class="${S.engSource === x ? "on" : ""}" data-act="engSrc" data-v="${x}">${x}</button>`).join(""); }
